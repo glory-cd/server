@@ -1,0 +1,349 @@
+syntax = "proto3";
+
+//--------------comm---------------
+// 空message请求
+message EmptyRequest {
+}
+// 空message响应
+message EmptyReply {
+}
+//--------------comm-------------------
+
+//--------------org-------------------
+//
+message OrgNameRequest{
+    string name = 1;
+}
+
+message OrgAddReply {
+    int32 orgid = 1;
+}
+
+// 获取组织信息列表
+message OrganizationList {
+    message OrganizationInfo {
+        int32 id = 1;
+        string name = 2;
+        string ctime = 3;
+    }
+    repeated OrganizationInfo orgs = 1;
+}
+
+service Organization {
+    rpc AddOrganization (OrgNameRequest) returns (OrgAddReply) {}
+    rpc DeleteOrganization (OrgNameRequest) returns (EmptyReply) {}
+    rpc GetOrganizations (EmptyRequest) returns (OrganizationList) {}
+    rpc GetOrganizationID (OrgNameRequest) returns (OrgAddReply){}
+}
+//----------------------------project--------------------------------
+message ProjectNameRequest{
+    string name = 1;
+}
+
+message ProjectAddReply{
+    int32 proid = 1;
+}
+
+// 获取项目列表
+message ProjectList {
+    message ProjectInfo {
+        int32 id = 1;
+        string name = 2;
+        string ctime = 3;
+    }
+    repeated ProjectInfo pros = 1;
+}
+
+service Project {
+    rpc AddProject (ProjectNameRequest) returns (ProjectAddReply) {}
+    rpc DeleteProject (ProjectNameRequest) returns (EmptyReply) {}
+    rpc GetProjects (EmptyRequest) returns (ProjectList) {}
+}
+//---------------------------------env-------------------------------------
+message EnvNameRequest{
+    string name = 1;
+}
+
+message EnvAddReply{
+    int32 envid = 1;
+}
+// 获取环境列表
+message EnvironmentList {
+    message EnvironmentInfo {
+        int32 id = 1;
+        string name = 2;
+        string ctime = 3;
+    }
+    repeated EnvironmentInfo envs = 1;
+}
+
+service Environment {
+    rpc AddEnvironment (EnvNameRequest) returns (EnvAddReply) {}
+    rpc DeleteEnvironment (EnvNameRequest) returns (EmptyReply) {}
+    rpc GetEnvironments (EmptyRequest) returns (EnvironmentList) {}
+}
+
+//----------------------------group--------------------------------
+// 添加分组
+message GroupAddRequest {
+    string name = 1; // 分组名称
+    int32 orgid = 2; // 组织ID
+    int32 envid = 3; // 环境ID
+    int32 proid = 4; // 项目ID
+}
+
+message GroupAddReply{
+    int32 groupid = 1;
+}
+
+message GroupNameRequest{
+    string name = 1;
+}
+
+// 获取分组列表
+message GroupList {
+    message GroupInfo {
+        int32 id = 1;
+        string name = 2;
+        string orgname = 3;
+        string envname = 4;
+        string proname = 5;
+    }
+    repeated GroupInfo groups = 1;
+}
+
+service Group {
+    rpc AddGroup (GroupAddRequest) returns (GroupAddReply) {}
+    rpc DeleteGroup (GroupNameRequest) returns (EmptyReply) {}
+    rpc GetGroups (EmptyRequest) returns (GroupList) {}
+}
+
+//-----------------------------release--------------------------
+message ReleaseNameRequest{
+    string name = 1;
+}
+
+message ReleaseIdRequest{
+    int32 id = 1;
+}
+
+message ReleaseAddReply{
+    int32 releaseid = 1;
+}
+
+// 发布代码
+message ReleaseCode {
+    string name = 1;
+    string relativepath = 2;
+}
+
+// 添加发布
+message AddReleaseRequest {
+    string name = 1; // 发布名称
+    string version = 2; // 发布版本
+    int32 orgid = 3; // 组织ID
+    int32 proid = 4; // 项目ID
+    repeated ReleaseCode releasecodes = 5; // 发布代码
+}
+
+// 发布代码列表
+message ReleaseCodeList{
+    message ReleaseCodeInfo{
+        int32 id = 1;
+        string name = 2;
+    }
+    repeated ReleaseCodeInfo releasecodes = 1;
+}
+
+service Release {
+    rpc AddRelease (AddReleaseRequest) returns (ReleaseAddReply) {}
+    rpc DeleteRelease (ReleaseNameRequest) returns (EmptyReply) {}
+    rpc GetReleaseCode (ReleaseIdRequest) returns(ReleaseCodeList){}
+}
+
+//-------------------------------------Agent------------------------
+// Agent
+message AgentList {
+    message AgentInfo {
+        string id = 1;
+        string alias = 2;
+        string hostname = 3;
+        string hostip = 4;
+        string status = 5;
+        string ctime = 6;
+        string utime = 7;
+
+    }
+    repeated AgentInfo agents = 1;
+}
+
+message AgentRestartRequest {
+    string id = 1;
+    string op = 2;
+}
+
+message AgentAliasRequest{
+    string id = 1;
+    string alias = 2;
+}
+
+message AgentGetRequest {
+    enum AgentClassify {
+        none = 0;    //;
+        online = 1;  //上线
+        offline = 2; //下线
+        all = 3;     //所有
+    }
+    AgentClassify ac = 1;
+    int32 groupid = 2; //groupid
+}
+
+service Agent {
+    rpc GetAgents(AgentGetRequest) returns (AgentList){}
+    rpc SetAgentAlias (AgentAliasRequest) returns (EmptyReply){}
+    rpc OperateAgent (AgentRestartRequest) returns (EmptyReply) {}
+}
+
+//--------------------service---------------------------------------------
+// 添加服务请求
+message ServiceAddRequest {
+    string name = 1;
+    string dir = 2;
+    string moudlename = 3;
+    string osuser = 4;
+    string codepattern = 5;
+    string pidfile = 7;
+    string startcmd = 8;
+    string stopcmd = 9;
+    string agentid = 10;
+    int32 groupid = 11;
+}
+// 添加服务响应
+message ServiceAddReply {
+    string serviceid = 1;
+}
+
+//删除服务请求
+message ServiceDeleteRequest {
+    string id = 1;
+}
+
+// 查询服务请求
+message ServiceRequest {
+    repeated int32 groupids = 1;
+    repeated string agentids = 2;
+    repeated string moudlenames = 3;
+    repeated string serviceids = 4;
+}
+
+// 查询服务结果响应
+message ServiceList {
+    message ServiceInfo {
+        string id = 1;
+        string name = 2;
+        string dir = 3;
+        string moudlename = 4;
+        string osuser = 5;
+        string codepattern = 6;
+        int32 port = 7;
+        string pidfile = 8;
+        string startcmd = 9;
+        string stopcmd = 10;
+        string agentname = 12;
+        string groupname = 13;
+    }
+    repeated ServiceInfo services = 1;
+}
+
+// 修改服务agent属组和group属组请求
+message ServiceChangeOwnRequest {
+    string id = 1;
+    string agentid = 2;
+    int32 groupid= 3;
+}
+
+
+service Service {
+    rpc AddService (ServiceAddRequest) returns (ServiceAddReply) {}
+    rpc DeleteService (ServiceDeleteRequest) returns (EmptyReply) {}
+    rpc GetServices (ServiceRequest) returns (ServiceList) {}
+    rpc ChangeServiceOwn(ServiceChangeOwnRequest) returns (EmptyReply) {}
+}
+
+//--------------------------------------task--------------------------------
+message TaksNameRequest{
+    string name = 1;
+}
+
+message TaskIdRequest{
+    int32 id = 1;
+}
+
+//添加任务
+message TaskAddRequest {
+    string name = 1;
+    int32 groupid = 2;
+    int32 releaseid = 3;
+}
+
+message TaskAddReply{
+    int32 taskid = 1;
+}
+
+
+
+message TaskList {
+    message TaskInfo {
+        int32 id = 1;
+        string name = 2;
+        int32 status = 3;
+        string ctime = 4;
+        string starttime = 5;
+        string endtime = 6;
+        string releasename = 7;
+        string groupname = 8;
+    }
+    repeated TaskInfo tasks = 1;
+}
+// 具体每个服务的操作，
+// 如果operation是0，则releasecodeid要指定;否则不需要指定
+message SpecificService {
+    string serviceid = 1;
+    int32  operation = 2;
+    int32  releasecodeid = 3;
+    string customupgradepattern = 4;
+}
+
+message TaskDetailsRequst {
+    int32 taskid = 1;
+    repeated SpecificService sslist = 2;
+}
+
+message ExecutionList {
+    message ExecutionInfo {
+        string taskname = 1;
+        int32  id = 2;
+        string servicename = 3;
+        int32 operation = 4;
+        int32 rcode = 5;
+        string rmsg = 6;
+        string customupgradepattern = 7;
+    }
+    repeated ExecutionInfo executions = 1;
+}
+
+
+message TaskString {
+    string taskstr = 1;
+}
+
+
+service task {
+    rpc AddTask (TaskAddRequest) returns (TaskAddReply) {}
+    rpc DeleteTask (TaksNameRequest) returns (EmptyReply) {}
+    rpc GetTasks (EmptyRequest) returns (TaskList) {}
+    rpc SetTaskDetails (TaskDetailsRequst) returns (EmptyReply) {}
+    rpc GetTaskExecutions (TaskIdRequest) returns (ExecutionList) {}
+    rpc PublishTask (TaskIdRequest) returns (ExecutionList) {}
+}
+

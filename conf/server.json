@@ -1,0 +1,27 @@
+{
+  "log": {
+    "loglevel": "INFO",
+    "filename": "logs/server.log",
+    "maxsize": 128,
+    "maxbackups": 30,
+    "maxage": 7,
+    "compress": true
+  },
+  "mysql": {
+    "dsn": "auto:auto@tcp(192.168.1.41:3306)/dev_cdp?charset=utf8&parseTime=true&loc=Local",
+    "maxopenconns": 100,
+    "maxidleconns": 10
+  },
+  "etcd": {
+    "endpoint": [
+      "192.168.1.151:2379"
+    ],
+    "dialtimeout": 10
+  },
+  "redis": {
+    "host": "192.168.1.41:6133",
+    "maxidele": 3,
+    "maxactive": 0,
+    "timeout": 300
+  }
+}
