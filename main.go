@@ -5,8 +5,8 @@
 package main
 
 import (
-	"server/comm"
-	"server/server"
+	"github.com/glory-cd/server/comm"
+	"github.com/glory-cd/server/server"
 )
 
 func main() {

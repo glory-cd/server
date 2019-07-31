@@ -7,7 +7,7 @@ package comm
 import (
 	"fmt"
 	"strings"
-	"utils/log"
+	"github.com/glory-cd/utils/log"
 )
 
 //db--------------------------------------------------------

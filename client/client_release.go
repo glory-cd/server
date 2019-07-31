@@ -6,7 +6,7 @@ package client
 
 import (
 	"context"
-	pb "server/idlentity"
+	pb "github.com/glory-cd/server/idlentity"
 )
 
 // 添加发布，返回发布ID和错误信息

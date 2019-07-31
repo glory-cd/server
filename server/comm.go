@@ -6,12 +6,12 @@ package server
 
 import (
 	"encoding/json"
-	"server/comm"
-	pb "server/idlentity"
+	"github.com/glory-cd/server/comm"
+	pb "github.com/glory-cd/server/idlentity"
 	"strings"
 	"sync"
 	"time"
-	"utils/log"
+	"github.com/glory-cd/utils/log"
 )
 
 const (

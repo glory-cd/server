@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"net"
-	pb "server/idlentity"
-	"utils/log"
+	pb "github.com/glory-cd/server/idlentity"
+	"github.com/glory-cd/utils/log"
 )
 
 const rpcPort = ":50051"

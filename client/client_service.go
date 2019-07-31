@@ -6,7 +6,7 @@ package client
 
 import (
 	"context"
-	pb "server/idlentity"
+	pb "github.com/glory-cd/server/idlentity"
 )
 
 type addServiceOption struct {

@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"strings"
 	"time"
-	"utils/log"
+	"github.com/glory-cd/utils/log"
 )
 
 //------------------------------------------------------------

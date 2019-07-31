@@ -7,10 +7,10 @@ package server
 import (
 	"context"
 	"errors"
-	"server/comm"
-	pb "server/idlentity"
+	"github.com/glory-cd/server/comm"
+	pb "github.com/glory-cd/server/idlentity"
 	"strconv"
-	"utils/log"
+	"github.com/glory-cd/utils/log"
 )
 
 type Task struct{}

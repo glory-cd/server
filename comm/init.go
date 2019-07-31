@@ -7,9 +7,9 @@ package comm
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	"utils/etcd"
-	"utils/log"
-	"utils/myredis"
+	"github.com/glory-cd/utils/etcd"
+	"github.com/glory-cd/utils/log"
+	"github.com/glory-cd/utils/myredis"
 )
 
 func InitLog() {

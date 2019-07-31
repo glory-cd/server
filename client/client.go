@@ -7,7 +7,7 @@ package client
 import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	pb "server/idlentity"
+	pb "github.com/glory-cd/server/idlentity"
 )
 
 type CDPCClientAttr struct {

@@ -7,7 +7,7 @@ package client
 import (
 	"context"
 	"errors"
-	pb "server/idlentity"
+	pb "github.com/glory-cd/server/idlentity"
 )
 
 // 获取上线agent

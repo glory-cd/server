@@ -6,7 +6,7 @@ package client
 
 import (
 	"context"
-	pb "server/idlentity"
+	pb "github.com/glory-cd/server/idlentity"
 )
 
 // 添加环境，返回组织ID和错误信息

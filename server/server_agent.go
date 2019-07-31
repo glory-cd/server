@@ -8,9 +8,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"server/comm"
-	pb "server/idlentity"
-	"utils/log"
+	"github.com/glory-cd/server/comm"
+	pb "github.com/glory-cd/server/idlentity"
+	"github.com/glory-cd/utils/log"
 )
 
 type Agent struct{}

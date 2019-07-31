@@ -9,9 +9,9 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
-	"server/comm"
-	pb "server/idlentity"
-	"utils/log"
+	"github.com/glory-cd/server/comm"
+	pb "github.com/glory-cd/server/idlentity"
+	"github.com/glory-cd/utils/log"
 )
 
 func GetMd5String(str string) string {
