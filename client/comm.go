@@ -111,7 +111,7 @@ func CheckRCIDOwnRelease(IDs []int, rcMap map[string]int) error {
 	return nil
 }
 
-func CheckRCNameOwnRelease(names []string, rcMap map[int]string) error {
+func CheckRCNameOwnRelease(names []string, rcMap map[string]int) error {
 	reverseMap := make(map[interface{}]interface{})
 	for k, v := range rcMap {
 		reverseMap[v] = k
