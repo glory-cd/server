@@ -2,3 +2,5 @@
 *.xml
 logs/*
 bg
+vendor/*
+cdpc.go
