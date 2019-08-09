@@ -53,3 +53,12 @@ func (g *Group) GetGroups(ctx context.Context, in *pb.EmptyRequest) (*pb.GroupLi
 	}
 	return &rgrous, nil
 }
+
+// 根据分组名称获取ID
+func (o *Group) GetGroupID(ctx context.Context, in *pb.GroupNameRequest) (*pb.GroupAddReply, error) {
+	var group comm.Group
+	if err := comm.DB.Where("name=?", in.Name).Find(&group).Error; err != nil {
+		return nil, err
+	}
+	return &pb.GroupAddReply{Groupid: int32(group.ID)}, nil
+}

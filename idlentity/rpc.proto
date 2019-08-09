@@ -58,6 +58,7 @@ service Project {
     rpc AddProject (ProjectNameRequest) returns (ProjectAddReply) {}
     rpc DeleteProject (ProjectNameRequest) returns (EmptyReply) {}
     rpc GetProjects (EmptyRequest) returns (ProjectList) {}
+    rpc GetProjectID(ProjectNameRequest) returns (ProjectAddReply) {}
 }
 //---------------------------------env-------------------------------------
 message EnvNameRequest{
@@ -81,6 +82,7 @@ service Environment {
     rpc AddEnvironment (EnvNameRequest) returns (EnvAddReply) {}
     rpc DeleteEnvironment (EnvNameRequest) returns (EmptyReply) {}
     rpc GetEnvironments (EmptyRequest) returns (EnvironmentList) {}
+    rpc GetEnvironmentID(EnvNameRequest) returns (EnvAddReply) {}
 }
 
 //----------------------------group--------------------------------
@@ -116,6 +118,7 @@ service Group {
     rpc AddGroup (GroupAddRequest) returns (GroupAddReply) {}
     rpc DeleteGroup (GroupNameRequest) returns (EmptyReply) {}
     rpc GetGroups (EmptyRequest) returns (GroupList) {}
+    rpc GetGroupID (GroupNameRequest) returns (GroupAddReply){}
 }
 
 //-----------------------------release--------------------------

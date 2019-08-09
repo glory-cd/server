@@ -44,3 +44,36 @@ func (c *CDPClient) GetProjects() (*[]Project, error) {
 	}
 	return &projects, nil
 }
+
+/*
+根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
+当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
+example:
+        1. cdpclient.GetOrganizationID()
+        2. cdpclient.GetOrganizationID("org2")
+        3. cdpclient.GetOrganizationID("org3","org2")
+*/
+func (c *CDPClient) GetProjectID(proName ...string) (map[string]int32, error) {
+	proNameId := make(map[string]int32)
+	oc := c.newProjectClient()
+	ctx := context.TODO()
+	if len(proName) == 0 {
+		res, err := oc.GetProjects(ctx, &pb.EmptyRequest{})
+		if err != nil {
+			return proNameId, err
+		}
+		for _, r := range res.Pros {
+			proNameId[r.Name] = r.Id
+		}
+
+	} else {
+		for _, ename := range proName {
+			res, err := oc.GetProjectID(ctx, &pb.ProjectNameRequest{Name: ename})
+			if err != nil {
+				return proNameId, err
+			}
+			proNameId[ename] = res.Proid
+		}
+	}
+	return proNameId, nil
+}

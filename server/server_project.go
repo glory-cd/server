@@ -52,3 +52,12 @@ func (p *Pro) GetProjects(ctx context.Context, in *pb.EmptyRequest) (*pb.Project
 	}
 	return &rpros, nil
 }
+
+// 根据项目名称获取ID
+func (o *Pro) GetProjectID(ctx context.Context, in *pb.ProjectNameRequest) (*pb.ProjectAddReply, error) {
+	var pro comm.Project
+	if err := comm.DB.Where("name=?", in.Name).Find(&pro).Error; err != nil {
+		return nil, err
+	}
+	return &pb.ProjectAddReply{Proid: int32(pro.ID)}, nil
+}

@@ -44,3 +44,36 @@ func (c *CDPClient) GetEnvironments() (*[]Environment, error) {
 	}
 	return &environments, nil
 }
+
+/*
+根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
+当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
+example:
+        1. cdpclient.GetOrganizationID()
+        2. cdpclient.GetOrganizationID("org2")
+        3. cdpclient.GetOrganizationID("org3","org2")
+*/
+func (c *CDPClient) GetEnvironmentID(envName ...string) (map[string]int32, error) {
+	envNameId := make(map[string]int32)
+	oc := c.newEnvironmentClient()
+	ctx := context.TODO()
+	if len(envName) == 0 {
+		res, err := oc.GetEnvironments(ctx, &pb.EmptyRequest{})
+		if err != nil {
+			return envNameId, err
+		}
+		for _, r := range res.Envs {
+			envNameId[r.Name] = r.Id
+		}
+
+	} else {
+		for _, ename := range envName {
+			res, err := oc.GetEnvironmentID(ctx, &pb.EnvNameRequest{Name: ename})
+			if err != nil {
+				return envNameId, err
+			}
+			envNameId[ename] = res.Envid
+		}
+	}
+	return envNameId, nil
+}

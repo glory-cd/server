@@ -52,8 +52,8 @@ example:
         2. cdpclient.GetOrganizationID("org2")
         3. cdpclient.GetOrganizationID("org3","org2")
 */
-func (c *CDPClient) GetOrganizationID(orgName ...string) (map[string]int, error) {
-	orgNameId := make(map[string]int)
+func (c *CDPClient) GetOrganizationID(orgName ...string) (map[string]int32, error) {
+	orgNameId := make(map[string]int32)
 	oc := c.newOrganizationClient()
 	ctx := context.TODO()
 	if len(orgName) == 0 {
@@ -62,7 +62,7 @@ func (c *CDPClient) GetOrganizationID(orgName ...string) (map[string]int, error)
 			return orgNameId, err
 		}
 		for _, r := range res.Orgs {
-			orgNameId[r.Name] = int(r.Id)
+			orgNameId[r.Name] = r.Id
 		}
 
 	} else {
@@ -71,7 +71,7 @@ func (c *CDPClient) GetOrganizationID(orgName ...string) (map[string]int, error)
 			if err != nil {
 				return orgNameId, err
 			}
-			orgNameId[oname] = int(res.Orgid)
+			orgNameId[oname] = res.Orgid
 		}
 	}
 	return orgNameId, nil

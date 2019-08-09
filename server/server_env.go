@@ -55,3 +55,11 @@ func (e *Env) GetEnvironments(ctx context.Context, in *pb.EmptyRequest) (*pb.Env
 
 	return &renvs, nil
 }
+// 根据环境称获取ID
+func (o *Env) GetEnvironmentID(ctx context.Context, in *pb.EnvNameRequest) (*pb.EnvAddReply, error) {
+	var env comm.Environment
+	if err := comm.DB.Where("name=?", in.Name).Find(&env).Error; err != nil {
+		return nil, err
+	}
+	return &pb.EnvAddReply{Envid: int32(env.ID)}, nil
+}

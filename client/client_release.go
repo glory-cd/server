@@ -18,6 +18,7 @@ func (c *CDPClient) AddRelease(name string, version string, organizationid, proj
 		_tmp := pb.ReleaseCode{Name: c.CodeName, Relativepath: c.CodePath}
 		rcs = append(rcs, &_tmp)
 	}
+
 	res, err := rc.AddRelease(ctx, &pb.AddReleaseRequest{Name: name, Orgid: int32(organizationid), Proid: int32(projectid), Releasecodes: rcs})
 	if err != nil {
 		return 0, err
