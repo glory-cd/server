@@ -20,7 +20,7 @@ func (e *Env) AddEnvironment(ctx context.Context, in *pb.EnvNameRequest) (*pb.En
 		log.Slogger.Errorf("[Environment] 添加环境失败: %s", err.Error())
 		return &pb.EnvAddReply{}, err
 	} else {
-		log.Slogger.Infof("[Environment] 添加环境成功")
+		log.Slogger.Infof("[Environment] 添加环境[%s]成功", envObj.Name)
 		return &pb.EnvAddReply{Envid: int32(envObj.ID)}, err
 	}
 }

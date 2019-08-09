@@ -95,7 +95,7 @@ func defaultOptions() taskOption {
    5. Statics:  其他操作参数详情。其中定义了ServiceID和Op。ServiceID自然是服务ID，Op则是具体操作类型。
 */
 
-func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (int, error) {
+func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (int32, error) {
 	taskOption := defaultOptions()
 	for _, opt := range opts {
 		opt.apply(&taskOption)
@@ -228,10 +228,10 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 
 	_, err = sc.SetTaskDetails(ctx, &pb.TaskDetailsRequst{Taskid: res.Taskid, Sslist: ss})
 	if err != nil {
-		return int(res.Taskid), err
+		return res.Taskid, err
 	}
 
-	return int(res.Taskid), nil
+	return res.Taskid, nil
 }
 
 func (c *CDPClient) DeleteTask(taskName string) error {

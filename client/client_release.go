@@ -10,7 +10,7 @@ import (
 )
 
 // 添加发布，返回发布ID和错误信息
-func (c *CDPClient) AddRelease(name string, version string, organizationid, projectid int, codes []ReleaseCode) (int, error) {
+func (c *CDPClient) AddRelease(name string, version string, organizationid, projectid int, codes []ReleaseCode) (int32, error) {
 	rc := c.newReleaseClient()
 	ctx := context.TODO()
 	var rcs []*pb.ReleaseCode
@@ -22,7 +22,7 @@ func (c *CDPClient) AddRelease(name string, version string, organizationid, proj
 	if err != nil {
 		return 0, err
 	}
-	return int(res.Releaseid), err
+	return res.Releaseid, err
 }
 
 func (c *CDPClient) DeleteRelease(name string) error {

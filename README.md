@@ -13,6 +13,17 @@ win:
 1. openssl genrsa -out server.key 2048
 2. openssl req -new -sha256 -key server.key -out server.csr
 3. openssl x509 -req -sha256 -in server.csr -signkey server.key -out server.crt -days 3650 
+
+openssl genrsa -out server.key 2048
+ 
+openssl req -new -key server.key -subj "/CN=10.30.0.163" -out server.csr
+ 
+echo subjectAltName = IP:10.30.0.163 > extfile.cnf
+ 
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile extfile.cnf -out server.crt -days 5000
+--------------------- 
+版权声明：本文为CSDN博主「min19900718」的原创文章，遵循CC 4.0 by-sa版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/min19900718/article/details/87920254
 ```
 ###2. 命令格式
 ######1. 发布代码json字符串 
