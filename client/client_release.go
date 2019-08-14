@@ -50,3 +50,29 @@ func (c *CDPClient) GetReleaseCode(releaseID int) (map[string]int, error) {
 	}
 	return rcmap, nil
 }
+
+func (c *CDPClient) GetReleaseID(releaseName ...string) (map[string]int32, error) {
+	releaseNameId := make(map[string]int32)
+	oc := c.newReleaseClient()
+	ctx := context.TODO()
+	if len(releaseName) == 0 {
+		res, err := oc.GetReleases(ctx, &pb.EmptyRequest{})
+		if err != nil {
+			return releaseNameId, err
+		}
+		for _, r := range res.Releases {
+			releaseNameId[r.Name] = r.Id
+		}
+
+	} else {
+		for _, ename := range releaseName {
+			res, err := oc.GetReleaseID(ctx, &pb.ReleaseNameRequest{Name: ename})
+			if err != nil {
+				return releaseNameId, err
+			}
+			releaseNameId[ename] = res.Releaseid
+		}
+	}
+	return releaseNameId, nil
+}
+

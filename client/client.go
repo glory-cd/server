@@ -38,21 +38,21 @@ func (c *CDPClient) newServClient(stype string) (nsc interface{}) {
 		nsc = oclient
 	} else {
 		switch stype {
-		case Key_OrganizationClient:
+		case KeyOrganizationClient:
 			nsc = pb.NewOrganizationClient(c.Conn)
-		case Key_EnvironmentClient:
+		case KeyEnvironmentClient:
 			nsc = pb.NewEnvironmentClient(c.Conn)
-		case Key_ProjectClient:
+		case KeyProjectClient:
 			nsc = pb.NewProjectClient(c.Conn)
-		case Key_GroupClient:
+		case KeyGroupClient:
 			nsc = pb.NewGroupClient(c.Conn)
-		case Key_ReleaseClient:
+		case KeyReleaseClient:
 			nsc = pb.NewReleaseClient(c.Conn)
-		case Key_ServiceClient:
+		case KeyServiceClient:
 			nsc = pb.NewServiceClient(c.Conn)
-		case Key_AgentClient:
+		case KeyAgentClient:
 			nsc = pb.NewAgentClient(c.Conn)
-		case Key_TaskClient:
+		case KeyTaskClient:
 			nsc = pb.NewTaskClient(c.Conn)
 		}
 		c.SNodes[stype] = nsc
@@ -61,49 +61,49 @@ func (c *CDPClient) newServClient(stype string) (nsc interface{}) {
 }
 
 func (c *CDPClient) newOrganizationClient() (oc pb.OrganizationClient) {
-	oci := c.newServClient(Key_OrganizationClient)
+	oci := c.newServClient(KeyOrganizationClient)
 	oc = oci.(pb.OrganizationClient)
 	return
 }
 
 func (c *CDPClient) newProjectClient() (pc pb.ProjectClient) {
-	pci := c.newServClient(Key_ProjectClient)
+	pci := c.newServClient(KeyProjectClient)
 	pc = pci.(pb.ProjectClient)
 	return
 }
 
 func (c *CDPClient) newEnvironmentClient() (ec pb.EnvironmentClient) {
-	eci := c.newServClient(Key_EnvironmentClient)
+	eci := c.newServClient(KeyEnvironmentClient)
 	ec = eci.(pb.EnvironmentClient)
 	return
 }
 
 func (c *CDPClient) newGroupClient() (gc pb.GroupClient) {
-	gci := c.newServClient(Key_GroupClient)
+	gci := c.newServClient(KeyGroupClient)
 	gc = gci.(pb.GroupClient)
 	return
 }
 
 func (c *CDPClient) newServiceClient() (sc pb.ServiceClient) {
-	sci := c.newServClient(Key_ServiceClient)
+	sci := c.newServClient(KeyServiceClient)
 	sc = sci.(pb.ServiceClient)
 	return
 }
 
 func (c *CDPClient) newTaskClient() (sc pb.TaskClient) {
-	sci := c.newServClient(Key_TaskClient)
+	sci := c.newServClient(KeyTaskClient)
 	sc = sci.(pb.TaskClient)
 	return
 }
 
 func (c *CDPClient) newAgentClient() (sc pb.AgentClient) {
-	sci := c.newServClient(Key_AgentClient)
+	sci := c.newServClient(KeyAgentClient)
 	sc = sci.(pb.AgentClient)
 	return
 }
 
 func (c *CDPClient) newReleaseClient() (rc pb.ReleaseClient) {
-	rci := c.newServClient(Key_ReleaseClient)
+	rci := c.newServClient(KeyReleaseClient)
 	rc = rci.(pb.ReleaseClient)
 	return
 }

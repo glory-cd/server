@@ -106,15 +106,15 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 	upgrades := taskOption.Upgrades
 	statics := taskOption.Statics
 
-	if releaseID == 0 && op == Operate_Default && len(deploys) == 0 && len(upgrades) == 0 && len(statics) == 0 {
+	if releaseID == 0 && op == OperateDefault && len(deploys) == 0 && len(upgrades) == 0 && len(statics) == 0 {
 		return 0, errors.New("参数错误: 没有设置任务的具体参数！")
 	}
 
-	if releaseID == 0 && (len(deploys) > 0 || len(upgrades) > 0 || op == Operate_Upgrade) {
+	if releaseID == 0 && (len(deploys) > 0 || len(upgrades) > 0 || op == OperateUpgrade) {
 		return 0, errors.New("参数错误: 因为是部署(升级)任务，所以必须使用WithRelease(id int) 设置发布ID，否则无法设置任务切片！")
 	}
 
-	if op == Operate_Deploy {
+	if op == OperateDeploy {
 		return 0, errors.New("参数错误: 此处OP是全局的，针对group中的所有服务的操作，不能为[1]; 若要实现部署任务，请使用WithDeploy设置.")
 	}
 
@@ -134,16 +134,18 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 		return 0, err
 	}
 	switch op {
-	case Operate_Start, Operate_Stop, Operate_Restart, Operate_Check:
+	case OperateDeploy:
+		return 0, errors.New("参数错误: 全局OP不能为OperateDeploy.")
+	case OperateUpgrade:
+		for _, s := range services {
+			// + 校验
+			ss = append(ss, &pb.SpecificService{Serviceid: s.ID, Operation: int32(OperateUpgrade)})
+		}
+	case OperateStart, OperateStop, OperateRestart, OperateCheck, OperateBackUp, OperateRollBack:
 		for _, s := range services {
 			ss = append(ss, &pb.SpecificService{Serviceid: s.ID, Operation: int32(op)})
 		}
-	case Operate_Upgrade:
-		for _, s := range services {
-			// + 校验
-			ss = append(ss, &pb.SpecificService{Serviceid: s.ID, Operation: int32(Operate_Upgrade)})
-		}
-	case Operate_Default:
+	case OperateDefault:
 		// 当op没有设置时，根据deploys,upgrades,statics信息设置
 		// 校验deploys
 
@@ -204,21 +206,25 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 			var serviceIDList []string
 			for _, s := range statics {
 				serviceIDList = append(serviceIDList, s.ServiceID)
+				//验证OpMode
+				if s.Op == OperateDeploy || s.Op == OperateUpgrade {
+					return 0, errors.New("参数错误: 静态模式的OpMode不能是OperateDeploy和OperateUpgrade.")
+				}
+
 			}
 			// 验证服务ID
 			err := CheckServiceOwnGroup(serviceIDList, services)
 			if err != nil {
 				return 0, err
 			}
-
 		}
 
 		for _, d := range deploys {
-			ss = append(ss, &pb.SpecificService{Serviceid: d.ServiceID, Operation: int32(Operate_Deploy), Releasecodeid: int32(d.ReleaseCodeID)})
+			ss = append(ss, &pb.SpecificService{Serviceid: d.ServiceID, Operation: int32(OperateDeploy), Releasecodeid: int32(d.ReleaseCodeID)})
 		}
 
 		for _, u := range upgrades {
-			ss = append(ss, &pb.SpecificService{Serviceid: u.ServiceID, Operation: int32(Operate_Upgrade), Customupgradepattern: strings.Join(u.CustomUpgradePattern, ";")})
+			ss = append(ss, &pb.SpecificService{Serviceid: u.ServiceID, Operation: int32(OperateUpgrade), Customupgradepattern: strings.Join(u.CustomUpgradePattern, ";")})
 		}
 
 		for _, s := range statics {

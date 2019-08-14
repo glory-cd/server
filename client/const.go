@@ -5,26 +5,28 @@
 package client
 
 const (
-	Key_OrganizationClient string = "orgClient"
-	Key_EnvironmentClient  string = "envClient"
-	Key_ProjectClient      string = "proClient"
-	Key_GroupClient        string = "groupClient"
-	Key_ReleaseClient      string = "releaseClient"
-	Key_ServiceClient      string = "serviceClient"
-	Key_AgentClient        string = "AgentClient"
-	Key_TaskClient         string = "TaskClient"
+	KeyOrganizationClient string = "orgClient"
+	KeyEnvironmentClient  string = "envClient"
+	KeyProjectClient      string = "proClient"
+	KeyGroupClient        string = "groupClient"
+	KeyReleaseClient      string = "releaseClient"
+	KeyServiceClient      string = "serviceClient"
+	KeyAgentClient        string = "AgentClient"
+	KeyTaskClient         string = "TaskClient"
 )
 
 type OpMode int
 
 const (
-	Operate_Default OpMode = 0
-	Operate_Deploy  OpMode = 1
-	Operate_Upgrade OpMode = 2
-	Operate_Start   OpMode = 3
-	Operate_Stop    OpMode = 4
-	Operate_Restart OpMode = 5
-	Operate_Check   OpMode = 6
+	OperateDefault  OpMode = 0
+	OperateDeploy   OpMode = 1
+	OperateUpgrade  OpMode = 2
+	OperateStart    OpMode = 3
+	OperateStop     OpMode = 4
+	OperateRestart  OpMode = 5
+	OperateCheck    OpMode = 6
+	OperateBackUp   OpMode = 7
+	OperateRollBack OpMode = 8
 )
 
 type Organization struct {

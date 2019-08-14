@@ -149,6 +149,18 @@ message AddReleaseRequest {
     repeated ReleaseCode releasecodes = 5; // 发布代码
 }
 
+// 发布列表
+message ReleaseList {
+    message ReleaseInfo {
+        int32 id = 1;
+        string name = 2;
+        string version = 3;
+        string orgname = 4;
+        string proname = 5;
+    }
+    repeated ReleaseInfo releases = 1;
+}
+
 // 发布代码列表
 message ReleaseCodeList{
     message ReleaseCodeInfo{
@@ -161,6 +173,8 @@ message ReleaseCodeList{
 service Release {
     rpc AddRelease (AddReleaseRequest) returns (ReleaseAddReply) {}
     rpc DeleteRelease (ReleaseNameRequest) returns (EmptyReply) {}
+    rpc GetReleases(EmptyRequest) returns(ReleaseList){}
+    rpc GetReleaseID (ReleaseNameRequest) returns (ReleaseAddReply){}
     rpc GetReleaseCode (ReleaseIdRequest) returns(ReleaseCodeList){}
 }
 

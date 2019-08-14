@@ -63,3 +63,25 @@ func (r *Release) GetReleaseCode(ctx context.Context, in *pb.ReleaseIdRequest) (
 	}
 	return &rcl, nil
 }
+
+func (r *Release) GetReleases(ctx context.Context, in *pb.EmptyRequest) (*pb.ReleaseList, error) {
+	var rels []comm.Release
+	if err := comm.DB.Preload("Organization").Preload("Project").Find(&rels).Error; err != nil {
+		return nil, err
+	}
+	var rrels pb.ReleaseList
+	for _, rel := range rels {
+		rrels.Releases = append(rrels.Releases, &pb.ReleaseList_ReleaseInfo{Id: int32(rel.ID), Name: rel.Name, Version: rel.Version, Orgname: rel.Organization.Name, Proname: rel.Project.Name})
+	}
+	return &rrels, nil
+}
+
+func (r *Release) GetReleaseID(ctx context.Context, in *pb.ReleaseNameRequest) (*pb.ReleaseAddReply, error) {
+	var rl comm.Release
+	var rlr pb.ReleaseAddReply
+	if err := comm.DB.Where("name = ?", in.Name).Find(&rl).Error; err != nil {
+		return &rlr, err
+	}
+	rlr.Releaseid = int32(rl.ID)
+	return &rlr, nil
+}
