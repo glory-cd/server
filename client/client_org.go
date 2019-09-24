@@ -30,49 +30,73 @@ func (c *CDPClient) DeleteOrganization(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetOrganizations() (*[]Organization, error) {
+func (c *CDPClient) GetOrganizations(opts ...QueryOption) (OrganizationSlice, error) {
+	orgQueryOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&orgQueryOption)
+	}
+
 	oc := c.newOrganizationClient()
 	ctx := context.TODO()
-	var organizations []Organization
-	orglist, err := oc.GetOrganizations(ctx, &pb.EmptyRequest{})
+	organizations := []Organization{}
+	orglist, err := oc.GetOrganizations(ctx, &pb.GetOrgRequest{Ids:orgQueryOption.Ids,Names:orgQueryOption.Names})
 	if err != nil {
-		return &organizations, err
+		return organizations, err
+	}
+
+	for _, org := range orglist.Orgs {
+		organizations = append(organizations, Organization{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
+	}
+	return organizations, nil
+}
+
+/*
+	access all organization records
+*/
+func (c *CDPClient) GetAllOrganizations() (OrganizationSlice, error) {
+	oc := c.newOrganizationClient()
+	ctx := context.TODO()
+	organizations := []Organization{}
+	orglist, err := oc.GetOrganizations(ctx, &pb.GetOrgRequest{})
+	if err != nil {
+		return organizations, err
 	}
 	for _, org := range orglist.Orgs {
 		organizations = append(organizations, Organization{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
 	}
-	return &organizations, nil
+	return organizations, nil
 }
 
 /*
-根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
-当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
-example:
-        1. cdpclient.GetOrganizationID()
-        2. cdpclient.GetOrganizationID("org2")
-        3. cdpclient.GetOrganizationID("org3","org2")
+	Obtain organization record information based on the organization name provided;
 */
-func (c *CDPClient) GetOrganizationID(orgName ...string) (map[string]int32, error) {
-	orgNameId := make(map[string]int32)
+func (c *CDPClient) GetOrganizationsFromNames(names []string) (OrganizationSlice, error) {
 	oc := c.newOrganizationClient()
 	ctx := context.TODO()
-	if len(orgName) == 0 {
-		res, err := oc.GetOrganizations(ctx, &pb.EmptyRequest{})
-		if err != nil {
-			return orgNameId, err
-		}
-		for _, r := range res.Orgs {
-			orgNameId[r.Name] = r.Id
-		}
-
-	} else {
-		for _, oname := range orgName {
-			res, err := oc.GetOrganizationID(ctx, &pb.OrgNameRequest{Name: oname})
-			if err != nil {
-				return orgNameId, err
-			}
-			orgNameId[oname] = res.Orgid
-		}
+	organizations := []Organization{}
+	orglist, err := oc.GetOrganizations(ctx, &pb.GetOrgRequest{Names:names})
+	if err != nil {
+		return organizations, err
 	}
-	return orgNameId, nil
+	for _, org := range orglist.Orgs {
+		organizations = append(organizations, Organization{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
+	}
+	return organizations, nil
+}
+
+/*
+	Obtain organization record information based on the organization id provided;
+*/
+func (c *CDPClient) GetOrganizationsFromIDs(ids []int32) (OrganizationSlice, error) {
+	oc := c.newOrganizationClient()
+	ctx := context.TODO()
+	organizations := []Organization{}
+	orglist, err := oc.GetOrganizations(ctx, &pb.GetOrgRequest{Ids: ids})
+	if err != nil {
+		return organizations, err
+	}
+	for _, org := range orglist.Orgs {
+		organizations = append(organizations, Organization{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
+	}
+	return organizations, nil
 }

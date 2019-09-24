@@ -11,19 +11,10 @@ import (
 	"strings"
 )
 
-type TaskDetail struct {
-	ID          int
-	Name        string
-	Status      int
-	CreateTime  string
-	StartTime   string
-	EndTime     string
-	GroupName   string
-	ReleaseName string
-}
+
 type DeployServiceDeatl struct {
 	ServiceID     string
-	ReleaseCodeID int
+	ReleaseCodeID int32
 }
 
 type UpgradeServiceDeatl struct {
@@ -37,7 +28,7 @@ type StaticServiceDeatl struct {
 }
 
 type taskOption struct {
-	ReleaseID int
+	ReleaseID int32
 	Op        OpMode
 	Deploys   []DeployServiceDeatl
 	Upgrades  []UpgradeServiceDeatl
@@ -60,7 +51,7 @@ func newFuncOption(f func(*taskOption)) *funcOption {
 	return &funcOption{f: f}
 }
 
-func WithRelease(id int) TaskOption {
+func WithRelease(id int32) TaskOption {
 	return newFuncOption(func(o *taskOption) { o.ReleaseID = id })
 }
 
@@ -95,7 +86,7 @@ func defaultOptions() taskOption {
    5. Statics:  其他操作参数详情。其中定义了ServiceID和Op。ServiceID自然是服务ID，Op则是具体操作类型。
 */
 
-func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (int32, error) {
+func (c *CDPClient) AddTask(taskName string, groupName string, opts ...TaskOption) (int32, error) {
 	taskOption := defaultOptions()
 	for _, opt := range opts {
 		opt.apply(&taskOption)
@@ -106,52 +97,61 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 	upgrades := taskOption.Upgrades
 	statics := taskOption.Statics
 
-	if releaseID == 0 && op == OperateDefault && len(deploys) == 0 && len(upgrades) == 0 && len(statics) == 0 {
-		return 0, errors.New("参数错误: 没有设置任务的具体参数！")
+	if op == OperateDeploy {
+		return 0, errors.New("Parameter error: OP is global, for all services in designated group，So it can't be [deploy], " +
+			"its [1].If you want to achieve the deploy task, use the 'WithDeploy' parameter")
+	}
+
+	if op == OperateDefault && len(deploys) == 0 && len(upgrades) == 0 && len(statics) == 0 {
+		return 0, errors.New("Parameter error: neither OP nor detailed parameters are set.")
 	}
 
 	if releaseID == 0 && (len(deploys) > 0 || len(upgrades) > 0 || op == OperateUpgrade) {
-		return 0, errors.New("参数错误: 因为是部署(升级)任务，所以必须使用WithRelease(id int) 设置发布ID，否则无法设置任务切片！")
+		return 0, errors.New("Parameter error: to deploy or upgrade tasks, you must use WithRelease to set the release's name.")
 	}
 
-	if op == OperateDeploy {
-		return 0, errors.New("参数错误: 此处OP是全局的，针对group中的所有服务的操作，不能为[1]; 若要实现部署任务，请使用WithDeploy设置.")
+	ctx := context.TODO()
+	// 获取分组ID
+	groups,err := c.GetGroups(WithNames([]string{groupName}))
+	if err != nil{
+		return 0,err
+	}
+	groupID := groups.GetID()
+
+	// 获取所有服务信息
+	services, err := c.GetServices(WithGroups([]string{groupName}))
+	if err != nil {
+		return 0, err
+	}
+
+	if len(services) == 0{
+		return 0,errors.New("service list is empty.")
 	}
 
 	sc := c.newTaskClient()
-	ctx := context.TODO()
-
 	// 添加任务，在任务表中插入一条记录
-	res, err := sc.AddTask(ctx, &pb.TaskAddRequest{Name: taskName, Groupid: int32(groupID), Releaseid: int32(releaseID)})
+	res, err := sc.AddTask(ctx, &pb.TaskAddRequest{Name: taskName, Groupid: groupID, Releaseid: int32(releaseID)})
 	if err != nil {
 		return 0, err
 	}
 	// 设置任务详情
 	var ss []*pb.SpecificService
-	// 获取所有服务信息
-	services, err := c.GetServices(WithGroups([]int32{int32(groupID)}))
-	if err != nil {
-		return 0, err
-	}
 	switch op {
 	case OperateDeploy:
-		return 0, errors.New("参数错误: 全局OP不能为OperateDeploy.")
+		return 0, errors.New("Parameter error: OP is global, for all services in designated group，So it can't be [deploy],its [1]")
 	case OperateUpgrade:
 		for _, s := range services {
-			// + 校验
 			ss = append(ss, &pb.SpecificService{Serviceid: s.ID, Operation: int32(OperateUpgrade)})
 		}
 	case OperateStart, OperateStop, OperateRestart, OperateCheck, OperateBackUp, OperateRollBack:
 		for _, s := range services {
 			ss = append(ss, &pb.SpecificService{Serviceid: s.ID, Operation: int32(op)})
 		}
+	// 当op没有设置时，根据deploys,upgrades,statics信息设置
 	case OperateDefault:
-		// 当op没有设置时，根据deploys,upgrades,statics信息设置
-		// 校验deploys
-
-		if len(deploys) > 0 {
+		if deploys != nil {
 			var serviceIDList []string
-			var releaseCodeIDList []int
+			var releaseCodeIDList []int32
 			for _, d := range deploys {
 				serviceIDList = append(serviceIDList, d.ServiceID)
 				releaseCodeIDList = append(releaseCodeIDList, d.ReleaseCodeID)
@@ -162,7 +162,7 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 				return 0, err
 			}
 			// 验证发布代码
-			rCodeParentMap, err := c.GetReleaseCode(releaseID)
+			rCodeParentMap, err := c.GetReleaseCodeMap(releaseID)
 			if err != nil {
 				return 0, err
 			}
@@ -172,7 +172,7 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 			}
 		}
 		// 校验upgrades
-		if len(upgrades) > 0 {
+		if upgrades !=nil {
 			var serviceIDList []string
 			for _, u := range upgrades {
 				serviceIDList = append(serviceIDList, u.ServiceID)
@@ -189,7 +189,7 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 			for _, us := range upgradeServices {
 				upgradeServiceMoudleNames = append(upgradeServiceMoudleNames, us.MoudleName)
 			}
-			rCodeParentMap, err := c.GetReleaseCode(releaseID)
+			rCodeParentMap, err := c.GetReleaseCodeMap(releaseID)
 			if err != nil {
 				return 0, err
 			}
@@ -202,7 +202,7 @@ func (c *CDPClient) AddTask(taskName string, groupID int, opts ...TaskOption) (i
 		}
 
 		// 校验static
-		if len(statics) > 0 {
+		if statics != nil {
 			var serviceIDList []string
 			for _, s := range statics {
 				serviceIDList = append(serviceIDList, s.ServiceID)
@@ -250,22 +250,29 @@ func (c *CDPClient) DeleteTask(taskName string) error {
 	return nil
 }
 
-func (c *CDPClient) GetTasks() (*[]TaskDetail, error) {
+func (c *CDPClient) GetTasks(opts ...QueryOption) (TaskSlice, error) {
+	taskQueryOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&taskQueryOption)
+	}
+
 	sc := c.newTaskClient()
 	ctx := context.TODO()
-	var tasks []TaskDetail
-	Tasklist, err := sc.GetTasks(ctx, &pb.EmptyRequest{})
+	var tasks TaskSlice
+	tasklist, err := sc.GetTasks(ctx, &pb.GetTaskRequest{Id: taskQueryOption.Ids,
+		Name:    taskQueryOption.Names,
+		Release: taskQueryOption.ReleaseNames,
+		Group:   taskQueryOption.GroupNames})
 	if err != nil {
-		return &tasks, err
+		return tasks, err
 	}
-	for _, s := range Tasklist.Tasks {
-		tmpTaskInfo := TaskDetail{ID: int(s.Id), Name: s.Name, Status: int(s.Status), StartTime: s.Starttime, EndTime: s.Endtime, CreateTime: s.Ctime, GroupName: s.Groupname, ReleaseName: s.Releasename}
-		tasks = append(tasks, tmpTaskInfo)
+	for _, t := range tasklist.Tasks {
+		tasks = append(tasks, Task{ID: t.Id, Name: t.Name, Status: t.Status, StartTime: t.Starttime, EndTime: t.Endtime, GroupName: t.Groupname, ReleaseName: t.Releasename, CreateTime: t.Ctime})
 	}
-	return &tasks, nil
+	return tasks, nil
 }
 
-func (c *CDPClient) ExecuteTask(taskID int) ([]TaskResult, error) {
+func (c *CDPClient) ExecuteTask(taskID int32) ([]TaskResult, error) {
 	sc := c.newTaskClient()
 	ctx := context.TODO()
 
@@ -281,4 +288,18 @@ func (c *CDPClient) ExecuteTask(taskID int) ([]TaskResult, error) {
 		tresult = append(tresult, tmp)
 	}
 	return tresult, nil
+}
+
+func (c *CDPClient) GetTaskExecutions(taskID int32) (ExecutionSlice, error) {
+	sc := c.newTaskClient()
+	ctx := context.TODO()
+	es, err := sc.GetTaskExecutions(ctx, &pb.TaskIdRequest{Id: taskID})
+	if err != nil {
+		return nil, err
+	}
+	res := ExecutionSlice{}
+	for _, e := range es.Executions {
+		res = append(res, Execution{TaskName: e.Taskname, ServiceName: e.Servicename, ID: e.Id, Op: OpMap[OpMode(e.Operation)], ReturnCode: e.Rcode, ReturnMsg: e.Rmsg})
+	}
+	return res, nil
 }

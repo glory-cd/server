@@ -10,68 +10,23 @@ import (
 	pb "github.com/glory-cd/server/idlentity"
 )
 
-// 获取上线agent
-func (c *CDPClient) GetOnLineAgents() ([]Agent, error) {
-	var agents []Agent
-	var err error
-	var agentlist *pb.AgentList
+func (c *CDPClient) GetAgents(opts ...QueryOption) (AgentSlice, error) {
+	agentQueryOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&agentQueryOption)
+	}
+
 	ac := c.newAgentClient()
 	ctx := context.TODO()
-	agentlist, err = ac.GetAgents(ctx, &pb.AgentGetRequest{Ac: 1})
-	if err != nil {
-		return agents, err
+	var agents AgentSlice
+	var aqs int32
+	if agentQueryOption.AgentIsOnLine == true {
+		aqs = 1
+	} else {
+		aqs = 2
 	}
 
-	for _, a := range agentlist.Agents {
-		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, Ip: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
-	}
-	return agents, nil
-}
-
-// 获取下线agent
-func (c *CDPClient) GetOffLineAgents() ([]Agent, error) {
-	var agents []Agent
-	var err error
-	var agentlist *pb.AgentList
-	ac := c.newAgentClient()
-	ctx := context.TODO()
-	agentlist, err = ac.GetAgents(ctx, &pb.AgentGetRequest{Ac: 2})
-	if err != nil {
-		return agents, err
-	}
-
-	for _, a := range agentlist.Agents {
-		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, Ip: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
-	}
-	return agents, nil
-}
-
-// 获取所有agent
-func (c *CDPClient) GetAllAgents() ([]Agent, error) {
-	var agents []Agent
-	var err error
-	var agentlist *pb.AgentList
-	ac := c.newAgentClient()
-	ctx := context.TODO()
-	agentlist, err = ac.GetAgents(ctx, &pb.AgentGetRequest{Ac: 3})
-	if err != nil {
-		return agents, err
-	}
-
-	for _, a := range agentlist.Agents {
-		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, Ip: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
-	}
-	return agents, nil
-}
-
-// 根据groupID获取agent
-func (c *CDPClient) GetGroupAgents(groupID int) ([]Agent, error) {
-	var agents []Agent
-	var err error
-	var agentlist *pb.AgentList
-	ac := c.newAgentClient()
-	ctx := context.TODO()
-	agentlist, err = ac.GetAgents(ctx, &pb.AgentGetRequest{Groupid: int32(groupID)})
+	agentlist, err := ac.GetAgents(ctx, &pb.GetAgentRequest{Agentstatus: aqs, Id: agentQueryOption.AgentIDs, Name: agentQueryOption.Names})
 	if err != nil {
 		return agents, err
 	}
@@ -97,7 +52,7 @@ func (c *CDPClient) SetAgentAlias(agentID, agentAlias string) error {
 
 type agentOperateOption struct {
 	AgentIDs []string
-	GroupID  int
+	GroupIDs []int32
 }
 
 type AgentOperateOption interface {
@@ -116,12 +71,12 @@ func newFuncOptionAgentOperate(f func(*agentOperateOption)) *funcOptionAgentOper
 	return &funcOptionAgentOperate{f: f}
 }
 
-func WithAgentID(ids ...string) AgentOperateOption {
+func WithAgentID(ids []string) AgentOperateOption {
 	return newFuncOptionAgentOperate(func(o *agentOperateOption) { o.AgentIDs = ids })
 }
 
-func WithGroupID(id int) AgentOperateOption {
-	return newFuncOptionAgentOperate(func(o *agentOperateOption) { o.GroupID = id })
+func WithGroupID(ids []int32) AgentOperateOption {
+	return newFuncOptionAgentOperate(func(o *agentOperateOption) { o.GroupIDs = ids })
 }
 
 //默认参数
@@ -137,22 +92,13 @@ func (c *CDPClient) OperateAgent(op string, opts ...AgentOperateOption) error {
 	}
 
 	var agentIDList []string
-	if len(agentOperateOption.AgentIDs) > 0 && agentOperateOption.GroupID != 0 {
-		return errors.New("参数错误: 两个参数不能同时存在！")
-	}
 
-	for _, agentid := range agentOperateOption.AgentIDs {
-		agentIDList = append(agentIDList, agentid)
-	}
-
-	agents, err := c.GetGroupAgents(agentOperateOption.GroupID)
+	agentIDs, err := c.GetAgentsFromGroup(agentOperateOption.GroupIDs)
 	if err != nil {
-		return err
+		return errors.New("get agentid failed. " + err.Error())
 	}
 
-	for _, a := range agents {
-		agentIDList = append(agentIDList, a.ID)
-	}
+	agentIDList = append(agentOperateOption.AgentIDs, agentIDs...)
 
 	ac := c.newAgentClient()
 	ctx := context.TODO()

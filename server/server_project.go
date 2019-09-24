@@ -17,10 +17,10 @@ type Pro struct{}
 func (p *Pro) AddProject(ctx context.Context, in *pb.ProjectNameRequest) (*pb.ProjectAddReply, error) {
 	proObj := comm.Project{Name: in.Name}
 	if err := comm.CreateRecord(&proObj); err != nil {
-		log.Slogger.Errorf("[Project] 添加项目失败: %s", err.Error())
+		log.Slogger.Errorf("[Project] add [%s] failed. %s", proObj.Name,err.Error())
 		return &pb.ProjectAddReply{}, err
 	} else {
-		log.Slogger.Infof("[Project] 添加项目成功")
+		log.Slogger.Infof("[Project] add [%s] successful.", proObj.Name)
 		return &pb.ProjectAddReply{Proid: int32(proObj.ID)}, err
 	}
 }
@@ -28,36 +28,39 @@ func (p *Pro) AddProject(ctx context.Context, in *pb.ProjectNameRequest) (*pb.Pr
 func (p *Pro) DeleteProject(ctx context.Context, in *pb.ProjectNameRequest) (*pb.EmptyReply, error) {
 	proObj := comm.Project{Name: in.Name}
 	if comm.CheckRecordWithName(in.Name, &proObj) {
-		log.Slogger.Errorf("[Project] 删除项目[%s]失败: 不存在,无法删除", in.Name)
-		return &pb.EmptyReply{}, errors.New("项目不存在，无法删除")
+		log.Slogger.Errorf("[Project] delete [%s] failed. not-exist", in.Name)
+		return &pb.EmptyReply{}, errors.New("project not exist")
 	}
 	err := comm.DeleteRecord(&proObj)
 	if err != nil {
-		log.Slogger.Errorf("[Project] 删除项目[%s]失败: %s", in.Name, err)
+		log.Slogger.Errorf("[Project] delete [%s] failed.: %s", in.Name, err)
 		return &pb.EmptyReply{}, err
 	}
 
-	log.Slogger.Infof("[Project] 删除项目[%s]成功", in.Name)
+	log.Slogger.Infof("[Project] delete [%s] successful.", in.Name)
 	return &pb.EmptyReply{}, nil
 }
 
-func (p *Pro) GetProjects(ctx context.Context, in *pb.EmptyRequest) (*pb.ProjectList, error) {
+func (p *Pro) GetProjects(ctx context.Context, in *pb.GetProRequest) (*pb.ProjectList, error) {
 	var pros []comm.Project
-	if err := comm.DB.Find(&pros).Error; err != nil {
+	queryCmd := comm.DB
+
+	if in.Names != nil  {
+		queryCmd = queryCmd.Where("name in (?)", in.Names)
+	}
+
+	if in.Ids != nil {
+		queryCmd = queryCmd.Where("id in (?)", in.Ids)
+	}
+
+	if err := queryCmd.Find(&pros).Error; err != nil {
+		log.Slogger.Errorf("[Project] query error: %v", err)
 		return nil, err
 	}
+
 	var rpros pb.ProjectList
 	for _, pro := range pros {
 		rpros.Pros = append(rpros.Pros, &pb.ProjectList_ProjectInfo{Id: int32(pro.ID), Name: pro.Name, Ctime: pro.CreatedAt.String()})
 	}
 	return &rpros, nil
-}
-
-// 根据项目名称获取ID
-func (o *Pro) GetProjectID(ctx context.Context, in *pb.ProjectNameRequest) (*pb.ProjectAddReply, error) {
-	var pro comm.Project
-	if err := comm.DB.Where("name=?", in.Name).Find(&pro).Error; err != nil {
-		return nil, err
-	}
-	return &pb.ProjectAddReply{Proid: int32(pro.ID)}, nil
 }

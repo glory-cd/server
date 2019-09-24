@@ -9,6 +9,8 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.3.2
 	github.com/jinzhu/gorm v1.9.10
+	github.com/modood/table v0.0.0-20181112072225-499dc7fba710
 	github.com/toolkits/file v0.0.0-20160325033739-a5b3c5147e07
+	github.com/tredoe/osutil v0.0.0-20161130133508-7d3ee1afa71c
 	google.golang.org/grpc v1.19.0
 )

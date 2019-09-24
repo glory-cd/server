@@ -80,7 +80,7 @@ func String2Interface(strs []string) (iStrs []interface{}) {
 	return iStrs
 }
 
-func Int2Interface(ints []int) (iInts []interface{}) {
+func Int2Interface(ints []int32) (iInts []interface{}) {
 	for _, n := range ints {
 		iInts = append(iInts, n)
 	}
@@ -94,12 +94,12 @@ func CheckServiceOwnGroup(IDs []string, groupServices []Service) error {
 	serviceParentSet := GenerateServiceMap(groupServices)
 	isServiceLegal, serviceNotBelong := IsSubSet(String2Interface(IDs), serviceParentSet)
 	if !isServiceLegal {
-		return errors.New("服务ID不匹配:" + strings.Join(serviceNotBelong, ";"))
+		return errors.New("service ID not match with group:" + strings.Join(serviceNotBelong, ";"))
 	}
 	return nil
 }
 
-func CheckRCIDOwnRelease(IDs []int, rcMap map[string]int) error {
+func CheckRCIDOwnRelease(IDs []int32, rcMap map[string]int32) error {
 	nMap := make(map[interface{}]interface{})
 	for k, v := range rcMap {
 		nMap[v] = k
@@ -111,7 +111,7 @@ func CheckRCIDOwnRelease(IDs []int, rcMap map[string]int) error {
 	return nil
 }
 
-func CheckRCNameOwnRelease(names []string, rcMap map[string]int) error {
+func CheckRCNameOwnRelease(names []string, rcMap map[string]int32) error {
 	reverseMap := make(map[interface{}]interface{})
 	for k, v := range rcMap {
 		reverseMap[v] = k

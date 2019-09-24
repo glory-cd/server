@@ -73,6 +73,7 @@ type Service struct {
 	Dir          string   `gorm:"column:dir;type:varchar(1024);NOT NULL" json:"servicedir"`
 	ModuleName   string   `gorm:"column:module_name;type:varchar(128);NOT NULL" json:"servicemodulename"`
 	OsUser       string   `gorm:"column:os_user;type:varchar(128);NOT NULL" json:"serviceosuser"`
+	OsPass       string   `gorm:"column:os_pass;type:varchar(128);NOT NULL" json:"serviceospass"`
 	CodePattern  []string `gorm:"-" json:"servicecodepattern"`
 	CodePatterns string   `gorm:"column:code_pattern;type:varchar(1000)"`
 	Pidfile      string   `gorm:"column:pid_file" json:"servicepidfile"`

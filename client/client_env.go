@@ -30,50 +30,66 @@ func (c *CDPClient) DeleteEnvironment(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetEnvironments() (*[]Environment, error) {
+func (c *CDPClient) GetEnvironments(opts ...QueryOption) (EnvironmentSlice, error) {
+	envQueryOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&envQueryOption)
+	}
 	ec := c.newEnvironmentClient()
 	ctx := context.TODO()
 	var environments []Environment
-	envlist, err := ec.GetEnvironments(ctx, &pb.EmptyRequest{})
+	envlist, err := ec.GetEnvironments(ctx, &pb.GetEnvRequest{Ids:envQueryOption.Ids,Names:envQueryOption.Names})
 	if err != nil {
-		return &environments, err
+		return environments, err
 	}
 
-	for _, org := range envlist.Envs {
-		environments = append(environments, Environment{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
+	for _, env := range envlist.Envs {
+		environments = append(environments, Environment{ID: env.Id, Name: env.Name, CreatTime: env.Ctime})
 	}
-	return &environments, nil
+	return environments, nil
 }
 
-/*
-根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
-当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
-example:
-        1. cdpclient.GetOrganizationID()
-        2. cdpclient.GetOrganizationID("org2")
-        3. cdpclient.GetOrganizationID("org3","org2")
-*/
-func (c *CDPClient) GetEnvironmentID(envName ...string) (map[string]int32, error) {
-	envNameId := make(map[string]int32)
-	oc := c.newEnvironmentClient()
+func (c *CDPClient) GetAllEnvironments() (EnvironmentSlice, error) {
+	ec := c.newEnvironmentClient()
 	ctx := context.TODO()
-	if len(envName) == 0 {
-		res, err := oc.GetEnvironments(ctx, &pb.EmptyRequest{})
-		if err != nil {
-			return envNameId, err
-		}
-		for _, r := range res.Envs {
-			envNameId[r.Name] = r.Id
-		}
-
-	} else {
-		for _, ename := range envName {
-			res, err := oc.GetEnvironmentID(ctx, &pb.EnvNameRequest{Name: ename})
-			if err != nil {
-				return envNameId, err
-			}
-			envNameId[ename] = res.Envid
-		}
+	var environments []Environment
+	envlist, err := ec.GetEnvironments(ctx, &pb.GetEnvRequest{})
+	if err != nil {
+		return environments, err
 	}
-	return envNameId, nil
+
+	for _, env := range envlist.Envs {
+		environments = append(environments, Environment{ID: env.Id, Name: env.Name, CreatTime: env.Ctime})
+	}
+	return environments, nil
+}
+
+func (c *CDPClient) GetEnvironmentsFromNames(names []string) (EnvironmentSlice, error) {
+	ec := c.newEnvironmentClient()
+	ctx := context.TODO()
+	var environments []Environment
+	envlist, err := ec.GetEnvironments(ctx, &pb.GetEnvRequest{Names: names})
+	if err != nil {
+		return environments, err
+	}
+
+	for _, env := range envlist.Envs {
+		environments = append(environments, Environment{ID: env.Id, Name: env.Name, CreatTime: env.Ctime})
+	}
+	return environments, nil
+}
+
+func (c *CDPClient) GetEnvironmentsFromIDs(ids []int32) (EnvironmentSlice, error) {
+	ec := c.newEnvironmentClient()
+	ctx := context.TODO()
+	var environments []Environment
+	envlist, err := ec.GetEnvironments(ctx, &pb.GetEnvRequest{Ids: ids})
+	if err != nil {
+		return environments, err
+	}
+
+	for _, env := range envlist.Envs {
+		environments = append(environments, Environment{ID: env.Id, Name: env.Name, CreatTime: env.Ctime})
+	}
+	return environments, nil
 }

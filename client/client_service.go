@@ -94,59 +94,20 @@ func (c *CDPClient) DeleteService(id string) error {
 }
 
 // 查询服务
-type queryServiceOption struct {
-	AgentIDs    []string
-	GroupIDs    []int32
-	MoudleNames []string
-	ServiceIDs  []string
-}
-
-type QueryServiceOption interface {
-	apply(*queryServiceOption)
-}
-
-type funcQueryServiceOption struct {
-	f func(*queryServiceOption)
-}
-
-func (fdo *funcQueryServiceOption) apply(do *queryServiceOption) {
-	fdo.f(do)
-}
-
-func newFuncQueryServiceOption(f func(*queryServiceOption)) *funcQueryServiceOption {
-	return &funcQueryServiceOption{f: f}
-}
-
-func WithMoudleNames(mNames []string) QueryServiceOption {
-	return newFuncQueryServiceOption(func(o *queryServiceOption) { o.MoudleNames = mNames })
-}
-
-func WithAgents(ids []string) QueryServiceOption {
-	return newFuncQueryServiceOption(func(o *queryServiceOption) { o.AgentIDs = ids })
-}
-
-func WithGroups(ids []int32) QueryServiceOption {
-	return newFuncQueryServiceOption(func(o *queryServiceOption) { o.GroupIDs = ids })
-}
-
-func WithServices(ids []string) QueryServiceOption {
-	return newFuncQueryServiceOption(func(o *queryServiceOption) { o.ServiceIDs = ids })
-}
-
-func defaultQueryServiceOption() queryServiceOption {
-	return queryServiceOption{}
-}
-
-func (c *CDPClient) GetServices(opts ...QueryServiceOption) ([]Service, error) {
-	serviceQueryOption := defaultQueryServiceOption()
+func (c *CDPClient) GetServices(opts ...QueryOption) (ServiceSlice, error) {
+	serviceQueryOption := defaultQueryOption()
 	for _, opt := range opts {
 		opt.apply(&serviceQueryOption)
 	}
 
 	sc := c.newServiceClient()
 	ctx := context.TODO()
-	var services []Service
-	servicelist, err := sc.GetServices(ctx, &pb.ServiceRequest{Agentids: serviceQueryOption.AgentIDs, Groupids: serviceQueryOption.GroupIDs, Moudlenames: serviceQueryOption.MoudleNames, Serviceids: serviceQueryOption.ServiceIDs})
+	var services ServiceSlice
+	servicelist, err := sc.GetServices(ctx, &pb.ServiceRequest{Agentids: serviceQueryOption.AgentIDs,
+		Groupnames:   serviceQueryOption.GroupNames,
+		Moudlenames:  serviceQueryOption.MoudleNames,
+		Serviceids:   serviceQueryOption.ServiceIDs,
+		Servicenames: serviceQueryOption.Names})
 	if err != nil {
 		return services, err
 	}
@@ -158,7 +119,7 @@ func (c *CDPClient) GetServices(opts ...QueryServiceOption) ([]Service, error) {
 	return services, nil
 }
 
-// 查询服务
+// 修改服务
 type changeServiceOption struct {
 	AgentID string
 	GroupID int

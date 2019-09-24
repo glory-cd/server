@@ -24,37 +24,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type AgentGetRequest_AgentClassify int32
-
-const (
-	AgentGetRequest_none    AgentGetRequest_AgentClassify = 0
-	AgentGetRequest_online  AgentGetRequest_AgentClassify = 1
-	AgentGetRequest_offline AgentGetRequest_AgentClassify = 2
-	AgentGetRequest_all     AgentGetRequest_AgentClassify = 3
-)
-
-var AgentGetRequest_AgentClassify_name = map[int32]string{
-	0: "none",
-	1: "online",
-	2: "offline",
-	3: "all",
-}
-
-var AgentGetRequest_AgentClassify_value = map[string]int32{
-	"none":    0,
-	"online":  1,
-	"offline": 2,
-	"all":     3,
-}
-
-func (x AgentGetRequest_AgentClassify) String() string {
-	return proto.EnumName(AgentGetRequest_AgentClassify_name, int32(x))
-}
-
-func (AgentGetRequest_AgentClassify) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{25, 0}
-}
-
 //--------------comm---------------
 // 空message请求
 type EmptyRequest struct {
@@ -295,6 +264,54 @@ func (m *OrganizationList_OrganizationInfo) GetCtime() string {
 	return ""
 }
 
+// 获取组织信息请求
+type GetOrgRequest struct {
+	Names                []string `protobuf:"bytes,1,rep,name=Names,proto3" json:"Names,omitempty"`
+	Ids                  []int32  `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetOrgRequest) Reset()         { *m = GetOrgRequest{} }
+func (m *GetOrgRequest) String() string { return proto.CompactTextString(m) }
+func (*GetOrgRequest) ProtoMessage()    {}
+func (*GetOrgRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{5}
+}
+
+func (m *GetOrgRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetOrgRequest.Unmarshal(m, b)
+}
+func (m *GetOrgRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetOrgRequest.Marshal(b, m, deterministic)
+}
+func (m *GetOrgRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetOrgRequest.Merge(m, src)
+}
+func (m *GetOrgRequest) XXX_Size() int {
+	return xxx_messageInfo_GetOrgRequest.Size(m)
+}
+func (m *GetOrgRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetOrgRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetOrgRequest proto.InternalMessageInfo
+
+func (m *GetOrgRequest) GetNames() []string {
+	if m != nil {
+		return m.Names
+	}
+	return nil
+}
+
+func (m *GetOrgRequest) GetIds() []int32 {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
 //----------------------------project--------------------------------
 type ProjectNameRequest struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -307,7 +324,7 @@ func (m *ProjectNameRequest) Reset()         { *m = ProjectNameRequest{} }
 func (m *ProjectNameRequest) String() string { return proto.CompactTextString(m) }
 func (*ProjectNameRequest) ProtoMessage()    {}
 func (*ProjectNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{5}
+	return fileDescriptor_77a6da22d6a3feb1, []int{6}
 }
 
 func (m *ProjectNameRequest) XXX_Unmarshal(b []byte) error {
@@ -346,7 +363,7 @@ func (m *ProjectAddReply) Reset()         { *m = ProjectAddReply{} }
 func (m *ProjectAddReply) String() string { return proto.CompactTextString(m) }
 func (*ProjectAddReply) ProtoMessage()    {}
 func (*ProjectAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{6}
+	return fileDescriptor_77a6da22d6a3feb1, []int{7}
 }
 
 func (m *ProjectAddReply) XXX_Unmarshal(b []byte) error {
@@ -386,7 +403,7 @@ func (m *ProjectList) Reset()         { *m = ProjectList{} }
 func (m *ProjectList) String() string { return proto.CompactTextString(m) }
 func (*ProjectList) ProtoMessage()    {}
 func (*ProjectList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{7}
+	return fileDescriptor_77a6da22d6a3feb1, []int{8}
 }
 
 func (m *ProjectList) XXX_Unmarshal(b []byte) error {
@@ -427,7 +444,7 @@ func (m *ProjectList_ProjectInfo) Reset()         { *m = ProjectList_ProjectInfo
 func (m *ProjectList_ProjectInfo) String() string { return proto.CompactTextString(m) }
 func (*ProjectList_ProjectInfo) ProtoMessage()    {}
 func (*ProjectList_ProjectInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{7, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{8, 0}
 }
 
 func (m *ProjectList_ProjectInfo) XXX_Unmarshal(b []byte) error {
@@ -469,6 +486,54 @@ func (m *ProjectList_ProjectInfo) GetCtime() string {
 	return ""
 }
 
+// 获取项目信息请求
+type GetProRequest struct {
+	Names                []string `protobuf:"bytes,1,rep,name=Names,proto3" json:"Names,omitempty"`
+	Ids                  []int32  `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetProRequest) Reset()         { *m = GetProRequest{} }
+func (m *GetProRequest) String() string { return proto.CompactTextString(m) }
+func (*GetProRequest) ProtoMessage()    {}
+func (*GetProRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{9}
+}
+
+func (m *GetProRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetProRequest.Unmarshal(m, b)
+}
+func (m *GetProRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetProRequest.Marshal(b, m, deterministic)
+}
+func (m *GetProRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProRequest.Merge(m, src)
+}
+func (m *GetProRequest) XXX_Size() int {
+	return xxx_messageInfo_GetProRequest.Size(m)
+}
+func (m *GetProRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetProRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetProRequest proto.InternalMessageInfo
+
+func (m *GetProRequest) GetNames() []string {
+	if m != nil {
+		return m.Names
+	}
+	return nil
+}
+
+func (m *GetProRequest) GetIds() []int32 {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
 //---------------------------------env-------------------------------------
 type EnvNameRequest struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -481,7 +546,7 @@ func (m *EnvNameRequest) Reset()         { *m = EnvNameRequest{} }
 func (m *EnvNameRequest) String() string { return proto.CompactTextString(m) }
 func (*EnvNameRequest) ProtoMessage()    {}
 func (*EnvNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{8}
+	return fileDescriptor_77a6da22d6a3feb1, []int{10}
 }
 
 func (m *EnvNameRequest) XXX_Unmarshal(b []byte) error {
@@ -520,7 +585,7 @@ func (m *EnvAddReply) Reset()         { *m = EnvAddReply{} }
 func (m *EnvAddReply) String() string { return proto.CompactTextString(m) }
 func (*EnvAddReply) ProtoMessage()    {}
 func (*EnvAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{9}
+	return fileDescriptor_77a6da22d6a3feb1, []int{11}
 }
 
 func (m *EnvAddReply) XXX_Unmarshal(b []byte) error {
@@ -560,7 +625,7 @@ func (m *EnvironmentList) Reset()         { *m = EnvironmentList{} }
 func (m *EnvironmentList) String() string { return proto.CompactTextString(m) }
 func (*EnvironmentList) ProtoMessage()    {}
 func (*EnvironmentList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{10}
+	return fileDescriptor_77a6da22d6a3feb1, []int{12}
 }
 
 func (m *EnvironmentList) XXX_Unmarshal(b []byte) error {
@@ -601,7 +666,7 @@ func (m *EnvironmentList_EnvironmentInfo) Reset()         { *m = EnvironmentList
 func (m *EnvironmentList_EnvironmentInfo) String() string { return proto.CompactTextString(m) }
 func (*EnvironmentList_EnvironmentInfo) ProtoMessage()    {}
 func (*EnvironmentList_EnvironmentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{10, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{12, 0}
 }
 
 func (m *EnvironmentList_EnvironmentInfo) XXX_Unmarshal(b []byte) error {
@@ -643,6 +708,54 @@ func (m *EnvironmentList_EnvironmentInfo) GetCtime() string {
 	return ""
 }
 
+// 获取环境信息请求
+type GetEnvRequest struct {
+	Names                []string `protobuf:"bytes,1,rep,name=Names,proto3" json:"Names,omitempty"`
+	Ids                  []int32  `protobuf:"varint,2,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetEnvRequest) Reset()         { *m = GetEnvRequest{} }
+func (m *GetEnvRequest) String() string { return proto.CompactTextString(m) }
+func (*GetEnvRequest) ProtoMessage()    {}
+func (*GetEnvRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{13}
+}
+
+func (m *GetEnvRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetEnvRequest.Unmarshal(m, b)
+}
+func (m *GetEnvRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetEnvRequest.Marshal(b, m, deterministic)
+}
+func (m *GetEnvRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetEnvRequest.Merge(m, src)
+}
+func (m *GetEnvRequest) XXX_Size() int {
+	return xxx_messageInfo_GetEnvRequest.Size(m)
+}
+func (m *GetEnvRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetEnvRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetEnvRequest proto.InternalMessageInfo
+
+func (m *GetEnvRequest) GetNames() []string {
+	if m != nil {
+		return m.Names
+	}
+	return nil
+}
+
+func (m *GetEnvRequest) GetIds() []int32 {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
 //----------------------------group--------------------------------
 // 添加分组
 type GroupAddRequest struct {
@@ -659,7 +772,7 @@ func (m *GroupAddRequest) Reset()         { *m = GroupAddRequest{} }
 func (m *GroupAddRequest) String() string { return proto.CompactTextString(m) }
 func (*GroupAddRequest) ProtoMessage()    {}
 func (*GroupAddRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{11}
+	return fileDescriptor_77a6da22d6a3feb1, []int{14}
 }
 
 func (m *GroupAddRequest) XXX_Unmarshal(b []byte) error {
@@ -719,7 +832,7 @@ func (m *GroupAddReply) Reset()         { *m = GroupAddReply{} }
 func (m *GroupAddReply) String() string { return proto.CompactTextString(m) }
 func (*GroupAddReply) ProtoMessage()    {}
 func (*GroupAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{12}
+	return fileDescriptor_77a6da22d6a3feb1, []int{15}
 }
 
 func (m *GroupAddReply) XXX_Unmarshal(b []byte) error {
@@ -758,7 +871,7 @@ func (m *GroupNameRequest) Reset()         { *m = GroupNameRequest{} }
 func (m *GroupNameRequest) String() string { return proto.CompactTextString(m) }
 func (*GroupNameRequest) ProtoMessage()    {}
 func (*GroupNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{13}
+	return fileDescriptor_77a6da22d6a3feb1, []int{16}
 }
 
 func (m *GroupNameRequest) XXX_Unmarshal(b []byte) error {
@@ -798,7 +911,7 @@ func (m *GroupList) Reset()         { *m = GroupList{} }
 func (m *GroupList) String() string { return proto.CompactTextString(m) }
 func (*GroupList) ProtoMessage()    {}
 func (*GroupList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{14}
+	return fileDescriptor_77a6da22d6a3feb1, []int{17}
 }
 
 func (m *GroupList) XXX_Unmarshal(b []byte) error {
@@ -841,7 +954,7 @@ func (m *GroupList_GroupInfo) Reset()         { *m = GroupList_GroupInfo{} }
 func (m *GroupList_GroupInfo) String() string { return proto.CompactTextString(m) }
 func (*GroupList_GroupInfo) ProtoMessage()    {}
 func (*GroupList_GroupInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{14, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{17, 0}
 }
 
 func (m *GroupList_GroupInfo) XXX_Unmarshal(b []byte) error {
@@ -897,6 +1010,158 @@ func (m *GroupList_GroupInfo) GetProname() string {
 	return ""
 }
 
+// 获取分组信息请求
+type GetGroupRequest struct {
+	Names                []string `protobuf:"bytes,1,rep,name=Names,proto3" json:"Names,omitempty"`
+	Ids                  []int32  `protobuf:"varint,2,rep,packed,name=Ids,proto3" json:"Ids,omitempty"`
+	Orgs                 []string `protobuf:"bytes,3,rep,name=Orgs,proto3" json:"Orgs,omitempty"`
+	Envs                 []string `protobuf:"bytes,4,rep,name=Envs,proto3" json:"Envs,omitempty"`
+	Pros                 []string `protobuf:"bytes,5,rep,name=Pros,proto3" json:"Pros,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetGroupRequest) Reset()         { *m = GetGroupRequest{} }
+func (m *GetGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*GetGroupRequest) ProtoMessage()    {}
+func (*GetGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{18}
+}
+
+func (m *GetGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetGroupRequest.Unmarshal(m, b)
+}
+func (m *GetGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetGroupRequest.Marshal(b, m, deterministic)
+}
+func (m *GetGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetGroupRequest.Merge(m, src)
+}
+func (m *GetGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_GetGroupRequest.Size(m)
+}
+func (m *GetGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetGroupRequest proto.InternalMessageInfo
+
+func (m *GetGroupRequest) GetNames() []string {
+	if m != nil {
+		return m.Names
+	}
+	return nil
+}
+
+func (m *GetGroupRequest) GetIds() []int32 {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
+func (m *GetGroupRequest) GetOrgs() []string {
+	if m != nil {
+		return m.Orgs
+	}
+	return nil
+}
+
+func (m *GetGroupRequest) GetEnvs() []string {
+	if m != nil {
+		return m.Envs
+	}
+	return nil
+}
+
+func (m *GetGroupRequest) GetPros() []string {
+	if m != nil {
+		return m.Pros
+	}
+	return nil
+}
+
+// 根据group名称获取agentid请求
+type GetAgentFromGroupRequest struct {
+	Gids                 []int32  `protobuf:"varint,1,rep,packed,name=gids,proto3" json:"gids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetAgentFromGroupRequest) Reset()         { *m = GetAgentFromGroupRequest{} }
+func (m *GetAgentFromGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*GetAgentFromGroupRequest) ProtoMessage()    {}
+func (*GetAgentFromGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{19}
+}
+
+func (m *GetAgentFromGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetAgentFromGroupRequest.Unmarshal(m, b)
+}
+func (m *GetAgentFromGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetAgentFromGroupRequest.Marshal(b, m, deterministic)
+}
+func (m *GetAgentFromGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAgentFromGroupRequest.Merge(m, src)
+}
+func (m *GetAgentFromGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_GetAgentFromGroupRequest.Size(m)
+}
+func (m *GetAgentFromGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetAgentFromGroupRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetAgentFromGroupRequest proto.InternalMessageInfo
+
+func (m *GetAgentFromGroupRequest) GetGids() []int32 {
+	if m != nil {
+		return m.Gids
+	}
+	return nil
+}
+
+// 根据group名称获取agentid响应
+type GroupAgentIds struct {
+	Agentid              []string `protobuf:"bytes,1,rep,name=agentid,proto3" json:"agentid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GroupAgentIds) Reset()         { *m = GroupAgentIds{} }
+func (m *GroupAgentIds) String() string { return proto.CompactTextString(m) }
+func (*GroupAgentIds) ProtoMessage()    {}
+func (*GroupAgentIds) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{20}
+}
+
+func (m *GroupAgentIds) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GroupAgentIds.Unmarshal(m, b)
+}
+func (m *GroupAgentIds) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GroupAgentIds.Marshal(b, m, deterministic)
+}
+func (m *GroupAgentIds) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GroupAgentIds.Merge(m, src)
+}
+func (m *GroupAgentIds) XXX_Size() int {
+	return xxx_messageInfo_GroupAgentIds.Size(m)
+}
+func (m *GroupAgentIds) XXX_DiscardUnknown() {
+	xxx_messageInfo_GroupAgentIds.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GroupAgentIds proto.InternalMessageInfo
+
+func (m *GroupAgentIds) GetAgentid() []string {
+	if m != nil {
+		return m.Agentid
+	}
+	return nil
+}
+
 //-----------------------------release--------------------------
 type ReleaseNameRequest struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -909,7 +1174,7 @@ func (m *ReleaseNameRequest) Reset()         { *m = ReleaseNameRequest{} }
 func (m *ReleaseNameRequest) String() string { return proto.CompactTextString(m) }
 func (*ReleaseNameRequest) ProtoMessage()    {}
 func (*ReleaseNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{15}
+	return fileDescriptor_77a6da22d6a3feb1, []int{21}
 }
 
 func (m *ReleaseNameRequest) XXX_Unmarshal(b []byte) error {
@@ -948,7 +1213,7 @@ func (m *ReleaseIdRequest) Reset()         { *m = ReleaseIdRequest{} }
 func (m *ReleaseIdRequest) String() string { return proto.CompactTextString(m) }
 func (*ReleaseIdRequest) ProtoMessage()    {}
 func (*ReleaseIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{16}
+	return fileDescriptor_77a6da22d6a3feb1, []int{22}
 }
 
 func (m *ReleaseIdRequest) XXX_Unmarshal(b []byte) error {
@@ -987,7 +1252,7 @@ func (m *ReleaseAddReply) Reset()         { *m = ReleaseAddReply{} }
 func (m *ReleaseAddReply) String() string { return proto.CompactTextString(m) }
 func (*ReleaseAddReply) ProtoMessage()    {}
 func (*ReleaseAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{17}
+	return fileDescriptor_77a6da22d6a3feb1, []int{23}
 }
 
 func (m *ReleaseAddReply) XXX_Unmarshal(b []byte) error {
@@ -1015,7 +1280,7 @@ func (m *ReleaseAddReply) GetReleaseid() int32 {
 	return 0
 }
 
-// 发布代码
+// 发布代码,添加发布时使用
 type ReleaseCode struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Relativepath         string   `protobuf:"bytes,2,opt,name=relativepath,proto3" json:"relativepath,omitempty"`
@@ -1028,7 +1293,7 @@ func (m *ReleaseCode) Reset()         { *m = ReleaseCode{} }
 func (m *ReleaseCode) String() string { return proto.CompactTextString(m) }
 func (*ReleaseCode) ProtoMessage()    {}
 func (*ReleaseCode) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{18}
+	return fileDescriptor_77a6da22d6a3feb1, []int{24}
 }
 
 func (m *ReleaseCode) XXX_Unmarshal(b []byte) error {
@@ -1063,7 +1328,63 @@ func (m *ReleaseCode) GetRelativepath() string {
 	return ""
 }
 
-// 添加发布
+// 查询发布返回结果使用
+type QueryReleaseCode struct {
+	Rc                   *ReleaseCode `protobuf:"bytes,1,opt,name=rc,proto3" json:"rc,omitempty"`
+	Id                   int32        `protobuf:"varint,3,opt,name=id,proto3" json:"id,omitempty"`
+	Releaseid            int32        `protobuf:"varint,4,opt,name=releaseid,proto3" json:"releaseid,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
+}
+
+func (m *QueryReleaseCode) Reset()         { *m = QueryReleaseCode{} }
+func (m *QueryReleaseCode) String() string { return proto.CompactTextString(m) }
+func (*QueryReleaseCode) ProtoMessage()    {}
+func (*QueryReleaseCode) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{25}
+}
+
+func (m *QueryReleaseCode) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_QueryReleaseCode.Unmarshal(m, b)
+}
+func (m *QueryReleaseCode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_QueryReleaseCode.Marshal(b, m, deterministic)
+}
+func (m *QueryReleaseCode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryReleaseCode.Merge(m, src)
+}
+func (m *QueryReleaseCode) XXX_Size() int {
+	return xxx_messageInfo_QueryReleaseCode.Size(m)
+}
+func (m *QueryReleaseCode) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryReleaseCode.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryReleaseCode proto.InternalMessageInfo
+
+func (m *QueryReleaseCode) GetRc() *ReleaseCode {
+	if m != nil {
+		return m.Rc
+	}
+	return nil
+}
+
+func (m *QueryReleaseCode) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *QueryReleaseCode) GetReleaseid() int32 {
+	if m != nil {
+		return m.Releaseid
+	}
+	return 0
+}
+
+// 添加发布请求
 type AddReleaseRequest struct {
 	Name                 string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Version              string         `protobuf:"bytes,2,opt,name=version,proto3" json:"version,omitempty"`
@@ -1079,7 +1400,7 @@ func (m *AddReleaseRequest) Reset()         { *m = AddReleaseRequest{} }
 func (m *AddReleaseRequest) String() string { return proto.CompactTextString(m) }
 func (*AddReleaseRequest) ProtoMessage()    {}
 func (*AddReleaseRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{19}
+	return fileDescriptor_77a6da22d6a3feb1, []int{26}
 }
 
 func (m *AddReleaseRequest) XXX_Unmarshal(b []byte) error {
@@ -1135,7 +1456,71 @@ func (m *AddReleaseRequest) GetReleasecodes() []*ReleaseCode {
 	return nil
 }
 
-// 发布列表
+// 获取发布请求
+type GetReleaseRequest struct {
+	Ids                  []int32  `protobuf:"varint,1,rep,packed,name=Ids,proto3" json:"Ids,omitempty"`
+	Names                []string `protobuf:"bytes,2,rep,name=Names,proto3" json:"Names,omitempty"`
+	Orgs                 []string `protobuf:"bytes,3,rep,name=Orgs,proto3" json:"Orgs,omitempty"`
+	Pros                 []string `protobuf:"bytes,4,rep,name=Pros,proto3" json:"Pros,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetReleaseRequest) Reset()         { *m = GetReleaseRequest{} }
+func (m *GetReleaseRequest) String() string { return proto.CompactTextString(m) }
+func (*GetReleaseRequest) ProtoMessage()    {}
+func (*GetReleaseRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{27}
+}
+
+func (m *GetReleaseRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetReleaseRequest.Unmarshal(m, b)
+}
+func (m *GetReleaseRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetReleaseRequest.Marshal(b, m, deterministic)
+}
+func (m *GetReleaseRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetReleaseRequest.Merge(m, src)
+}
+func (m *GetReleaseRequest) XXX_Size() int {
+	return xxx_messageInfo_GetReleaseRequest.Size(m)
+}
+func (m *GetReleaseRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetReleaseRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetReleaseRequest proto.InternalMessageInfo
+
+func (m *GetReleaseRequest) GetIds() []int32 {
+	if m != nil {
+		return m.Ids
+	}
+	return nil
+}
+
+func (m *GetReleaseRequest) GetNames() []string {
+	if m != nil {
+		return m.Names
+	}
+	return nil
+}
+
+func (m *GetReleaseRequest) GetOrgs() []string {
+	if m != nil {
+		return m.Orgs
+	}
+	return nil
+}
+
+func (m *GetReleaseRequest) GetPros() []string {
+	if m != nil {
+		return m.Pros
+	}
+	return nil
+}
+
+// 发布响应
 type ReleaseList struct {
 	Releases             []*ReleaseList_ReleaseInfo `protobuf:"bytes,1,rep,name=releases,proto3" json:"releases,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
@@ -1147,7 +1532,7 @@ func (m *ReleaseList) Reset()         { *m = ReleaseList{} }
 func (m *ReleaseList) String() string { return proto.CompactTextString(m) }
 func (*ReleaseList) ProtoMessage()    {}
 func (*ReleaseList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{20}
+	return fileDescriptor_77a6da22d6a3feb1, []int{28}
 }
 
 func (m *ReleaseList) XXX_Unmarshal(b []byte) error {
@@ -1176,21 +1561,22 @@ func (m *ReleaseList) GetReleases() []*ReleaseList_ReleaseInfo {
 }
 
 type ReleaseList_ReleaseInfo struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Version              string   `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
-	Orgname              string   `protobuf:"bytes,4,opt,name=orgname,proto3" json:"orgname,omitempty"`
-	Proname              string   `protobuf:"bytes,5,opt,name=proname,proto3" json:"proname,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id                   int32               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string              `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Version              string              `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Orgname              string              `protobuf:"bytes,4,opt,name=orgname,proto3" json:"orgname,omitempty"`
+	Proname              string              `protobuf:"bytes,5,opt,name=proname,proto3" json:"proname,omitempty"`
+	Rcs                  []*QueryReleaseCode `protobuf:"bytes,6,rep,name=rcs,proto3" json:"rcs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *ReleaseList_ReleaseInfo) Reset()         { *m = ReleaseList_ReleaseInfo{} }
 func (m *ReleaseList_ReleaseInfo) String() string { return proto.CompactTextString(m) }
 func (*ReleaseList_ReleaseInfo) ProtoMessage()    {}
 func (*ReleaseList_ReleaseInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{20, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{28, 0}
 }
 
 func (m *ReleaseList_ReleaseInfo) XXX_Unmarshal(b []byte) error {
@@ -1246,19 +1632,66 @@ func (m *ReleaseList_ReleaseInfo) GetProname() string {
 	return ""
 }
 
-// 发布代码列表
+func (m *ReleaseList_ReleaseInfo) GetRcs() []*QueryReleaseCode {
+	if m != nil {
+		return m.Rcs
+	}
+	return nil
+}
+
+// 查询发布代码请求
+type GetReleaseCodeRequest struct {
+	Releaseids           []int32  `protobuf:"varint,1,rep,packed,name=releaseids,proto3" json:"releaseids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetReleaseCodeRequest) Reset()         { *m = GetReleaseCodeRequest{} }
+func (m *GetReleaseCodeRequest) String() string { return proto.CompactTextString(m) }
+func (*GetReleaseCodeRequest) ProtoMessage()    {}
+func (*GetReleaseCodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{29}
+}
+
+func (m *GetReleaseCodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetReleaseCodeRequest.Unmarshal(m, b)
+}
+func (m *GetReleaseCodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetReleaseCodeRequest.Marshal(b, m, deterministic)
+}
+func (m *GetReleaseCodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetReleaseCodeRequest.Merge(m, src)
+}
+func (m *GetReleaseCodeRequest) XXX_Size() int {
+	return xxx_messageInfo_GetReleaseCodeRequest.Size(m)
+}
+func (m *GetReleaseCodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetReleaseCodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetReleaseCodeRequest proto.InternalMessageInfo
+
+func (m *GetReleaseCodeRequest) GetReleaseids() []int32 {
+	if m != nil {
+		return m.Releaseids
+	}
+	return nil
+}
+
+// 查询发布代码响应
 type ReleaseCodeList struct {
-	Releasecodes         []*ReleaseCodeList_ReleaseCodeInfo `protobuf:"bytes,1,rep,name=releasecodes,proto3" json:"releasecodes,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                           `json:"-"`
-	XXX_unrecognized     []byte                             `json:"-"`
-	XXX_sizecache        int32                              `json:"-"`
+	Rcs                  []*QueryReleaseCode `protobuf:"bytes,1,rep,name=rcs,proto3" json:"rcs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *ReleaseCodeList) Reset()         { *m = ReleaseCodeList{} }
 func (m *ReleaseCodeList) String() string { return proto.CompactTextString(m) }
 func (*ReleaseCodeList) ProtoMessage()    {}
 func (*ReleaseCodeList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{21}
+	return fileDescriptor_77a6da22d6a3feb1, []int{30}
 }
 
 func (m *ReleaseCodeList) XXX_Unmarshal(b []byte) error {
@@ -1279,58 +1712,11 @@ func (m *ReleaseCodeList) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ReleaseCodeList proto.InternalMessageInfo
 
-func (m *ReleaseCodeList) GetReleasecodes() []*ReleaseCodeList_ReleaseCodeInfo {
+func (m *ReleaseCodeList) GetRcs() []*QueryReleaseCode {
 	if m != nil {
-		return m.Releasecodes
+		return m.Rcs
 	}
 	return nil
-}
-
-type ReleaseCodeList_ReleaseCodeInfo struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ReleaseCodeList_ReleaseCodeInfo) Reset()         { *m = ReleaseCodeList_ReleaseCodeInfo{} }
-func (m *ReleaseCodeList_ReleaseCodeInfo) String() string { return proto.CompactTextString(m) }
-func (*ReleaseCodeList_ReleaseCodeInfo) ProtoMessage()    {}
-func (*ReleaseCodeList_ReleaseCodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{21, 0}
-}
-
-func (m *ReleaseCodeList_ReleaseCodeInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo.Unmarshal(m, b)
-}
-func (m *ReleaseCodeList_ReleaseCodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo.Marshal(b, m, deterministic)
-}
-func (m *ReleaseCodeList_ReleaseCodeInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo.Merge(m, src)
-}
-func (m *ReleaseCodeList_ReleaseCodeInfo) XXX_Size() int {
-	return xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo.Size(m)
-}
-func (m *ReleaseCodeList_ReleaseCodeInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ReleaseCodeList_ReleaseCodeInfo proto.InternalMessageInfo
-
-func (m *ReleaseCodeList_ReleaseCodeInfo) GetId() int32 {
-	if m != nil {
-		return m.Id
-	}
-	return 0
-}
-
-func (m *ReleaseCodeList_ReleaseCodeInfo) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
 }
 
 //-------------------------------------Agent------------------------
@@ -1346,7 +1732,7 @@ func (m *AgentList) Reset()         { *m = AgentList{} }
 func (m *AgentList) String() string { return proto.CompactTextString(m) }
 func (*AgentList) ProtoMessage()    {}
 func (*AgentList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{22}
+	return fileDescriptor_77a6da22d6a3feb1, []int{31}
 }
 
 func (m *AgentList) XXX_Unmarshal(b []byte) error {
@@ -1391,7 +1777,7 @@ func (m *AgentList_AgentInfo) Reset()         { *m = AgentList_AgentInfo{} }
 func (m *AgentList_AgentInfo) String() string { return proto.CompactTextString(m) }
 func (*AgentList_AgentInfo) ProtoMessage()    {}
 func (*AgentList_AgentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{22, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{31, 0}
 }
 
 func (m *AgentList_AgentInfo) XXX_Unmarshal(b []byte) error {
@@ -1473,7 +1859,7 @@ func (m *AgentRestartRequest) Reset()         { *m = AgentRestartRequest{} }
 func (m *AgentRestartRequest) String() string { return proto.CompactTextString(m) }
 func (*AgentRestartRequest) ProtoMessage()    {}
 func (*AgentRestartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{23}
+	return fileDescriptor_77a6da22d6a3feb1, []int{32}
 }
 
 func (m *AgentRestartRequest) XXX_Unmarshal(b []byte) error {
@@ -1520,7 +1906,7 @@ func (m *AgentAliasRequest) Reset()         { *m = AgentAliasRequest{} }
 func (m *AgentAliasRequest) String() string { return proto.CompactTextString(m) }
 func (*AgentAliasRequest) ProtoMessage()    {}
 func (*AgentAliasRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{24}
+	return fileDescriptor_77a6da22d6a3feb1, []int{33}
 }
 
 func (m *AgentAliasRequest) XXX_Unmarshal(b []byte) error {
@@ -1555,51 +1941,59 @@ func (m *AgentAliasRequest) GetAlias() string {
 	return ""
 }
 
-type AgentGetRequest struct {
-	Ac                   AgentGetRequest_AgentClassify `protobuf:"varint,1,opt,name=ac,proto3,enum=AgentGetRequest_AgentClassify" json:"ac,omitempty"`
-	Groupid              int32                         `protobuf:"varint,2,opt,name=groupid,proto3" json:"groupid,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                      `json:"-"`
-	XXX_unrecognized     []byte                        `json:"-"`
-	XXX_sizecache        int32                         `json:"-"`
+type GetAgentRequest struct {
+	Agentstatus          int32    `protobuf:"varint,1,opt,name=agentstatus,proto3" json:"agentstatus,omitempty"`
+	Id                   []string `protobuf:"bytes,2,rep,name=id,proto3" json:"id,omitempty"`
+	Name                 []string `protobuf:"bytes,3,rep,name=name,proto3" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *AgentGetRequest) Reset()         { *m = AgentGetRequest{} }
-func (m *AgentGetRequest) String() string { return proto.CompactTextString(m) }
-func (*AgentGetRequest) ProtoMessage()    {}
-func (*AgentGetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{25}
+func (m *GetAgentRequest) Reset()         { *m = GetAgentRequest{} }
+func (m *GetAgentRequest) String() string { return proto.CompactTextString(m) }
+func (*GetAgentRequest) ProtoMessage()    {}
+func (*GetAgentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{34}
 }
 
-func (m *AgentGetRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AgentGetRequest.Unmarshal(m, b)
+func (m *GetAgentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetAgentRequest.Unmarshal(m, b)
 }
-func (m *AgentGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AgentGetRequest.Marshal(b, m, deterministic)
+func (m *GetAgentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetAgentRequest.Marshal(b, m, deterministic)
 }
-func (m *AgentGetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AgentGetRequest.Merge(m, src)
+func (m *GetAgentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAgentRequest.Merge(m, src)
 }
-func (m *AgentGetRequest) XXX_Size() int {
-	return xxx_messageInfo_AgentGetRequest.Size(m)
+func (m *GetAgentRequest) XXX_Size() int {
+	return xxx_messageInfo_GetAgentRequest.Size(m)
 }
-func (m *AgentGetRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_AgentGetRequest.DiscardUnknown(m)
+func (m *GetAgentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetAgentRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AgentGetRequest proto.InternalMessageInfo
+var xxx_messageInfo_GetAgentRequest proto.InternalMessageInfo
 
-func (m *AgentGetRequest) GetAc() AgentGetRequest_AgentClassify {
+func (m *GetAgentRequest) GetAgentstatus() int32 {
 	if m != nil {
-		return m.Ac
-	}
-	return AgentGetRequest_none
-}
-
-func (m *AgentGetRequest) GetGroupid() int32 {
-	if m != nil {
-		return m.Groupid
+		return m.Agentstatus
 	}
 	return 0
+}
+
+func (m *GetAgentRequest) GetId() []string {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *GetAgentRequest) GetName() []string {
+	if m != nil {
+		return m.Name
+	}
+	return nil
 }
 
 //--------------------service---------------------------------------------
@@ -1609,7 +2003,8 @@ type ServiceAddRequest struct {
 	Dir                  string   `protobuf:"bytes,2,opt,name=dir,proto3" json:"dir,omitempty"`
 	Moudlename           string   `protobuf:"bytes,3,opt,name=moudlename,proto3" json:"moudlename,omitempty"`
 	Osuser               string   `protobuf:"bytes,4,opt,name=osuser,proto3" json:"osuser,omitempty"`
-	Codepattern          string   `protobuf:"bytes,5,opt,name=codepattern,proto3" json:"codepattern,omitempty"`
+	Ospass               string   `protobuf:"bytes,5,opt,name=ospass,proto3" json:"ospass,omitempty"`
+	Codepattern          string   `protobuf:"bytes,6,opt,name=codepattern,proto3" json:"codepattern,omitempty"`
 	Pidfile              string   `protobuf:"bytes,7,opt,name=pidfile,proto3" json:"pidfile,omitempty"`
 	Startcmd             string   `protobuf:"bytes,8,opt,name=startcmd,proto3" json:"startcmd,omitempty"`
 	Stopcmd              string   `protobuf:"bytes,9,opt,name=stopcmd,proto3" json:"stopcmd,omitempty"`
@@ -1624,7 +2019,7 @@ func (m *ServiceAddRequest) Reset()         { *m = ServiceAddRequest{} }
 func (m *ServiceAddRequest) String() string { return proto.CompactTextString(m) }
 func (*ServiceAddRequest) ProtoMessage()    {}
 func (*ServiceAddRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{26}
+	return fileDescriptor_77a6da22d6a3feb1, []int{35}
 }
 
 func (m *ServiceAddRequest) XXX_Unmarshal(b []byte) error {
@@ -1669,6 +2064,13 @@ func (m *ServiceAddRequest) GetMoudlename() string {
 func (m *ServiceAddRequest) GetOsuser() string {
 	if m != nil {
 		return m.Osuser
+	}
+	return ""
+}
+
+func (m *ServiceAddRequest) GetOspass() string {
+	if m != nil {
+		return m.Ospass
 	}
 	return ""
 }
@@ -1727,7 +2129,7 @@ func (m *ServiceAddReply) Reset()         { *m = ServiceAddReply{} }
 func (m *ServiceAddReply) String() string { return proto.CompactTextString(m) }
 func (*ServiceAddReply) ProtoMessage()    {}
 func (*ServiceAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{27}
+	return fileDescriptor_77a6da22d6a3feb1, []int{36}
 }
 
 func (m *ServiceAddReply) XXX_Unmarshal(b []byte) error {
@@ -1767,7 +2169,7 @@ func (m *ServiceDeleteRequest) Reset()         { *m = ServiceDeleteRequest{} }
 func (m *ServiceDeleteRequest) String() string { return proto.CompactTextString(m) }
 func (*ServiceDeleteRequest) ProtoMessage()    {}
 func (*ServiceDeleteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{28}
+	return fileDescriptor_77a6da22d6a3feb1, []int{37}
 }
 
 func (m *ServiceDeleteRequest) XXX_Unmarshal(b []byte) error {
@@ -1797,10 +2199,11 @@ func (m *ServiceDeleteRequest) GetId() string {
 
 // 查询服务请求
 type ServiceRequest struct {
-	Groupids             []int32  `protobuf:"varint,1,rep,packed,name=groupids,proto3" json:"groupids,omitempty"`
+	Groupnames           []string `protobuf:"bytes,1,rep,name=groupnames,proto3" json:"groupnames,omitempty"`
 	Agentids             []string `protobuf:"bytes,2,rep,name=agentids,proto3" json:"agentids,omitempty"`
 	Moudlenames          []string `protobuf:"bytes,3,rep,name=moudlenames,proto3" json:"moudlenames,omitempty"`
 	Serviceids           []string `protobuf:"bytes,4,rep,name=serviceids,proto3" json:"serviceids,omitempty"`
+	Servicenames         []string `protobuf:"bytes,5,rep,name=servicenames,proto3" json:"servicenames,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1810,7 +2213,7 @@ func (m *ServiceRequest) Reset()         { *m = ServiceRequest{} }
 func (m *ServiceRequest) String() string { return proto.CompactTextString(m) }
 func (*ServiceRequest) ProtoMessage()    {}
 func (*ServiceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{29}
+	return fileDescriptor_77a6da22d6a3feb1, []int{38}
 }
 
 func (m *ServiceRequest) XXX_Unmarshal(b []byte) error {
@@ -1831,9 +2234,9 @@ func (m *ServiceRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ServiceRequest proto.InternalMessageInfo
 
-func (m *ServiceRequest) GetGroupids() []int32 {
+func (m *ServiceRequest) GetGroupnames() []string {
 	if m != nil {
-		return m.Groupids
+		return m.Groupnames
 	}
 	return nil
 }
@@ -1859,6 +2262,13 @@ func (m *ServiceRequest) GetServiceids() []string {
 	return nil
 }
 
+func (m *ServiceRequest) GetServicenames() []string {
+	if m != nil {
+		return m.Servicenames
+	}
+	return nil
+}
+
 // 查询服务结果响应
 type ServiceList struct {
 	Services             []*ServiceList_ServiceInfo `protobuf:"bytes,1,rep,name=services,proto3" json:"services,omitempty"`
@@ -1871,7 +2281,7 @@ func (m *ServiceList) Reset()         { *m = ServiceList{} }
 func (m *ServiceList) String() string { return proto.CompactTextString(m) }
 func (*ServiceList) ProtoMessage()    {}
 func (*ServiceList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{30}
+	return fileDescriptor_77a6da22d6a3feb1, []int{39}
 }
 
 func (m *ServiceList) XXX_Unmarshal(b []byte) error {
@@ -1921,7 +2331,7 @@ func (m *ServiceList_ServiceInfo) Reset()         { *m = ServiceList_ServiceInfo
 func (m *ServiceList_ServiceInfo) String() string { return proto.CompactTextString(m) }
 func (*ServiceList_ServiceInfo) ProtoMessage()    {}
 func (*ServiceList_ServiceInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{30, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{39, 0}
 }
 
 func (m *ServiceList_ServiceInfo) XXX_Unmarshal(b []byte) error {
@@ -2040,7 +2450,7 @@ func (m *ServiceChangeOwnRequest) Reset()         { *m = ServiceChangeOwnRequest
 func (m *ServiceChangeOwnRequest) String() string { return proto.CompactTextString(m) }
 func (*ServiceChangeOwnRequest) ProtoMessage()    {}
 func (*ServiceChangeOwnRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{31}
+	return fileDescriptor_77a6da22d6a3feb1, []int{40}
 }
 
 func (m *ServiceChangeOwnRequest) XXX_Unmarshal(b []byte) error {
@@ -2094,7 +2504,7 @@ func (m *TaksNameRequest) Reset()         { *m = TaksNameRequest{} }
 func (m *TaksNameRequest) String() string { return proto.CompactTextString(m) }
 func (*TaksNameRequest) ProtoMessage()    {}
 func (*TaksNameRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{32}
+	return fileDescriptor_77a6da22d6a3feb1, []int{41}
 }
 
 func (m *TaksNameRequest) XXX_Unmarshal(b []byte) error {
@@ -2133,7 +2543,7 @@ func (m *TaskIdRequest) Reset()         { *m = TaskIdRequest{} }
 func (m *TaskIdRequest) String() string { return proto.CompactTextString(m) }
 func (*TaskIdRequest) ProtoMessage()    {}
 func (*TaskIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{33}
+	return fileDescriptor_77a6da22d6a3feb1, []int{42}
 }
 
 func (m *TaskIdRequest) XXX_Unmarshal(b []byte) error {
@@ -2161,7 +2571,7 @@ func (m *TaskIdRequest) GetId() int32 {
 	return 0
 }
 
-//添加任务
+//添加任务请求
 type TaskAddRequest struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Groupid              int32    `protobuf:"varint,2,opt,name=groupid,proto3" json:"groupid,omitempty"`
@@ -2175,7 +2585,7 @@ func (m *TaskAddRequest) Reset()         { *m = TaskAddRequest{} }
 func (m *TaskAddRequest) String() string { return proto.CompactTextString(m) }
 func (*TaskAddRequest) ProtoMessage()    {}
 func (*TaskAddRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{34}
+	return fileDescriptor_77a6da22d6a3feb1, []int{43}
 }
 
 func (m *TaskAddRequest) XXX_Unmarshal(b []byte) error {
@@ -2217,6 +2627,7 @@ func (m *TaskAddRequest) GetReleaseid() int32 {
 	return 0
 }
 
+//添加任务响应
 type TaskAddReply struct {
 	Taskid               int32    `protobuf:"varint,1,opt,name=taskid,proto3" json:"taskid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -2228,7 +2639,7 @@ func (m *TaskAddReply) Reset()         { *m = TaskAddReply{} }
 func (m *TaskAddReply) String() string { return proto.CompactTextString(m) }
 func (*TaskAddReply) ProtoMessage()    {}
 func (*TaskAddReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{35}
+	return fileDescriptor_77a6da22d6a3feb1, []int{44}
 }
 
 func (m *TaskAddReply) XXX_Unmarshal(b []byte) error {
@@ -2256,6 +2667,71 @@ func (m *TaskAddReply) GetTaskid() int32 {
 	return 0
 }
 
+// 获取任务请求
+type GetTaskRequest struct {
+	Id                   []int32  `protobuf:"varint,1,rep,packed,name=id,proto3" json:"id,omitempty"`
+	Name                 []string `protobuf:"bytes,2,rep,name=name,proto3" json:"name,omitempty"`
+	Group                []string `protobuf:"bytes,3,rep,name=group,proto3" json:"group,omitempty"`
+	Release              []string `protobuf:"bytes,4,rep,name=release,proto3" json:"release,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetTaskRequest) Reset()         { *m = GetTaskRequest{} }
+func (m *GetTaskRequest) String() string { return proto.CompactTextString(m) }
+func (*GetTaskRequest) ProtoMessage()    {}
+func (*GetTaskRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_77a6da22d6a3feb1, []int{45}
+}
+
+func (m *GetTaskRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetTaskRequest.Unmarshal(m, b)
+}
+func (m *GetTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetTaskRequest.Marshal(b, m, deterministic)
+}
+func (m *GetTaskRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetTaskRequest.Merge(m, src)
+}
+func (m *GetTaskRequest) XXX_Size() int {
+	return xxx_messageInfo_GetTaskRequest.Size(m)
+}
+func (m *GetTaskRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetTaskRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetTaskRequest proto.InternalMessageInfo
+
+func (m *GetTaskRequest) GetId() []int32 {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *GetTaskRequest) GetName() []string {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *GetTaskRequest) GetGroup() []string {
+	if m != nil {
+		return m.Group
+	}
+	return nil
+}
+
+func (m *GetTaskRequest) GetRelease() []string {
+	if m != nil {
+		return m.Release
+	}
+	return nil
+}
+
+// 任务列表
 type TaskList struct {
 	Tasks                []*TaskList_TaskInfo `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
@@ -2267,7 +2743,7 @@ func (m *TaskList) Reset()         { *m = TaskList{} }
 func (m *TaskList) String() string { return proto.CompactTextString(m) }
 func (*TaskList) ProtoMessage()    {}
 func (*TaskList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{36}
+	return fileDescriptor_77a6da22d6a3feb1, []int{46}
 }
 
 func (m *TaskList) XXX_Unmarshal(b []byte) error {
@@ -2313,7 +2789,7 @@ func (m *TaskList_TaskInfo) Reset()         { *m = TaskList_TaskInfo{} }
 func (m *TaskList_TaskInfo) String() string { return proto.CompactTextString(m) }
 func (*TaskList_TaskInfo) ProtoMessage()    {}
 func (*TaskList_TaskInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{36, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{46, 0}
 }
 
 func (m *TaskList_TaskInfo) XXX_Unmarshal(b []byte) error {
@@ -2406,7 +2882,7 @@ func (m *SpecificService) Reset()         { *m = SpecificService{} }
 func (m *SpecificService) String() string { return proto.CompactTextString(m) }
 func (*SpecificService) ProtoMessage()    {}
 func (*SpecificService) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{37}
+	return fileDescriptor_77a6da22d6a3feb1, []int{47}
 }
 
 func (m *SpecificService) XXX_Unmarshal(b []byte) error {
@@ -2467,7 +2943,7 @@ func (m *TaskDetailsRequst) Reset()         { *m = TaskDetailsRequst{} }
 func (m *TaskDetailsRequst) String() string { return proto.CompactTextString(m) }
 func (*TaskDetailsRequst) ProtoMessage()    {}
 func (*TaskDetailsRequst) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{38}
+	return fileDescriptor_77a6da22d6a3feb1, []int{48}
 }
 
 func (m *TaskDetailsRequst) XXX_Unmarshal(b []byte) error {
@@ -2513,7 +2989,7 @@ func (m *ExecutionList) Reset()         { *m = ExecutionList{} }
 func (m *ExecutionList) String() string { return proto.CompactTextString(m) }
 func (*ExecutionList) ProtoMessage()    {}
 func (*ExecutionList) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{39}
+	return fileDescriptor_77a6da22d6a3feb1, []int{49}
 }
 
 func (m *ExecutionList) XXX_Unmarshal(b []byte) error {
@@ -2558,7 +3034,7 @@ func (m *ExecutionList_ExecutionInfo) Reset()         { *m = ExecutionList_Execu
 func (m *ExecutionList_ExecutionInfo) String() string { return proto.CompactTextString(m) }
 func (*ExecutionList_ExecutionInfo) ProtoMessage()    {}
 func (*ExecutionList_ExecutionInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{39, 0}
+	return fileDescriptor_77a6da22d6a3feb1, []int{49, 0}
 }
 
 func (m *ExecutionList_ExecutionInfo) XXX_Unmarshal(b []byte) error {
@@ -2639,7 +3115,7 @@ func (m *TaskString) Reset()         { *m = TaskString{} }
 func (m *TaskString) String() string { return proto.CompactTextString(m) }
 func (*TaskString) ProtoMessage()    {}
 func (*TaskString) Descriptor() ([]byte, []int) {
-	return fileDescriptor_77a6da22d6a3feb1, []int{40}
+	return fileDescriptor_77a6da22d6a3feb1, []int{50}
 }
 
 func (m *TaskString) XXX_Unmarshal(b []byte) error {
@@ -2668,40 +3144,47 @@ func (m *TaskString) GetTaskstr() string {
 }
 
 func init() {
-	proto.RegisterEnum("AgentGetRequest_AgentClassify", AgentGetRequest_AgentClassify_name, AgentGetRequest_AgentClassify_value)
 	proto.RegisterType((*EmptyRequest)(nil), "EmptyRequest")
 	proto.RegisterType((*EmptyReply)(nil), "EmptyReply")
 	proto.RegisterType((*OrgNameRequest)(nil), "OrgNameRequest")
 	proto.RegisterType((*OrgAddReply)(nil), "OrgAddReply")
 	proto.RegisterType((*OrganizationList)(nil), "OrganizationList")
 	proto.RegisterType((*OrganizationList_OrganizationInfo)(nil), "OrganizationList.OrganizationInfo")
+	proto.RegisterType((*GetOrgRequest)(nil), "GetOrgRequest")
 	proto.RegisterType((*ProjectNameRequest)(nil), "ProjectNameRequest")
 	proto.RegisterType((*ProjectAddReply)(nil), "ProjectAddReply")
 	proto.RegisterType((*ProjectList)(nil), "ProjectList")
 	proto.RegisterType((*ProjectList_ProjectInfo)(nil), "ProjectList.ProjectInfo")
+	proto.RegisterType((*GetProRequest)(nil), "GetProRequest")
 	proto.RegisterType((*EnvNameRequest)(nil), "EnvNameRequest")
 	proto.RegisterType((*EnvAddReply)(nil), "EnvAddReply")
 	proto.RegisterType((*EnvironmentList)(nil), "EnvironmentList")
 	proto.RegisterType((*EnvironmentList_EnvironmentInfo)(nil), "EnvironmentList.EnvironmentInfo")
+	proto.RegisterType((*GetEnvRequest)(nil), "GetEnvRequest")
 	proto.RegisterType((*GroupAddRequest)(nil), "GroupAddRequest")
 	proto.RegisterType((*GroupAddReply)(nil), "GroupAddReply")
 	proto.RegisterType((*GroupNameRequest)(nil), "GroupNameRequest")
 	proto.RegisterType((*GroupList)(nil), "GroupList")
 	proto.RegisterType((*GroupList_GroupInfo)(nil), "GroupList.GroupInfo")
+	proto.RegisterType((*GetGroupRequest)(nil), "GetGroupRequest")
+	proto.RegisterType((*GetAgentFromGroupRequest)(nil), "GetAgentFromGroupRequest")
+	proto.RegisterType((*GroupAgentIds)(nil), "GroupAgentIds")
 	proto.RegisterType((*ReleaseNameRequest)(nil), "ReleaseNameRequest")
 	proto.RegisterType((*ReleaseIdRequest)(nil), "ReleaseIdRequest")
 	proto.RegisterType((*ReleaseAddReply)(nil), "ReleaseAddReply")
 	proto.RegisterType((*ReleaseCode)(nil), "ReleaseCode")
+	proto.RegisterType((*QueryReleaseCode)(nil), "QueryReleaseCode")
 	proto.RegisterType((*AddReleaseRequest)(nil), "AddReleaseRequest")
+	proto.RegisterType((*GetReleaseRequest)(nil), "GetReleaseRequest")
 	proto.RegisterType((*ReleaseList)(nil), "ReleaseList")
 	proto.RegisterType((*ReleaseList_ReleaseInfo)(nil), "ReleaseList.ReleaseInfo")
+	proto.RegisterType((*GetReleaseCodeRequest)(nil), "GetReleaseCodeRequest")
 	proto.RegisterType((*ReleaseCodeList)(nil), "ReleaseCodeList")
-	proto.RegisterType((*ReleaseCodeList_ReleaseCodeInfo)(nil), "ReleaseCodeList.ReleaseCodeInfo")
 	proto.RegisterType((*AgentList)(nil), "AgentList")
 	proto.RegisterType((*AgentList_AgentInfo)(nil), "AgentList.AgentInfo")
 	proto.RegisterType((*AgentRestartRequest)(nil), "AgentRestartRequest")
 	proto.RegisterType((*AgentAliasRequest)(nil), "AgentAliasRequest")
-	proto.RegisterType((*AgentGetRequest)(nil), "AgentGetRequest")
+	proto.RegisterType((*GetAgentRequest)(nil), "GetAgentRequest")
 	proto.RegisterType((*ServiceAddRequest)(nil), "ServiceAddRequest")
 	proto.RegisterType((*ServiceAddReply)(nil), "ServiceAddReply")
 	proto.RegisterType((*ServiceDeleteRequest)(nil), "ServiceDeleteRequest")
@@ -2713,6 +3196,7 @@ func init() {
 	proto.RegisterType((*TaskIdRequest)(nil), "TaskIdRequest")
 	proto.RegisterType((*TaskAddRequest)(nil), "TaskAddRequest")
 	proto.RegisterType((*TaskAddReply)(nil), "TaskAddReply")
+	proto.RegisterType((*GetTaskRequest)(nil), "GetTaskRequest")
 	proto.RegisterType((*TaskList)(nil), "TaskList")
 	proto.RegisterType((*TaskList_TaskInfo)(nil), "TaskList.TaskInfo")
 	proto.RegisterType((*SpecificService)(nil), "SpecificService")
@@ -2725,129 +3209,141 @@ func init() {
 func init() { proto.RegisterFile("rpc.proto", fileDescriptor_77a6da22d6a3feb1) }
 
 var fileDescriptor_77a6da22d6a3feb1 = []byte{
-	// 1950 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x59, 0xcb, 0x8f, 0xe4, 0x46,
-	0x19, 0x6f, 0xbb, 0xdf, 0x5f, 0xbf, 0xdc, 0xb5, 0x43, 0x68, 0x59, 0xab, 0x30, 0x2a, 0x96, 0x61,
-	0x50, 0x96, 0x5a, 0xd2, 0xbb, 0x93, 0x08, 0x85, 0xcb, 0x68, 0x67, 0x34, 0x1a, 0x11, 0x31, 0x51,
-	0x4f, 0xb8, 0xc1, 0xc1, 0x69, 0xd7, 0xf4, 0x9a, 0xed, 0xb6, 0x8d, 0xed, 0xee, 0xb0, 0x48, 0x88,
-	0x03, 0x9c, 0x40, 0xe2, 0x14, 0x09, 0x2e, 0x88, 0x63, 0x94, 0xff, 0x80, 0x0b, 0x37, 0xf8, 0x0f,
-	0xb8, 0x20, 0x71, 0x40, 0x42, 0xf0, 0x77, 0xa0, 0xfa, 0xaa, 0xca, 0x2e, 0xbb, 0x1f, 0x33, 0x28,
-	0xb7, 0xfa, 0x5e, 0x55, 0xdf, 0xe3, 0xe7, 0x7a, 0x7c, 0x86, 0x6e, 0x12, 0xcf, 0x59, 0x9c, 0x44,
-	0x59, 0x44, 0x87, 0xd0, 0xbf, 0x5c, 0xc5, 0xd9, 0x9b, 0x19, 0xff, 0xe9, 0x9a, 0xa7, 0x19, 0xed,
-	0x03, 0x28, 0x3a, 0x5e, 0xbe, 0xa1, 0x4f, 0x60, 0x78, 0x93, 0x2c, 0x7e, 0xe0, 0xad, 0xb8, 0x92,
-	0x13, 0x02, 0x8d, 0xd0, 0x5b, 0xf1, 0x89, 0x75, 0x6c, 0x9d, 0x76, 0x67, 0x38, 0xa6, 0x5f, 0x87,
-	0xde, 0x4d, 0xb2, 0x38, 0xf7, 0x7d, 0x34, 0x22, 0x47, 0xd0, 0x8c, 0x92, 0x45, 0xe0, 0xa3, 0x4e,
-	0x73, 0x26, 0x09, 0xfa, 0x07, 0x0b, 0x9c, 0x9b, 0x64, 0xe1, 0x85, 0xc1, 0xcf, 0xbd, 0x2c, 0x88,
-	0xc2, 0x0f, 0x83, 0x34, 0x23, 0xef, 0x41, 0x23, 0x4a, 0x16, 0xe9, 0xc4, 0x3a, 0xae, 0x9f, 0xf6,
-	0xa6, 0x94, 0x55, 0x15, 0x4a, 0x8c, 0xeb, 0xf0, 0x2e, 0x9a, 0xa1, 0xbe, 0xfb, 0x61, 0x79, 0x2e,
-	0x21, 0x21, 0x43, 0xb0, 0xf3, 0x35, 0xed, 0xc0, 0xcf, 0x3d, 0xb5, 0x0b, 0x4f, 0x85, 0x6b, 0xf3,
-	0x2c, 0x58, 0xf1, 0x49, 0x1d, 0x99, 0x92, 0xa0, 0xa7, 0x40, 0x3e, 0x4a, 0xa2, 0x9f, 0xf0, 0x79,
-	0x76, 0x5f, 0xa4, 0xdf, 0x84, 0x91, 0xd2, 0x34, 0xa3, 0x8d, 0x93, 0xa8, 0x88, 0x16, 0x09, 0xfa,
-	0x6b, 0x0b, 0x7a, 0x4a, 0x13, 0x03, 0x7d, 0x0a, 0x8d, 0x38, 0x89, 0x74, 0xa0, 0x13, 0x66, 0xc8,
-	0xf4, 0x58, 0x86, 0x27, 0xb4, 0xdc, 0xab, 0xdc, 0xf8, 0x4b, 0x46, 0xf6, 0x04, 0x86, 0x97, 0xe1,
-	0xe6, 0x01, 0xf5, 0xbb, 0x0c, 0x37, 0x66, 0x44, 0x3c, 0xdc, 0x14, 0x11, 0x21, 0x41, 0x3f, 0xb3,
-	0x60, 0x74, 0x19, 0x6e, 0x82, 0x24, 0x0a, 0x57, 0x3c, 0x94, 0x51, 0xbd, 0x80, 0x06, 0x0f, 0x37,
-	0x3a, 0xaa, 0x63, 0x56, 0x91, 0x9b, 0xb4, 0x8c, 0x4e, 0x68, 0xbb, 0xdf, 0x2f, 0x4d, 0xf4, 0x25,
-	0x23, 0x5c, 0xc0, 0xe8, 0x2a, 0x89, 0xd6, 0x31, 0x7a, 0xbf, 0x37, 0xc4, 0x02, 0x93, 0xb6, 0x81,
-	0xc9, 0x22, 0xd2, 0xba, 0x11, 0x69, 0x51, 0xd1, 0x86, 0x59, 0xd1, 0x6f, 0xc1, 0xa0, 0x58, 0x48,
-	0xa4, 0x69, 0x02, 0xed, 0x85, 0x60, 0xe4, 0x8e, 0x6b, 0x92, 0x9e, 0x80, 0x83, 0xaa, 0xf7, 0xe5,
-	0xfd, 0xcf, 0x16, 0x74, 0x51, 0x51, 0x41, 0xa4, 0x85, 0x13, 0xe8, 0x74, 0x1e, 0xb1, 0x5c, 0x26,
-	0x47, 0x98, 0x42, 0xa5, 0xe3, 0xfe, 0x42, 0x99, 0x3e, 0x38, 0x7d, 0x13, 0x68, 0x47, 0xc9, 0x02,
-	0xd9, 0x32, 0x81, 0x9a, 0x14, 0x12, 0x1e, 0x6e, 0x50, 0xd2, 0x90, 0x12, 0x45, 0x0a, 0x49, 0x9c,
-	0x44, 0x28, 0x69, 0x4a, 0x89, 0x22, 0xc5, 0x27, 0x33, 0xe3, 0x4b, 0xee, 0xa5, 0xfc, 0xbe, 0x20,
-	0x29, 0x38, 0x4a, 0xf3, 0x3a, 0xaf, 0x50, 0xc5, 0x5f, 0xfa, 0x0c, 0x46, 0x4a, 0x27, 0xcf, 0xee,
-	0x63, 0xe8, 0x26, 0x92, 0x95, 0x6b, 0x16, 0x0c, 0x7a, 0x09, 0x3d, 0x65, 0xf0, 0x32, 0xf2, 0xf9,
-	0xce, 0x8a, 0x53, 0xe8, 0x27, 0x7c, 0xe9, 0x65, 0xc1, 0x86, 0xc7, 0x5e, 0xf6, 0x4a, 0xe5, 0xa2,
-	0xc4, 0xa3, 0x7f, 0xb2, 0x60, 0x8c, 0x2b, 0xe2, 0x54, 0x87, 0xf0, 0x33, 0x81, 0xf6, 0x86, 0x27,
-	0x69, 0x10, 0x85, 0x6a, 0x22, 0x4d, 0x16, 0xc8, 0xaa, 0x57, 0x90, 0xb5, 0x8d, 0x21, 0xf2, 0x1d,
-	0xf4, 0x49, 0xac, 0x35, 0x8f, 0x7c, 0x9e, 0x4e, 0x9a, 0x58, 0xe8, 0x3e, 0x33, 0x62, 0x99, 0x95,
-	0x34, 0xe8, 0x5f, 0xad, 0x3c, 0x52, 0xf5, 0xc5, 0x75, 0x94, 0xbc, 0xd8, 0x4b, 0x0c, 0xb9, 0x1e,
-	0x23, 0x54, 0x72, 0x4d, 0xf7, 0x97, 0xf9, 0x24, 0xff, 0x0f, 0x5c, 0x74, 0xc0, 0xf5, 0x72, 0xc0,
-	0x06, 0x90, 0x1a, 0x5b, 0x40, 0xda, 0x03, 0x97, 0xdf, 0x59, 0x79, 0x85, 0x45, 0x90, 0x18, 0xca,
-	0x45, 0x25, 0x19, 0x7a, 0x13, 0xa9, 0xe8, 0x99, 0x34, 0x86, 0x55, 0xb2, 0x72, 0xcf, 0x4a, 0x13,
-	0x3f, 0x34, 0x3c, 0xfa, 0x1f, 0x0b, 0xba, 0xe7, 0x0b, 0xbd, 0x8f, 0x3d, 0x85, 0x96, 0x27, 0x88,
-	0xe2, 0xd3, 0xcb, 0x65, 0x72, 0x24, 0x3f, 0x3d, 0xa9, 0xe3, 0x7e, 0xa1, 0x6d, 0x2b, 0xab, 0x75,
-	0x71, 0xb5, 0x23, 0x68, 0x7a, 0xcb, 0xc0, 0x4b, 0xd5, 0x72, 0x92, 0x20, 0x2e, 0x74, 0x5e, 0x45,
-	0x69, 0x66, 0x7c, 0x7e, 0x39, 0x4d, 0xde, 0x82, 0x96, 0x18, 0x07, 0xb1, 0xca, 0xa7, 0xa2, 0x04,
-	0x3f, 0xcd, 0xbc, 0x6c, 0x9d, 0xaa, 0x6c, 0x2a, 0xaa, 0xd8, 0x08, 0x5b, 0xc6, 0x46, 0x28, 0xb8,
-	0x6b, 0xe4, 0xb6, 0x25, 0x17, 0x09, 0x7a, 0x06, 0x8f, 0xd0, 0xd5, 0x19, 0x4f, 0x33, 0x2f, 0xc9,
-	0xb6, 0x3f, 0x40, 0xe9, 0xf4, 0x10, 0xec, 0x28, 0x56, 0x1e, 0xdb, 0x51, 0x4c, 0xbf, 0x0b, 0x63,
-	0x34, 0x3b, 0x17, 0xce, 0xef, 0x33, 0xda, 0x19, 0xa9, 0x38, 0xe7, 0x47, 0x68, 0x7b, 0xc5, 0xf3,
-	0xe5, 0x18, 0xd8, 0xde, 0x1c, 0x2d, 0x87, 0xd3, 0xb7, 0x59, 0x45, 0x2a, 0xe9, 0x97, 0x4b, 0x2f,
-	0x4d, 0x83, 0xbb, 0x37, 0x33, 0xdb, 0x9b, 0x9b, 0x5b, 0xab, 0x5d, 0xde, 0x5a, 0x3f, 0x80, 0x41,
-	0x49, 0x9d, 0x74, 0xa0, 0x11, 0x46, 0x21, 0x77, 0x6a, 0x04, 0xa0, 0x15, 0x85, 0xcb, 0x20, 0xe4,
-	0x8e, 0x45, 0x7a, 0xd0, 0x8e, 0xee, 0xee, 0x90, 0xb0, 0x49, 0x1b, 0xea, 0xde, 0x72, 0xe9, 0xd4,
-	0xe9, 0xef, 0x6d, 0x18, 0xdf, 0xf2, 0x64, 0x13, 0xcc, 0xf9, 0x3d, 0xc7, 0x85, 0x03, 0x75, 0x3f,
-	0x48, 0x54, 0x60, 0x62, 0x48, 0xde, 0x06, 0x58, 0x45, 0x6b, 0x7f, 0xc9, 0x8d, 0x12, 0x1a, 0x1c,
-	0x51, 0xac, 0x28, 0x5d, 0xa7, 0x3c, 0xd1, 0x45, 0x94, 0x14, 0x39, 0x86, 0x9e, 0x00, 0x6a, 0xec,
-	0x65, 0x19, 0x4f, 0x42, 0x55, 0x49, 0x93, 0x85, 0x5f, 0x4d, 0xe0, 0xdf, 0x05, 0x4b, 0x5d, 0x3a,
-	0x4d, 0x0a, 0xd0, 0x60, 0xd5, 0xe6, 0x2b, 0x7f, 0xd2, 0x91, 0xa0, 0xd1, 0xb4, 0xb0, 0x4a, 0xb3,
-	0x28, 0x16, 0xa2, 0xae, 0xb4, 0x52, 0xa4, 0x90, 0x20, 0x50, 0x03, 0x7f, 0x02, 0x52, 0xa2, 0x48,
-	0x33, 0xad, 0xbd, 0x72, 0x5a, 0x9f, 0xc1, 0xc8, 0x4c, 0x8c, 0xda, 0x80, 0x53, 0xc9, 0xca, 0x8b,
-	0x5e, 0x30, 0xe8, 0x09, 0x1c, 0x29, 0x83, 0x0b, 0xbe, 0xe4, 0x19, 0xdf, 0x83, 0x11, 0xfa, 0x1b,
-	0x0b, 0x86, 0x4a, 0x51, 0xab, 0xb8, 0xd0, 0x51, 0xcb, 0xca, 0xcf, 0xad, 0x39, 0xcb, 0x69, 0x21,
-	0x53, 0xce, 0x0a, 0x54, 0xd5, 0x45, 0xc4, 0x9a, 0x16, 0x99, 0x2c, 0xf2, 0x9d, 0x4e, 0xea, 0x28,
-	0x36, 0x59, 0xa2, 0x46, 0xb9, 0x87, 0xe9, 0xa4, 0x81, 0x0a, 0x06, 0x87, 0xfe, 0xaa, 0x0e, 0x3d,
-	0xe5, 0x8c, 0xde, 0x4c, 0x95, 0xb4, 0xd8, 0x4c, 0x0d, 0xb9, 0x1e, 0xcb, 0xcd, 0x54, 0x6b, 0xba,
-	0x7f, 0xb1, 0xf3, 0x59, 0x76, 0x6e, 0x00, 0xbb, 0x76, 0x53, 0x85, 0xa7, 0xfa, 0x3e, 0x3c, 0x35,
-	0x0e, 0xe0, 0xa9, 0x79, 0x08, 0x4f, 0xad, 0x6d, 0x3c, 0x11, 0x68, 0xc4, 0x51, 0x92, 0x21, 0x98,
-	0x9a, 0x33, 0x1c, 0x9b, 0x18, 0xeb, 0xec, 0xc7, 0x58, 0x77, 0x3f, 0xc6, 0xa0, 0x8c, 0xb1, 0xc7,
-	0xd0, 0xc5, 0xba, 0xa0, 0xf3, 0x7d, 0x09, 0x8e, 0x9c, 0x21, 0xa4, 0x58, 0x51, 0x94, 0x0e, 0xa4,
-	0x34, 0x67, 0xd0, 0x1f, 0xc3, 0x57, 0x55, 0xfa, 0x5e, 0xbe, 0xf2, 0xc2, 0x05, 0xbf, 0xf9, 0x34,
-	0xdc, 0xb7, 0xc3, 0x18, 0x50, 0xb6, 0xf7, 0x42, 0xb9, 0x5e, 0x86, 0xf2, 0x37, 0x60, 0xf4, 0xb1,
-	0xf7, 0x3a, 0xbd, 0xef, 0x5a, 0xf2, 0x35, 0x18, 0x7c, 0xec, 0xa5, 0xaf, 0xf7, 0xdf, 0x49, 0x7e,
-	0x04, 0x43, 0xa1, 0x70, 0xcf, 0x46, 0xb1, 0x77, 0xa7, 0x2a, 0x5f, 0x60, 0xea, 0xd5, 0x0b, 0xcc,
-	0x09, 0xf4, 0xf3, 0xd9, 0xc5, 0xd7, 0xf6, 0x16, 0xb4, 0x32, 0x2f, 0x7d, 0x9d, 0x7b, 0xa0, 0x28,
-	0xfa, 0x5b, 0x1b, 0x3a, 0x42, 0x11, 0xf1, 0x7a, 0x0a, 0x4d, 0xc1, 0xd6, 0x60, 0x25, 0x4c, 0x4b,
-	0x70, 0x80, 0x30, 0x95, 0x0a, 0xee, 0xdf, 0x2d, 0x69, 0xf6, 0xe0, 0xe3, 0xbe, 0x38, 0x6b, 0xa4,
-	0xab, 0x5b, 0x67, 0x4d, 0xc3, 0x3c, 0x6b, 0xc4, 0xde, 0x20, 0x40, 0x82, 0x92, 0xa6, 0xda, 0x1b,
-	0x34, 0x43, 0xde, 0x27, 0x7d, 0xe3, 0x84, 0xd2, 0xa4, 0x00, 0xaf, 0x4a, 0x01, 0x3a, 0x20, 0xb7,
-	0x3b, 0x93, 0x55, 0x86, 0x4e, 0xa7, 0x0a, 0x9d, 0xcf, 0x2d, 0x18, 0xdd, 0xc6, 0x7c, 0x1e, 0xdc,
-	0x05, 0x73, 0x85, 0xa1, 0xc3, 0xfb, 0x94, 0x90, 0x46, 0x31, 0x4f, 0xf0, 0x95, 0xa8, 0x2a, 0x54,
-	0x30, 0xc8, 0x13, 0x18, 0x18, 0x97, 0x89, 0xbc, 0x4e, 0x65, 0x26, 0x99, 0xc2, 0xd1, 0x7c, 0x9d,
-	0x66, 0xd1, 0x6a, 0x1d, 0x2f, 0x12, 0xaf, 0xf8, 0xf6, 0x64, 0x4a, 0x76, 0xca, 0xe8, 0x0f, 0x61,
-	0x2c, 0xf2, 0x7f, 0xc1, 0x33, 0x2f, 0x58, 0xe2, 0x09, 0x9a, 0x66, 0xfb, 0x8a, 0x4c, 0x4e, 0xa1,
-	0x95, 0xa6, 0xcb, 0x20, 0xcd, 0x70, 0xcf, 0xeb, 0x4d, 0x1d, 0x56, 0x09, 0x72, 0xa6, 0xe4, 0xf4,
-	0x0b, 0x1b, 0x06, 0x97, 0x3f, 0xe3, 0xf3, 0x75, 0xfe, 0x82, 0xfe, 0x1e, 0x00, 0xd7, 0x0c, 0x0d,
-	0x8c, 0xc7, 0xac, 0xa4, 0x53, 0x50, 0x08, 0x11, 0x43, 0xdf, 0xfd, 0x87, 0x65, 0xcc, 0x87, 0x60,
-	0x71, 0xa1, 0x23, 0xbc, 0x32, 0x80, 0x9e, 0xd3, 0x0a, 0x48, 0x76, 0x0e, 0xa4, 0x63, 0xe8, 0xa9,
-	0x4c, 0x1b, 0x87, 0xa2, 0xc9, 0x2a, 0xa7, 0xbf, 0x51, 0x4d, 0xff, 0x11, 0x34, 0x13, 0x91, 0x63,
-	0x84, 0x50, 0x73, 0x26, 0x09, 0x01, 0xcf, 0x64, 0x95, 0x2e, 0x14, 0x76, 0x70, 0xbc, 0xb7, 0x04,
-	0xed, 0x03, 0x25, 0x38, 0x01, 0x10, 0x25, 0xb8, 0xcd, 0x92, 0x20, 0x5c, 0x08, 0x50, 0xe2, 0xa7,
-	0x91, 0x25, 0x2a, 0x2c, 0x4d, 0x4e, 0xff, 0x6b, 0x41, 0xdf, 0x6c, 0x26, 0x90, 0x29, 0x8c, 0xce,
-	0x7d, 0xbf, 0xc4, 0x1a, 0xb1, 0x72, 0x1b, 0xc4, 0xed, 0x33, 0xa3, 0xe3, 0x41, 0x6b, 0xe4, 0x05,
-	0x10, 0x79, 0x10, 0x1e, 0x36, 0xeb, 0x31, 0xa3, 0xb9, 0x52, 0x23, 0xef, 0x81, 0x73, 0xc5, 0x33,
-	0xd3, 0x24, 0x25, 0x03, 0x66, 0xf6, 0x63, 0xdc, 0xf1, 0x56, 0x4f, 0x04, 0x57, 0x1b, 0x57, 0xec,
-	0xae, 0x2f, 0xee, 0xf5, 0x71, 0xfa, 0x4f, 0x0b, 0xda, 0xaa, 0xad, 0x40, 0xce, 0x00, 0xce, 0x7d,
-	0x5f, 0x53, 0x8f, 0xd8, 0x76, 0xff, 0xc3, 0x75, 0x58, 0xa5, 0xd5, 0x41, 0x6b, 0xe4, 0x39, 0x0c,
-	0x64, 0x98, 0x07, 0x2d, 0x2b, 0x51, 0x3e, 0x85, 0xde, 0x15, 0xcf, 0x94, 0xde, 0x56, 0x80, 0x7d,
-	0xb3, 0x17, 0x42, 0x6b, 0xe4, 0x7d, 0xe8, 0x17, 0xda, 0xd7, 0x17, 0x0f, 0xf6, 0x6d, 0xfa, 0x2f,
-	0x0b, 0xdb, 0x18, 0xba, 0xaf, 0x40, 0xde, 0x85, 0xe1, 0xb9, 0xef, 0x9b, 0x9c, 0x11, 0x2b, 0x37,
-	0x43, 0xdc, 0x3e, 0x33, 0xfa, 0x1e, 0x18, 0xde, 0x58, 0x86, 0x77, 0xd0, 0xaa, 0x12, 0xde, 0x0b,
-	0x18, 0x5d, 0xf1, 0xcc, 0xb0, 0xd8, 0x0a, 0xd1, 0xa9, 0x36, 0x46, 0x70, 0x29, 0xa7, 0x6c, 0x85,
-	0x15, 0x3c, 0xec, 0xdf, 0xf4, 0x6f, 0x16, 0x34, 0xf1, 0xd5, 0x4f, 0x18, 0x74, 0xce, 0x7d, 0x5f,
-	0x8e, 0x1d, 0x56, 0xe9, 0x80, 0xb8, 0x43, 0x56, 0x6a, 0x55, 0xd0, 0x1a, 0x79, 0x06, 0x3d, 0x19,
-	0x99, 0x34, 0x19, 0xb3, 0x6a, 0x83, 0xa2, 0x1a, 0xd5, 0x29, 0x74, 0xaf, 0x78, 0x86, 0x5a, 0x5b,
-	0xf1, 0x40, 0xd1, 0x99, 0xa0, 0x35, 0xf2, 0x2e, 0x80, 0xd6, 0xbc, 0xbe, 0xd8, 0x35, 0xf3, 0x96,
-	0x37, 0xd3, 0xcf, 0x6c, 0x68, 0xab, 0x57, 0x1b, 0x79, 0x81, 0x48, 0xd4, 0x14, 0x61, 0x5b, 0xef,
-	0x71, 0xd7, 0x61, 0x95, 0xe6, 0x80, 0x09, 0x44, 0x6d, 0xf8, 0x88, 0x6d, 0xf7, 0x23, 0x76, 0x03,
-	0x51, 0xe9, 0xed, 0x00, 0xa2, 0xf1, 0x90, 0xce, 0x81, 0xa8, 0xdf, 0xcd, 0x17, 0xbb, 0x57, 0xd8,
-	0xe5, 0xdb, 0xfb, 0x30, 0x2c, 0x0c, 0xb1, 0x3f, 0x31, 0x66, 0xd5, 0x16, 0x48, 0x61, 0xa8, 0xdf,
-	0xb9, 0xb4, 0x36, 0xfd, 0xa3, 0x05, 0x4d, 0x7c, 0xdd, 0x90, 0x77, 0x30, 0xfb, 0x38, 0x4e, 0x89,
-	0x53, 0x7d, 0x31, 0xb9, 0x50, 0xbc, 0x4f, 0x69, 0x8d, 0x4c, 0x61, 0x70, 0xab, 0x94, 0xf1, 0xbd,
-	0x26, 0x92, 0x58, 0x7d, 0xbc, 0x55, 0x53, 0xf1, 0x1c, 0xfa, 0x37, 0xb8, 0x0f, 0x73, 0xb9, 0xa0,
-	0x7a, 0xf1, 0x96, 0x9f, 0x89, 0x15, 0xa3, 0xe9, 0xbf, 0x2d, 0x68, 0xeb, 0x63, 0x57, 0x96, 0x4d,
-	0x53, 0x84, 0x6d, 0xbd, 0xab, 0x5c, 0x87, 0x55, 0x9e, 0x14, 0xb4, 0x46, 0xce, 0x74, 0xd9, 0xb4,
-	0xe1, 0x57, 0xd8, 0xae, 0x67, 0x44, 0xd5, 0x5b, 0x86, 0x85, 0x53, 0x9a, 0x29, 0x19, 0xb1, 0xf2,
-	0x93, 0xc2, 0xed, 0x9b, 0xd7, 0x76, 0x5a, 0x23, 0x1f, 0x80, 0x23, 0xef, 0x96, 0x8a, 0x7d, 0xf3,
-	0x69, 0x48, 0xf2, 0xab, 0x7d, 0xf5, 0xd6, 0x59, 0x8d, 0xf2, 0x73, 0x1b, 0x1a, 0xe2, 0x6c, 0x20,
-	0xef, 0x40, 0xfb, 0xdc, 0xf7, 0xc5, 0x19, 0x42, 0x46, 0xac, 0x7c, 0x17, 0x74, 0x07, 0xcc, 0xbc,
-	0xbe, 0xd1, 0x1a, 0xf9, 0x36, 0x80, 0x0c, 0x01, 0xf5, 0x1d, 0x56, 0xb9, 0x83, 0x56, 0x23, 0x3a,
-	0x81, 0xce, 0x15, 0xcf, 0x84, 0xee, 0x16, 0x0e, 0xbb, 0xf9, 0xb5, 0x0e, 0xeb, 0x34, 0xbc, 0x95,
-	0x7a, 0xea, 0x2a, 0x41, 0xe4, 0xad, 0xaf, 0x74, 0xb1, 0xa8, 0x4e, 0x7e, 0x86, 0xc7, 0x83, 0x50,
-	0xcb, 0xcf, 0xf6, 0x94, 0x0c, 0x59, 0xe9, 0xbe, 0xeb, 0x0e, 0xcb, 0x97, 0x04, 0xb9, 0x47, 0x7c,
-	0xb4, 0xfe, 0x64, 0x19, 0xa4, 0xaf, 0x30, 0x86, 0x7b, 0x0d, 0x3e, 0x69, 0xe1, 0x2f, 0x84, 0xe7,
-	0xff, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xf1, 0x94, 0xe5, 0x02, 0x4f, 0x18, 0x00, 0x00,
+	// 2129 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x59, 0xcd, 0x8f, 0x1b, 0x49,
+	0x15, 0x77, 0xfb, 0x63, 0x3c, 0x7e, 0xfe, 0xae, 0xcc, 0x06, 0xd3, 0x8a, 0x60, 0x54, 0x1b, 0xc2,
+	0xa0, 0x85, 0x0a, 0xeb, 0x24, 0x1b, 0x21, 0xe0, 0x30, 0xec, 0x0e, 0xa3, 0x11, 0x2b, 0x26, 0x78,
+	0x16, 0x71, 0x01, 0xa4, 0x5e, 0x77, 0xc5, 0x69, 0x62, 0x77, 0x37, 0xd5, 0x6d, 0x2f, 0x41, 0xe2,
+	0x04, 0x37, 0xae, 0x1c, 0xb8, 0x20, 0x2e, 0x2b, 0xa1, 0x48, 0x48, 0x08, 0x4e, 0x5c, 0xf8, 0x2f,
+	0xb8, 0xec, 0x19, 0xc1, 0x81, 0xbf, 0x62, 0x55, 0xaf, 0x3e, 0xba, 0xba, 0x3d, 0x1e, 0x27, 0x52,
+	0x6e, 0xf5, 0x3e, 0xaa, 0xeb, 0xd5, 0x7b, 0xbf, 0xf7, 0xaa, 0xea, 0x35, 0x74, 0x44, 0x3a, 0x67,
+	0xa9, 0x48, 0xf2, 0x84, 0x0e, 0xa0, 0x77, 0xb6, 0x4a, 0xf3, 0x17, 0x33, 0xfe, 0xcb, 0x35, 0xcf,
+	0x72, 0xda, 0x03, 0xd0, 0x74, 0xba, 0x7c, 0x41, 0xef, 0xc2, 0xe0, 0x52, 0x2c, 0x7e, 0x18, 0xac,
+	0xb8, 0x96, 0x13, 0x02, 0xcd, 0x38, 0x58, 0xf1, 0x89, 0x77, 0xec, 0x9d, 0x74, 0x66, 0x38, 0xa6,
+	0x6f, 0x43, 0xf7, 0x52, 0x2c, 0x4e, 0xc3, 0x10, 0x27, 0x91, 0x23, 0x68, 0x25, 0x62, 0x11, 0x85,
+	0xa8, 0xd3, 0x9a, 0x29, 0x82, 0xfe, 0xd1, 0x83, 0xd1, 0xa5, 0x58, 0x04, 0x71, 0xf4, 0xeb, 0x20,
+	0x8f, 0x92, 0xf8, 0xc3, 0x28, 0xcb, 0xc9, 0x7b, 0xd0, 0x4c, 0xc4, 0x22, 0x9b, 0x78, 0xc7, 0x8d,
+	0x93, 0xee, 0x94, 0xb2, 0xaa, 0x42, 0x89, 0x71, 0x11, 0x3f, 0x4d, 0x66, 0xa8, 0xef, 0x7f, 0x58,
+	0xfe, 0x96, 0x94, 0x90, 0x01, 0xd4, 0xed, 0x9a, 0xf5, 0x28, 0xb4, 0x96, 0xd6, 0x0b, 0x4b, 0xa5,
+	0x69, 0xf3, 0x3c, 0x5a, 0xf1, 0x49, 0x03, 0x99, 0x8a, 0xa0, 0x8f, 0xa1, 0x7f, 0xce, 0xf3, 0x4b,
+	0xb1, 0x30, 0x9b, 0x3c, 0x82, 0x96, 0xdc, 0xb3, 0xb2, 0xab, 0x33, 0x53, 0x04, 0x19, 0x41, 0x23,
+	0x0a, 0xb3, 0x49, 0xfd, 0xb8, 0x71, 0xd2, 0x9a, 0xc9, 0x21, 0x3d, 0x01, 0xf2, 0x44, 0x24, 0xbf,
+	0xe0, 0xf3, 0x7c, 0x9f, 0x8b, 0xbe, 0x0a, 0x43, 0xad, 0xe9, 0xba, 0x29, 0x15, 0x49, 0xe1, 0x26,
+	0x24, 0xe8, 0xef, 0x3c, 0xe8, 0x6a, 0x4d, 0xf4, 0xd0, 0xd7, 0xa1, 0x99, 0x8a, 0xc4, 0x78, 0x68,
+	0xc2, 0x1c, 0x99, 0x19, 0x2b, 0xbf, 0x48, 0x2d, 0xff, 0xdc, 0x4e, 0x7e, 0x23, 0x2e, 0x79, 0x22,
+	0x92, 0xd7, 0x75, 0xc9, 0x5d, 0x18, 0x9c, 0xc5, 0x9b, 0x57, 0x40, 0xcc, 0x59, 0xbc, 0x71, 0x5d,
+	0xc1, 0xe3, 0x4d, 0xe1, 0x0a, 0x24, 0xe8, 0x1f, 0x3c, 0x18, 0x9e, 0xc5, 0x9b, 0x48, 0x24, 0xf1,
+	0x8a, 0xc7, 0xca, 0x1d, 0x0f, 0xa1, 0xc9, 0xe3, 0x8d, 0x71, 0xc7, 0x31, 0xab, 0xc8, 0x5d, 0x5a,
+	0xb9, 0x45, 0x6a, 0xfb, 0x3f, 0x28, 0x7d, 0xe8, 0x8d, 0xb8, 0xe6, 0x2c, 0xde, 0xbc, 0xae, 0x6b,
+	0x16, 0x30, 0x3c, 0x17, 0xc9, 0x3a, 0xc5, 0x6d, 0xef, 0xf4, 0x4d, 0x91, 0x3e, 0x75, 0x27, 0x7d,
+	0x0a, 0x17, 0x35, 0x1c, 0x17, 0x15, 0x18, 0x6a, 0xba, 0x18, 0xfa, 0x1a, 0xf4, 0x8b, 0x85, 0xa4,
+	0x7f, 0x27, 0xd0, 0x5e, 0x48, 0x86, 0xdd, 0xb1, 0x21, 0xe9, 0x3d, 0x18, 0xa1, 0xea, 0xbe, 0x80,
+	0xfd, 0xd3, 0x83, 0x0e, 0x2a, 0x6a, 0x50, 0x1e, 0xe0, 0x07, 0x4c, 0x1c, 0x8e, 0x98, 0x95, 0xa9,
+	0x11, 0xfa, 0x5e, 0xeb, 0xf8, 0xbf, 0xd1, 0x53, 0x5f, 0xd9, 0xef, 0x13, 0x68, 0x27, 0x62, 0x81,
+	0x6c, 0xe5, 0x79, 0x43, 0x4a, 0x09, 0x8f, 0x37, 0x28, 0x69, 0x2a, 0x89, 0x26, 0xa5, 0x24, 0x15,
+	0x09, 0x4a, 0x5a, 0x4a, 0xa2, 0x49, 0xba, 0x86, 0xe1, 0x39, 0xcf, 0xd1, 0x82, 0xbd, 0x11, 0xbb,
+	0x28, 0x22, 0x76, 0x11, 0x66, 0xd2, 0xb8, 0x4b, 0x59, 0x9e, 0x1a, 0xa8, 0x86, 0x63, 0xc9, 0x3b,
+	0x93, 0x08, 0x6c, 0x2a, 0x9e, 0x1c, 0x4b, 0xde, 0x13, 0x99, 0xa4, 0x2d, 0xc5, 0x93, 0x63, 0xca,
+	0x60, 0x72, 0xce, 0xf3, 0xd3, 0x05, 0x8f, 0xf3, 0xef, 0x8b, 0x64, 0x55, 0x5a, 0x9f, 0x40, 0x73,
+	0x21, 0xc1, 0xe1, 0xe1, 0x52, 0x38, 0x2e, 0x82, 0x26, 0x67, 0xc8, 0xc5, 0x27, 0xd0, 0x0e, 0xe4,
+	0x18, 0xdd, 0x25, 0xbf, 0x6b, 0x48, 0x59, 0x76, 0x66, 0x7c, 0xc9, 0x83, 0x8c, 0xef, 0x0b, 0x1b,
+	0x85, 0x91, 0xd6, 0xbc, 0xb0, 0x98, 0xab, 0x44, 0x80, 0xde, 0x87, 0xa1, 0xd6, 0xb1, 0x78, 0xb9,
+	0x03, 0x1d, 0xa1, 0x58, 0x56, 0xb3, 0x60, 0xd0, 0x33, 0xe8, 0xea, 0x09, 0xef, 0x27, 0x21, 0xbf,
+	0x16, 0xc3, 0x14, 0x7a, 0x82, 0x2f, 0x83, 0x3c, 0xda, 0xf0, 0x34, 0xc8, 0x9f, 0xe9, 0xe8, 0x96,
+	0x78, 0xf4, 0xe7, 0x30, 0xfa, 0xd1, 0x9a, 0x8b, 0x17, 0xee, 0xb7, 0xee, 0x40, 0x5d, 0xcc, 0xf1,
+	0x4b, 0xdd, 0x69, 0x8f, 0x39, 0x92, 0x59, 0x5d, 0xcc, 0xb5, 0xe5, 0x0d, 0x8b, 0x9d, 0x92, 0x99,
+	0xcd, 0xaa, 0x99, 0x7f, 0xf6, 0x60, 0x8c, 0x3b, 0x42, 0xc6, 0x4d, 0x19, 0x37, 0x81, 0xf6, 0x86,
+	0x8b, 0x2c, 0x4a, 0x62, 0x6d, 0xa8, 0x21, 0x8b, 0x5c, 0x6c, 0x54, 0x72, 0x71, 0x3b, 0xeb, 0xc8,
+	0x37, 0x71, 0xcf, 0x72, 0xad, 0x79, 0x12, 0x72, 0x05, 0x86, 0xea, 0x2e, 0x4a, 0x1a, 0x74, 0x0e,
+	0xe3, 0x73, 0x9e, 0x57, 0x0c, 0xd4, 0x28, 0xf4, 0x0a, 0x14, 0x5a, 0xb4, 0xd6, 0x5d, 0xb4, 0xee,
+	0xc0, 0x26, 0xe2, 0xb0, 0xe9, 0xe0, 0xf0, 0xff, 0x9e, 0x0d, 0x97, 0xae, 0xa0, 0x87, 0xda, 0x88,
+	0xe2, 0x50, 0x71, 0xe4, 0x66, 0x8c, 0x19, 0x6c, 0x35, 0xfd, 0x4f, 0x8b, 0xaf, 0xbc, 0x4e, 0x1a,
+	0x1b, 0xb7, 0x36, 0xca, 0x6e, 0x75, 0x12, 0xbc, 0xb9, 0x95, 0xe0, 0xd7, 0xa7, 0x31, 0x79, 0x1b,
+	0x1a, 0x62, 0x9e, 0x4d, 0x0e, 0xd0, 0xe4, 0x31, 0xab, 0x42, 0x67, 0x26, 0xa5, 0xf4, 0x31, 0xbc,
+	0x55, 0x78, 0x14, 0xd9, 0xda, 0xab, 0x5f, 0x02, 0xb0, 0xc8, 0x30, 0xce, 0x75, 0x38, 0xf4, 0x3d,
+	0x9b, 0x04, 0x72, 0x16, 0x3a, 0x4a, 0x2f, 0xe8, 0xdd, 0xb8, 0xe0, 0x7f, 0x3d, 0xe8, 0x60, 0xc6,
+	0x9a, 0xba, 0x88, 0x39, 0x5a, 0xd4, 0x45, 0x2b, 0x53, 0x23, 0x55, 0x17, 0x95, 0x8e, 0xff, 0xd2,
+	0xcc, 0xad, 0x78, 0xb4, 0x83, 0x1e, 0x3d, 0x82, 0x56, 0xb0, 0x8c, 0x82, 0x4c, 0xbb, 0x54, 0x11,
+	0xc4, 0x87, 0xc3, 0x67, 0x49, 0x96, 0x3b, 0xb5, 0xd1, 0xd2, 0xe4, 0x36, 0x1c, 0xc8, 0x71, 0x94,
+	0x6a, 0xa7, 0x6a, 0x4a, 0xf2, 0xb3, 0x3c, 0xc8, 0xd7, 0x99, 0x76, 0xa9, 0xa6, 0x8a, 0xe3, 0xed,
+	0xc0, 0x39, 0xde, 0x24, 0x77, 0x8d, 0xdc, 0xb6, 0xe2, 0x22, 0x41, 0x1f, 0xc1, 0x2d, 0x34, 0x75,
+	0xc6, 0xb3, 0x3c, 0x10, 0xf9, 0x76, 0x2d, 0x51, 0x46, 0x0f, 0xa0, 0x9e, 0xa4, 0xda, 0xe2, 0x7a,
+	0x92, 0xd2, 0x6f, 0xc1, 0x18, 0xa7, 0x9d, 0x4a, 0xe3, 0x77, 0x4d, 0xba, 0x76, 0xa7, 0xf4, 0x27,
+	0x58, 0xb6, 0xf5, 0xa2, 0x6a, 0xe2, 0x31, 0x74, 0x95, 0xeb, 0xd4, 0x6e, 0x14, 0xfa, 0x5c, 0x96,
+	0xfe, 0xb4, 0xca, 0x13, 0x17, 0x96, 0x3a, 0x49, 0xb0, 0x26, 0xfe, 0xad, 0x0e, 0xe3, 0x2b, 0x2e,
+	0x36, 0xd1, 0x9c, 0xef, 0x39, 0x89, 0x47, 0xd0, 0x08, 0x23, 0xa1, 0xcd, 0x92, 0x43, 0x09, 0xa3,
+	0x55, 0xb2, 0x0e, 0x97, 0xdc, 0x09, 0x80, 0xc3, 0x91, 0xae, 0x4e, 0xb2, 0x75, 0xc6, 0x85, 0x09,
+	0x81, 0xa2, 0x14, 0x3f, 0x0d, 0x32, 0x1b, 0x02, 0x45, 0xc9, 0x1d, 0xc9, 0x52, 0x90, 0x06, 0x79,
+	0xce, 0x45, 0xac, 0x03, 0xe1, 0xb2, 0x30, 0x21, 0xa2, 0xf0, 0x69, 0xb4, 0x34, 0x01, 0x31, 0xa4,
+	0x84, 0x02, 0xc6, 0x62, 0xbe, 0x0a, 0x27, 0x87, 0x0a, 0x0a, 0x86, 0x96, 0xb3, 0xb2, 0x3c, 0x49,
+	0xa5, 0xa8, 0xa3, 0x66, 0x69, 0xd2, 0x3d, 0x55, 0x40, 0x49, 0x34, 0xe9, 0x5e, 0x12, 0xba, 0xe5,
+	0x4b, 0xc2, 0x7d, 0x18, 0xba, 0x0e, 0xd3, 0x27, 0x44, 0xa6, 0x58, 0x36, 0x94, 0x05, 0x83, 0xde,
+	0x83, 0x23, 0x3d, 0xe1, 0x03, 0xbe, 0xe4, 0x39, 0xdf, 0x11, 0x79, 0xfa, 0x0f, 0x0f, 0x06, 0x5a,
+	0xd1, 0x49, 0x54, 0x5c, 0x36, 0x76, 0xce, 0x67, 0x87, 0x23, 0x77, 0xad, 0x0d, 0x36, 0xf5, 0xd0,
+	0xd2, 0xd2, 0x9b, 0x45, 0x2c, 0x4c, 0x65, 0x74, 0x59, 0xf2, 0xeb, 0xd6, 0x4a, 0x53, 0x26, 0x1d,
+	0x8e, 0x3c, 0xb7, 0x34, 0xa5, 0x3e, 0xa1, 0x0e, 0xf4, 0x12, 0x8f, 0xfe, 0xb6, 0x01, 0x5d, 0x6d,
+	0xb4, 0x29, 0xa8, 0x5a, 0x5e, 0x14, 0x54, 0x47, 0x6e, 0xc6, 0xaa, 0xa0, 0x1a, 0x4d, 0xff, 0x5f,
+	0x75, 0xfb, 0x95, 0x6b, 0xd3, 0xff, 0xba, 0x82, 0xaa, 0xf1, 0xd8, 0xd8, 0x85, 0xc7, 0xe6, 0x0d,
+	0x78, 0x6c, 0x95, 0xf0, 0xb8, 0x1f, 0x77, 0x04, 0x9a, 0x69, 0x22, 0x72, 0x04, 0x5d, 0x6b, 0x86,
+	0x63, 0x17, 0x8b, 0x87, 0xbb, 0xb1, 0xd8, 0xd9, 0x8d, 0x45, 0x28, 0x63, 0xf1, 0x0e, 0x74, 0x30,
+	0x76, 0x68, 0x7c, 0x4f, 0x81, 0xc8, 0x32, 0xa4, 0xd4, 0xc6, 0x7d, 0xd2, 0x57, 0x52, 0xcb, 0xa0,
+	0x3f, 0x83, 0x2f, 0x68, 0xf7, 0xbd, 0xff, 0x2c, 0x88, 0x17, 0xfc, 0xf2, 0x93, 0x78, 0x57, 0x7d,
+	0x71, 0x20, 0x5f, 0xdf, 0x09, 0xf9, 0x46, 0x19, 0xf2, 0x5f, 0x81, 0xe1, 0x47, 0xc1, 0xf3, 0x6c,
+	0xdf, 0xfd, 0xea, 0xcb, 0xd0, 0xff, 0x28, 0xc8, 0x9e, 0xef, 0xbe, 0x5c, 0xfd, 0x14, 0x06, 0x52,
+	0x61, 0x4f, 0xa1, 0x71, 0xec, 0xa8, 0x97, 0xec, 0x28, 0x5f, 0x71, 0x1a, 0xd5, 0x2b, 0xce, 0x3d,
+	0xe8, 0xd9, 0xaf, 0xcb, 0xac, 0xbc, 0x0d, 0x07, 0x79, 0x90, 0x3d, 0xb7, 0x16, 0x68, 0x8a, 0x86,
+	0x30, 0x38, 0xe7, 0xb9, 0x54, 0xad, 0xda, 0xd9, 0xd8, 0x3a, 0xbf, 0x1b, 0xee, 0x43, 0x04, 0xcd,
+	0xd0, 0x89, 0xa4, 0x08, 0x69, 0xab, 0x36, 0x40, 0xe7, 0x8f, 0x21, 0xe9, 0xef, 0xeb, 0x70, 0x28,
+	0xd7, 0xc0, 0xac, 0x38, 0x81, 0x96, 0x5c, 0xdc, 0xa4, 0x04, 0x61, 0x46, 0x82, 0x03, 0x4c, 0x06,
+	0xa5, 0xe0, 0xff, 0xdb, 0x53, 0xd3, 0x5e, 0xf9, 0x5e, 0x51, 0x9c, 0x67, 0xca, 0x21, 0x5b, 0xe7,
+	0x59, 0xd3, 0x3d, 0xcf, 0x64, 0xa5, 0x92, 0x50, 0x44, 0x49, 0x4b, 0x57, 0x2a, 0xc3, 0x50, 0x0f,
+	0x8a, 0xd0, 0x39, 0x05, 0x0d, 0x29, 0x53, 0x44, 0x6f, 0x0c, 0x0d, 0x50, 0xc5, 0xd7, 0x65, 0x95,
+	0x01, 0x7a, 0x58, 0x05, 0xe8, 0x5f, 0x3c, 0x18, 0x5e, 0xa5, 0x7c, 0x1e, 0x3d, 0x8d, 0xe6, 0x1a,
+	0xa9, 0x37, 0x57, 0x4d, 0x29, 0x4d, 0x52, 0x2e, 0xb0, 0xa3, 0xa1, 0x71, 0x50, 0x30, 0xc8, 0x5d,
+	0xe8, 0x3b, 0x97, 0x47, 0x8b, 0x86, 0x32, 0x93, 0x4c, 0xe1, 0x68, 0xbe, 0xce, 0xf2, 0x64, 0xb5,
+	0x4e, 0x17, 0x22, 0x28, 0x32, 0x5c, 0xb9, 0xe4, 0x5a, 0x19, 0xfd, 0x31, 0x8c, 0xa5, 0xff, 0x3f,
+	0xe0, 0x79, 0x10, 0x2d, 0xf1, 0x94, 0xce, 0xf2, 0x5d, 0x50, 0x22, 0x27, 0x70, 0x90, 0x65, 0xcb,
+	0x28, 0xcb, 0x11, 0x2a, 0xdd, 0xe9, 0x88, 0x55, 0x36, 0x39, 0xd3, 0x72, 0xfa, 0xb2, 0x0e, 0xfd,
+	0xb3, 0x5f, 0xf1, 0xf9, 0xda, 0x76, 0x7b, 0xbe, 0x03, 0xc0, 0x0d, 0xc3, 0x00, 0xe3, 0x0e, 0x2b,
+	0xe9, 0x14, 0x14, 0x42, 0xc4, 0xd1, 0xf7, 0x3f, 0xf3, 0x9c, 0xef, 0x21, 0x58, 0x7c, 0x38, 0x94,
+	0x56, 0x39, 0xe9, 0x64, 0x69, 0x7b, 0x13, 0x30, 0x40, 0x3a, 0x86, 0xae, 0x53, 0xc5, 0x75, 0x0d,
+	0x75, 0x59, 0x65, 0xf7, 0x37, 0xab, 0xee, 0x3f, 0x82, 0x96, 0x90, 0x3e, 0x46, 0x08, 0xb5, 0x66,
+	0x8a, 0x90, 0xf0, 0x14, 0xab, 0x6c, 0xa1, 0xb1, 0x83, 0xe3, 0x9d, 0x21, 0x68, 0xdf, 0x10, 0x82,
+	0x7b, 0x00, 0x32, 0x04, 0x57, 0xb9, 0x88, 0xe2, 0x85, 0x04, 0x25, 0xa6, 0x46, 0x2e, 0xf4, 0xb6,
+	0x0c, 0x39, 0xfd, 0xbb, 0x07, 0x3d, 0xb7, 0xf1, 0x45, 0xa6, 0x30, 0x3c, 0x0d, 0xc3, 0x12, 0x6b,
+	0xc8, 0xca, 0x2d, 0x3b, 0xbf, 0xc7, 0x9c, 0xee, 0x1c, 0xad, 0x91, 0x87, 0x40, 0xd4, 0xb1, 0x7c,
+	0xf3, 0xb4, 0x2e, 0x73, 0x1a, 0x81, 0x35, 0xf2, 0x18, 0x46, 0xaa, 0x49, 0x66, 0xa7, 0x64, 0x64,
+	0xc0, 0x4a, 0x7d, 0x33, 0x7f, 0xbc, 0xd5, 0xc0, 0xa3, 0xb5, 0xe9, 0xa7, 0x1e, 0xb4, 0x75, 0x53,
+	0x8a, 0x3c, 0x02, 0x38, 0x0d, 0x43, 0x43, 0xdd, 0x62, 0xdb, 0xdd, 0x33, 0x7f, 0xc4, 0x2a, 0x8d,
+	0x32, 0x5a, 0x23, 0x0f, 0xa0, 0xaf, 0x2c, 0xbe, 0x71, 0x66, 0xc5, 0xe0, 0x6f, 0x40, 0x57, 0xb5,
+	0xb0, 0xa4, 0x9e, 0xb6, 0xb5, 0x68, 0x68, 0xf9, 0x3d, 0xb7, 0x95, 0x46, 0x6b, 0xd3, 0xbf, 0x7a,
+	0xd8, 0x93, 0x32, 0x4d, 0x22, 0xf2, 0x2e, 0x0c, 0x4e, 0xc3, 0xd0, 0xe5, 0x0c, 0x59, 0xb9, 0xb3,
+	0xe5, 0xf7, 0x98, 0xd3, 0xc4, 0x42, 0x33, 0xc7, 0xca, 0xcc, 0x1b, 0x67, 0x55, 0xcc, 0x7c, 0x84,
+	0xf7, 0x5c, 0x67, 0x86, 0x36, 0xb5, 0x68, 0x30, 0xf9, 0xa3, 0x6a, 0x9b, 0x8b, 0xd6, 0xa6, 0x9f,
+	0x79, 0xd0, 0xc2, 0x7e, 0x01, 0x61, 0x70, 0x78, 0x1a, 0x86, 0x6a, 0x3c, 0x62, 0x95, 0x0e, 0x93,
+	0x3f, 0x60, 0xa5, 0x56, 0x10, 0xad, 0x91, 0xfb, 0xd0, 0x55, 0x56, 0xaa, 0x29, 0x63, 0x56, 0x6d,
+	0x00, 0x55, 0x2d, 0x7c, 0x07, 0x3a, 0xa6, 0x81, 0x92, 0xc9, 0x15, 0xca, 0xcd, 0x14, 0x1f, 0x8a,
+	0xe6, 0x0f, 0xad, 0x91, 0xef, 0xc1, 0x2d, 0x73, 0x6d, 0xbf, 0x08, 0x6d, 0xe3, 0x83, 0x7c, 0x91,
+	0xed, 0x6a, 0x86, 0x58, 0x0b, 0x75, 0xdf, 0x83, 0xd6, 0xa6, 0xff, 0xf3, 0xa0, 0xad, 0x5f, 0x5a,
+	0xe4, 0x21, 0x22, 0xc6, 0x50, 0x84, 0x6d, 0xbd, 0xe8, 0xfd, 0x11, 0xab, 0xb4, 0x2f, 0x5c, 0xc0,
+	0x98, 0x89, 0xb7, 0xd8, 0x76, 0xc7, 0xa4, 0xba, 0xcf, 0x77, 0x11, 0x30, 0x5a, 0x2f, 0x23, 0x84,
+	0x6d, 0x3d, 0xce, 0xfd, 0x9e, 0xfb, 0x54, 0xa6, 0x35, 0xf2, 0x5d, 0x0c, 0x9e, 0xf3, 0x2a, 0xcc,
+	0xc8, 0x6d, 0x76, 0xed, 0x0b, 0xb4, 0x30, 0xd3, 0x3c, 0x30, 0x69, 0x6d, 0xfa, 0x27, 0x0f, 0x5a,
+	0xb8, 0x6f, 0xed, 0x63, 0x1c, 0x6b, 0x1f, 0xbb, 0x2f, 0x1f, 0x1f, 0x8a, 0x87, 0x24, 0xad, 0x91,
+	0x29, 0xf4, 0xaf, 0xb4, 0x02, 0x3e, 0xac, 0xa4, 0x5b, 0xaa, 0xaf, 0xac, 0xea, 0xe6, 0x1e, 0x40,
+	0xef, 0x12, 0x8b, 0x19, 0x57, 0x0b, 0xea, 0xa7, 0x69, 0xf9, 0x3d, 0x57, 0x99, 0x34, 0xfd, 0x8f,
+	0x07, 0x6d, 0x73, 0x76, 0xa9, 0x40, 0x18, 0x8a, 0xb0, 0xad, 0x27, 0x94, 0x3f, 0x62, 0x95, 0x57,
+	0x02, 0xa2, 0x5b, 0x07, 0xc2, 0x4c, 0x7c, 0x8b, 0x5d, 0xf7, 0x32, 0xa8, 0x5a, 0xcb, 0x30, 0x14,
+	0x5a, 0x33, 0x23, 0x43, 0x56, 0x7e, 0x25, 0xf8, 0x3d, 0xf7, 0x86, 0x4d, 0x6b, 0xe4, 0xdb, 0x30,
+	0x52, 0xd7, 0x40, 0xcd, 0xbe, 0xfc, 0x24, 0x26, 0xf6, 0x16, 0x5e, 0xbd, 0x20, 0x56, 0x77, 0xf9,
+	0xb2, 0x0e, 0x4d, 0x59, 0x60, 0xc9, 0x3b, 0xd0, 0x3e, 0x0d, 0x43, 0x59, 0x88, 0xc9, 0x90, 0x95,
+	0xaf, 0x6d, 0x7e, 0x9f, 0xb9, 0x37, 0x2d, 0x2c, 0x2f, 0xa0, 0xb6, 0x80, 0xfa, 0x23, 0x56, 0xb9,
+	0x2e, 0x56, 0x77, 0x74, 0x02, 0x87, 0xfa, 0x0a, 0x26, 0xb7, 0x53, 0xbe, 0x8d, 0xf9, 0x1d, 0x7b,
+	0x3b, 0xc2, 0x48, 0x0d, 0xae, 0x94, 0x58, 0x9f, 0xc8, 0x44, 0x5d, 0x9e, 0x4a, 0xe7, 0xf3, 0x76,
+	0x15, 0x19, 0xeb, 0x6f, 0xda, 0x23, 0x52, 0xd6, 0x91, 0xd2, 0xe5, 0xd4, 0x1f, 0x94, 0xcf, 0x5a,
+	0x55, 0x0b, 0x9e, 0xac, 0x3f, 0x5e, 0x46, 0xd9, 0x33, 0xdc, 0xc5, 0xde, 0x09, 0x1f, 0x1f, 0xe0,
+	0x5f, 0xa3, 0x07, 0x9f, 0x07, 0x00, 0x00, 0xff, 0xff, 0xb9, 0xc9, 0x2d, 0x04, 0x42, 0x1a, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2864,8 +3360,7 @@ const _ = grpc.SupportPackageIsVersion4
 type OrganizationClient interface {
 	AddOrganization(ctx context.Context, in *OrgNameRequest, opts ...grpc.CallOption) (*OrgAddReply, error)
 	DeleteOrganization(ctx context.Context, in *OrgNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetOrganizations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationList, error)
-	GetOrganizationID(ctx context.Context, in *OrgNameRequest, opts ...grpc.CallOption) (*OrgAddReply, error)
+	GetOrganizations(ctx context.Context, in *GetOrgRequest, opts ...grpc.CallOption) (*OrganizationList, error)
 }
 
 type organizationClient struct {
@@ -2894,18 +3389,9 @@ func (c *organizationClient) DeleteOrganization(ctx context.Context, in *OrgName
 	return out, nil
 }
 
-func (c *organizationClient) GetOrganizations(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OrganizationList, error) {
+func (c *organizationClient) GetOrganizations(ctx context.Context, in *GetOrgRequest, opts ...grpc.CallOption) (*OrganizationList, error) {
 	out := new(OrganizationList)
 	err := c.cc.Invoke(ctx, "/Organization/GetOrganizations", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *organizationClient) GetOrganizationID(ctx context.Context, in *OrgNameRequest, opts ...grpc.CallOption) (*OrgAddReply, error) {
-	out := new(OrgAddReply)
-	err := c.cc.Invoke(ctx, "/Organization/GetOrganizationID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2916,8 +3402,7 @@ func (c *organizationClient) GetOrganizationID(ctx context.Context, in *OrgNameR
 type OrganizationServer interface {
 	AddOrganization(context.Context, *OrgNameRequest) (*OrgAddReply, error)
 	DeleteOrganization(context.Context, *OrgNameRequest) (*EmptyReply, error)
-	GetOrganizations(context.Context, *EmptyRequest) (*OrganizationList, error)
-	GetOrganizationID(context.Context, *OrgNameRequest) (*OrgAddReply, error)
+	GetOrganizations(context.Context, *GetOrgRequest) (*OrganizationList, error)
 }
 
 // UnimplementedOrganizationServer can be embedded to have forward compatible implementations.
@@ -2930,11 +3415,8 @@ func (*UnimplementedOrganizationServer) AddOrganization(ctx context.Context, req
 func (*UnimplementedOrganizationServer) DeleteOrganization(ctx context.Context, req *OrgNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOrganization not implemented")
 }
-func (*UnimplementedOrganizationServer) GetOrganizations(ctx context.Context, req *EmptyRequest) (*OrganizationList, error) {
+func (*UnimplementedOrganizationServer) GetOrganizations(ctx context.Context, req *GetOrgRequest) (*OrganizationList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrganizations not implemented")
-}
-func (*UnimplementedOrganizationServer) GetOrganizationID(ctx context.Context, req *OrgNameRequest) (*OrgAddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrganizationID not implemented")
 }
 
 func RegisterOrganizationServer(s *grpc.Server, srv OrganizationServer) {
@@ -2978,7 +3460,7 @@ func _Organization_DeleteOrganization_Handler(srv interface{}, ctx context.Conte
 }
 
 func _Organization_GetOrganizations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetOrgRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2990,25 +3472,7 @@ func _Organization_GetOrganizations_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/Organization/GetOrganizations",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServer).GetOrganizations(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Organization_GetOrganizationID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrgNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServer).GetOrganizationID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Organization/GetOrganizationID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServer).GetOrganizationID(ctx, req.(*OrgNameRequest))
+		return srv.(OrganizationServer).GetOrganizations(ctx, req.(*GetOrgRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3029,10 +3493,6 @@ var _Organization_serviceDesc = grpc.ServiceDesc{
 			MethodName: "GetOrganizations",
 			Handler:    _Organization_GetOrganizations_Handler,
 		},
-		{
-			MethodName: "GetOrganizationID",
-			Handler:    _Organization_GetOrganizationID_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "rpc.proto",
@@ -3044,8 +3504,7 @@ var _Organization_serviceDesc = grpc.ServiceDesc{
 type ProjectClient interface {
 	AddProject(ctx context.Context, in *ProjectNameRequest, opts ...grpc.CallOption) (*ProjectAddReply, error)
 	DeleteProject(ctx context.Context, in *ProjectNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetProjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ProjectList, error)
-	GetProjectID(ctx context.Context, in *ProjectNameRequest, opts ...grpc.CallOption) (*ProjectAddReply, error)
+	GetProjects(ctx context.Context, in *GetProRequest, opts ...grpc.CallOption) (*ProjectList, error)
 }
 
 type projectClient struct {
@@ -3074,18 +3533,9 @@ func (c *projectClient) DeleteProject(ctx context.Context, in *ProjectNameReques
 	return out, nil
 }
 
-func (c *projectClient) GetProjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ProjectList, error) {
+func (c *projectClient) GetProjects(ctx context.Context, in *GetProRequest, opts ...grpc.CallOption) (*ProjectList, error) {
 	out := new(ProjectList)
 	err := c.cc.Invoke(ctx, "/Project/GetProjects", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *projectClient) GetProjectID(ctx context.Context, in *ProjectNameRequest, opts ...grpc.CallOption) (*ProjectAddReply, error) {
-	out := new(ProjectAddReply)
-	err := c.cc.Invoke(ctx, "/Project/GetProjectID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3096,8 +3546,7 @@ func (c *projectClient) GetProjectID(ctx context.Context, in *ProjectNameRequest
 type ProjectServer interface {
 	AddProject(context.Context, *ProjectNameRequest) (*ProjectAddReply, error)
 	DeleteProject(context.Context, *ProjectNameRequest) (*EmptyReply, error)
-	GetProjects(context.Context, *EmptyRequest) (*ProjectList, error)
-	GetProjectID(context.Context, *ProjectNameRequest) (*ProjectAddReply, error)
+	GetProjects(context.Context, *GetProRequest) (*ProjectList, error)
 }
 
 // UnimplementedProjectServer can be embedded to have forward compatible implementations.
@@ -3110,11 +3559,8 @@ func (*UnimplementedProjectServer) AddProject(ctx context.Context, req *ProjectN
 func (*UnimplementedProjectServer) DeleteProject(ctx context.Context, req *ProjectNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProject not implemented")
 }
-func (*UnimplementedProjectServer) GetProjects(ctx context.Context, req *EmptyRequest) (*ProjectList, error) {
+func (*UnimplementedProjectServer) GetProjects(ctx context.Context, req *GetProRequest) (*ProjectList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProjects not implemented")
-}
-func (*UnimplementedProjectServer) GetProjectID(ctx context.Context, req *ProjectNameRequest) (*ProjectAddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProjectID not implemented")
 }
 
 func RegisterProjectServer(s *grpc.Server, srv ProjectServer) {
@@ -3158,7 +3604,7 @@ func _Project_DeleteProject_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Project_GetProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetProRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3170,25 +3616,7 @@ func _Project_GetProjects_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/Project/GetProjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServer).GetProjects(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Project_GetProjectID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ProjectNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProjectServer).GetProjectID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Project/GetProjectID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProjectServer).GetProjectID(ctx, req.(*ProjectNameRequest))
+		return srv.(ProjectServer).GetProjects(ctx, req.(*GetProRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3209,10 +3637,6 @@ var _Project_serviceDesc = grpc.ServiceDesc{
 			MethodName: "GetProjects",
 			Handler:    _Project_GetProjects_Handler,
 		},
-		{
-			MethodName: "GetProjectID",
-			Handler:    _Project_GetProjectID_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "rpc.proto",
@@ -3224,8 +3648,7 @@ var _Project_serviceDesc = grpc.ServiceDesc{
 type EnvironmentClient interface {
 	AddEnvironment(ctx context.Context, in *EnvNameRequest, opts ...grpc.CallOption) (*EnvAddReply, error)
 	DeleteEnvironment(ctx context.Context, in *EnvNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetEnvironments(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EnvironmentList, error)
-	GetEnvironmentID(ctx context.Context, in *EnvNameRequest, opts ...grpc.CallOption) (*EnvAddReply, error)
+	GetEnvironments(ctx context.Context, in *GetEnvRequest, opts ...grpc.CallOption) (*EnvironmentList, error)
 }
 
 type environmentClient struct {
@@ -3254,18 +3677,9 @@ func (c *environmentClient) DeleteEnvironment(ctx context.Context, in *EnvNameRe
 	return out, nil
 }
 
-func (c *environmentClient) GetEnvironments(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EnvironmentList, error) {
+func (c *environmentClient) GetEnvironments(ctx context.Context, in *GetEnvRequest, opts ...grpc.CallOption) (*EnvironmentList, error) {
 	out := new(EnvironmentList)
 	err := c.cc.Invoke(ctx, "/Environment/GetEnvironments", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *environmentClient) GetEnvironmentID(ctx context.Context, in *EnvNameRequest, opts ...grpc.CallOption) (*EnvAddReply, error) {
-	out := new(EnvAddReply)
-	err := c.cc.Invoke(ctx, "/Environment/GetEnvironmentID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3276,8 +3690,7 @@ func (c *environmentClient) GetEnvironmentID(ctx context.Context, in *EnvNameReq
 type EnvironmentServer interface {
 	AddEnvironment(context.Context, *EnvNameRequest) (*EnvAddReply, error)
 	DeleteEnvironment(context.Context, *EnvNameRequest) (*EmptyReply, error)
-	GetEnvironments(context.Context, *EmptyRequest) (*EnvironmentList, error)
-	GetEnvironmentID(context.Context, *EnvNameRequest) (*EnvAddReply, error)
+	GetEnvironments(context.Context, *GetEnvRequest) (*EnvironmentList, error)
 }
 
 // UnimplementedEnvironmentServer can be embedded to have forward compatible implementations.
@@ -3290,11 +3703,8 @@ func (*UnimplementedEnvironmentServer) AddEnvironment(ctx context.Context, req *
 func (*UnimplementedEnvironmentServer) DeleteEnvironment(ctx context.Context, req *EnvNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEnvironment not implemented")
 }
-func (*UnimplementedEnvironmentServer) GetEnvironments(ctx context.Context, req *EmptyRequest) (*EnvironmentList, error) {
+func (*UnimplementedEnvironmentServer) GetEnvironments(ctx context.Context, req *GetEnvRequest) (*EnvironmentList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironments not implemented")
-}
-func (*UnimplementedEnvironmentServer) GetEnvironmentID(ctx context.Context, req *EnvNameRequest) (*EnvAddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEnvironmentID not implemented")
 }
 
 func RegisterEnvironmentServer(s *grpc.Server, srv EnvironmentServer) {
@@ -3338,7 +3748,7 @@ func _Environment_DeleteEnvironment_Handler(srv interface{}, ctx context.Context
 }
 
 func _Environment_GetEnvironments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetEnvRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3350,25 +3760,7 @@ func _Environment_GetEnvironments_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/Environment/GetEnvironments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnvironmentServer).GetEnvironments(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Environment_GetEnvironmentID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EnvNameRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(EnvironmentServer).GetEnvironmentID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Environment/GetEnvironmentID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EnvironmentServer).GetEnvironmentID(ctx, req.(*EnvNameRequest))
+		return srv.(EnvironmentServer).GetEnvironments(ctx, req.(*GetEnvRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3389,10 +3781,6 @@ var _Environment_serviceDesc = grpc.ServiceDesc{
 			MethodName: "GetEnvironments",
 			Handler:    _Environment_GetEnvironments_Handler,
 		},
-		{
-			MethodName: "GetEnvironmentID",
-			Handler:    _Environment_GetEnvironmentID_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "rpc.proto",
@@ -3404,8 +3792,8 @@ var _Environment_serviceDesc = grpc.ServiceDesc{
 type GroupClient interface {
 	AddGroup(ctx context.Context, in *GroupAddRequest, opts ...grpc.CallOption) (*GroupAddReply, error)
 	DeleteGroup(ctx context.Context, in *GroupNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetGroups(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GroupList, error)
-	GetGroupID(ctx context.Context, in *GroupNameRequest, opts ...grpc.CallOption) (*GroupAddReply, error)
+	GetGroups(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GroupList, error)
+	GetAgentIdFromGroup(ctx context.Context, in *GetAgentFromGroupRequest, opts ...grpc.CallOption) (*GroupAgentIds, error)
 }
 
 type groupClient struct {
@@ -3434,7 +3822,7 @@ func (c *groupClient) DeleteGroup(ctx context.Context, in *GroupNameRequest, opt
 	return out, nil
 }
 
-func (c *groupClient) GetGroups(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*GroupList, error) {
+func (c *groupClient) GetGroups(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GroupList, error) {
 	out := new(GroupList)
 	err := c.cc.Invoke(ctx, "/Group/GetGroups", in, out, opts...)
 	if err != nil {
@@ -3443,9 +3831,9 @@ func (c *groupClient) GetGroups(ctx context.Context, in *EmptyRequest, opts ...g
 	return out, nil
 }
 
-func (c *groupClient) GetGroupID(ctx context.Context, in *GroupNameRequest, opts ...grpc.CallOption) (*GroupAddReply, error) {
-	out := new(GroupAddReply)
-	err := c.cc.Invoke(ctx, "/Group/GetGroupID", in, out, opts...)
+func (c *groupClient) GetAgentIdFromGroup(ctx context.Context, in *GetAgentFromGroupRequest, opts ...grpc.CallOption) (*GroupAgentIds, error) {
+	out := new(GroupAgentIds)
+	err := c.cc.Invoke(ctx, "/Group/GetAgentIdFromGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3456,8 +3844,8 @@ func (c *groupClient) GetGroupID(ctx context.Context, in *GroupNameRequest, opts
 type GroupServer interface {
 	AddGroup(context.Context, *GroupAddRequest) (*GroupAddReply, error)
 	DeleteGroup(context.Context, *GroupNameRequest) (*EmptyReply, error)
-	GetGroups(context.Context, *EmptyRequest) (*GroupList, error)
-	GetGroupID(context.Context, *GroupNameRequest) (*GroupAddReply, error)
+	GetGroups(context.Context, *GetGroupRequest) (*GroupList, error)
+	GetAgentIdFromGroup(context.Context, *GetAgentFromGroupRequest) (*GroupAgentIds, error)
 }
 
 // UnimplementedGroupServer can be embedded to have forward compatible implementations.
@@ -3470,11 +3858,11 @@ func (*UnimplementedGroupServer) AddGroup(ctx context.Context, req *GroupAddRequ
 func (*UnimplementedGroupServer) DeleteGroup(ctx context.Context, req *GroupNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
 }
-func (*UnimplementedGroupServer) GetGroups(ctx context.Context, req *EmptyRequest) (*GroupList, error) {
+func (*UnimplementedGroupServer) GetGroups(ctx context.Context, req *GetGroupRequest) (*GroupList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroups not implemented")
 }
-func (*UnimplementedGroupServer) GetGroupID(ctx context.Context, req *GroupNameRequest) (*GroupAddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupID not implemented")
+func (*UnimplementedGroupServer) GetAgentIdFromGroup(ctx context.Context, req *GetAgentFromGroupRequest) (*GroupAgentIds, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAgentIdFromGroup not implemented")
 }
 
 func RegisterGroupServer(s *grpc.Server, srv GroupServer) {
@@ -3518,7 +3906,7 @@ func _Group_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _Group_GetGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3530,25 +3918,25 @@ func _Group_GetGroups_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/Group/GetGroups",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServer).GetGroups(ctx, req.(*EmptyRequest))
+		return srv.(GroupServer).GetGroups(ctx, req.(*GetGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Group_GetGroupID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GroupNameRequest)
+func _Group_GetAgentIdFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAgentFromGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GroupServer).GetGroupID(ctx, in)
+		return srv.(GroupServer).GetAgentIdFromGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Group/GetGroupID",
+		FullMethod: "/Group/GetAgentIdFromGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GroupServer).GetGroupID(ctx, req.(*GroupNameRequest))
+		return srv.(GroupServer).GetAgentIdFromGroup(ctx, req.(*GetAgentFromGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3570,8 +3958,8 @@ var _Group_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Group_GetGroups_Handler,
 		},
 		{
-			MethodName: "GetGroupID",
-			Handler:    _Group_GetGroupID_Handler,
+			MethodName: "GetAgentIdFromGroup",
+			Handler:    _Group_GetAgentIdFromGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3584,9 +3972,8 @@ var _Group_serviceDesc = grpc.ServiceDesc{
 type ReleaseClient interface {
 	AddRelease(ctx context.Context, in *AddReleaseRequest, opts ...grpc.CallOption) (*ReleaseAddReply, error)
 	DeleteRelease(ctx context.Context, in *ReleaseNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetReleases(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ReleaseList, error)
-	GetReleaseID(ctx context.Context, in *ReleaseNameRequest, opts ...grpc.CallOption) (*ReleaseAddReply, error)
-	GetReleaseCode(ctx context.Context, in *ReleaseIdRequest, opts ...grpc.CallOption) (*ReleaseCodeList, error)
+	GetReleases(ctx context.Context, in *GetReleaseRequest, opts ...grpc.CallOption) (*ReleaseList, error)
+	GetReleaseCodes(ctx context.Context, in *GetReleaseCodeRequest, opts ...grpc.CallOption) (*ReleaseCodeList, error)
 }
 
 type releaseClient struct {
@@ -3615,7 +4002,7 @@ func (c *releaseClient) DeleteRelease(ctx context.Context, in *ReleaseNameReques
 	return out, nil
 }
 
-func (c *releaseClient) GetReleases(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ReleaseList, error) {
+func (c *releaseClient) GetReleases(ctx context.Context, in *GetReleaseRequest, opts ...grpc.CallOption) (*ReleaseList, error) {
 	out := new(ReleaseList)
 	err := c.cc.Invoke(ctx, "/Release/GetReleases", in, out, opts...)
 	if err != nil {
@@ -3624,18 +4011,9 @@ func (c *releaseClient) GetReleases(ctx context.Context, in *EmptyRequest, opts 
 	return out, nil
 }
 
-func (c *releaseClient) GetReleaseID(ctx context.Context, in *ReleaseNameRequest, opts ...grpc.CallOption) (*ReleaseAddReply, error) {
-	out := new(ReleaseAddReply)
-	err := c.cc.Invoke(ctx, "/Release/GetReleaseID", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *releaseClient) GetReleaseCode(ctx context.Context, in *ReleaseIdRequest, opts ...grpc.CallOption) (*ReleaseCodeList, error) {
+func (c *releaseClient) GetReleaseCodes(ctx context.Context, in *GetReleaseCodeRequest, opts ...grpc.CallOption) (*ReleaseCodeList, error) {
 	out := new(ReleaseCodeList)
-	err := c.cc.Invoke(ctx, "/Release/GetReleaseCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/Release/GetReleaseCodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3646,9 +4024,8 @@ func (c *releaseClient) GetReleaseCode(ctx context.Context, in *ReleaseIdRequest
 type ReleaseServer interface {
 	AddRelease(context.Context, *AddReleaseRequest) (*ReleaseAddReply, error)
 	DeleteRelease(context.Context, *ReleaseNameRequest) (*EmptyReply, error)
-	GetReleases(context.Context, *EmptyRequest) (*ReleaseList, error)
-	GetReleaseID(context.Context, *ReleaseNameRequest) (*ReleaseAddReply, error)
-	GetReleaseCode(context.Context, *ReleaseIdRequest) (*ReleaseCodeList, error)
+	GetReleases(context.Context, *GetReleaseRequest) (*ReleaseList, error)
+	GetReleaseCodes(context.Context, *GetReleaseCodeRequest) (*ReleaseCodeList, error)
 }
 
 // UnimplementedReleaseServer can be embedded to have forward compatible implementations.
@@ -3661,14 +4038,11 @@ func (*UnimplementedReleaseServer) AddRelease(ctx context.Context, req *AddRelea
 func (*UnimplementedReleaseServer) DeleteRelease(ctx context.Context, req *ReleaseNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRelease not implemented")
 }
-func (*UnimplementedReleaseServer) GetReleases(ctx context.Context, req *EmptyRequest) (*ReleaseList, error) {
+func (*UnimplementedReleaseServer) GetReleases(ctx context.Context, req *GetReleaseRequest) (*ReleaseList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReleases not implemented")
 }
-func (*UnimplementedReleaseServer) GetReleaseID(ctx context.Context, req *ReleaseNameRequest) (*ReleaseAddReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetReleaseID not implemented")
-}
-func (*UnimplementedReleaseServer) GetReleaseCode(ctx context.Context, req *ReleaseIdRequest) (*ReleaseCodeList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetReleaseCode not implemented")
+func (*UnimplementedReleaseServer) GetReleaseCodes(ctx context.Context, req *GetReleaseCodeRequest) (*ReleaseCodeList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReleaseCodes not implemented")
 }
 
 func RegisterReleaseServer(s *grpc.Server, srv ReleaseServer) {
@@ -3712,7 +4086,7 @@ func _Release_DeleteRelease_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Release_GetReleases_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetReleaseRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3724,43 +4098,25 @@ func _Release_GetReleases_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/Release/GetReleases",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReleaseServer).GetReleases(ctx, req.(*EmptyRequest))
+		return srv.(ReleaseServer).GetReleases(ctx, req.(*GetReleaseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Release_GetReleaseID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReleaseNameRequest)
+func _Release_GetReleaseCodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReleaseCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReleaseServer).GetReleaseID(ctx, in)
+		return srv.(ReleaseServer).GetReleaseCodes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/Release/GetReleaseID",
+		FullMethod: "/Release/GetReleaseCodes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReleaseServer).GetReleaseID(ctx, req.(*ReleaseNameRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Release_GetReleaseCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReleaseIdRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReleaseServer).GetReleaseCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Release/GetReleaseCode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReleaseServer).GetReleaseCode(ctx, req.(*ReleaseIdRequest))
+		return srv.(ReleaseServer).GetReleaseCodes(ctx, req.(*GetReleaseCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3782,12 +4138,8 @@ var _Release_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Release_GetReleases_Handler,
 		},
 		{
-			MethodName: "GetReleaseID",
-			Handler:    _Release_GetReleaseID_Handler,
-		},
-		{
-			MethodName: "GetReleaseCode",
-			Handler:    _Release_GetReleaseCode_Handler,
+			MethodName: "GetReleaseCodes",
+			Handler:    _Release_GetReleaseCodes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3798,7 +4150,7 @@ var _Release_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AgentClient interface {
-	GetAgents(ctx context.Context, in *AgentGetRequest, opts ...grpc.CallOption) (*AgentList, error)
+	GetAgents(ctx context.Context, in *GetAgentRequest, opts ...grpc.CallOption) (*AgentList, error)
 	SetAgentAlias(ctx context.Context, in *AgentAliasRequest, opts ...grpc.CallOption) (*EmptyReply, error)
 	OperateAgent(ctx context.Context, in *AgentRestartRequest, opts ...grpc.CallOption) (*EmptyReply, error)
 }
@@ -3811,7 +4163,7 @@ func NewAgentClient(cc *grpc.ClientConn) AgentClient {
 	return &agentClient{cc}
 }
 
-func (c *agentClient) GetAgents(ctx context.Context, in *AgentGetRequest, opts ...grpc.CallOption) (*AgentList, error) {
+func (c *agentClient) GetAgents(ctx context.Context, in *GetAgentRequest, opts ...grpc.CallOption) (*AgentList, error) {
 	out := new(AgentList)
 	err := c.cc.Invoke(ctx, "/Agent/GetAgents", in, out, opts...)
 	if err != nil {
@@ -3840,7 +4192,7 @@ func (c *agentClient) OperateAgent(ctx context.Context, in *AgentRestartRequest,
 
 // AgentServer is the server API for Agent service.
 type AgentServer interface {
-	GetAgents(context.Context, *AgentGetRequest) (*AgentList, error)
+	GetAgents(context.Context, *GetAgentRequest) (*AgentList, error)
 	SetAgentAlias(context.Context, *AgentAliasRequest) (*EmptyReply, error)
 	OperateAgent(context.Context, *AgentRestartRequest) (*EmptyReply, error)
 }
@@ -3849,7 +4201,7 @@ type AgentServer interface {
 type UnimplementedAgentServer struct {
 }
 
-func (*UnimplementedAgentServer) GetAgents(ctx context.Context, req *AgentGetRequest) (*AgentList, error) {
+func (*UnimplementedAgentServer) GetAgents(ctx context.Context, req *GetAgentRequest) (*AgentList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAgents not implemented")
 }
 func (*UnimplementedAgentServer) SetAgentAlias(ctx context.Context, req *AgentAliasRequest) (*EmptyReply, error) {
@@ -3864,7 +4216,7 @@ func RegisterAgentServer(s *grpc.Server, srv AgentServer) {
 }
 
 func _Agent_GetAgents_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AgentGetRequest)
+	in := new(GetAgentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -3876,7 +4228,7 @@ func _Agent_GetAgents_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/Agent/GetAgents",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AgentServer).GetAgents(ctx, req.(*AgentGetRequest))
+		return srv.(AgentServer).GetAgents(ctx, req.(*GetAgentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4124,7 +4476,7 @@ var _Service_serviceDesc = grpc.ServiceDesc{
 type TaskClient interface {
 	AddTask(ctx context.Context, in *TaskAddRequest, opts ...grpc.CallOption) (*TaskAddReply, error)
 	DeleteTask(ctx context.Context, in *TaksNameRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	GetTasks(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*TaskList, error)
+	GetTasks(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*TaskList, error)
 	SetTaskDetails(ctx context.Context, in *TaskDetailsRequst, opts ...grpc.CallOption) (*EmptyReply, error)
 	GetTaskExecutions(ctx context.Context, in *TaskIdRequest, opts ...grpc.CallOption) (*ExecutionList, error)
 	PublishTask(ctx context.Context, in *TaskIdRequest, opts ...grpc.CallOption) (*ExecutionList, error)
@@ -4156,7 +4508,7 @@ func (c *taskClient) DeleteTask(ctx context.Context, in *TaksNameRequest, opts .
 	return out, nil
 }
 
-func (c *taskClient) GetTasks(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*TaskList, error) {
+func (c *taskClient) GetTasks(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*TaskList, error) {
 	out := new(TaskList)
 	err := c.cc.Invoke(ctx, "/task/GetTasks", in, out, opts...)
 	if err != nil {
@@ -4196,7 +4548,7 @@ func (c *taskClient) PublishTask(ctx context.Context, in *TaskIdRequest, opts ..
 type TaskServer interface {
 	AddTask(context.Context, *TaskAddRequest) (*TaskAddReply, error)
 	DeleteTask(context.Context, *TaksNameRequest) (*EmptyReply, error)
-	GetTasks(context.Context, *EmptyRequest) (*TaskList, error)
+	GetTasks(context.Context, *GetTaskRequest) (*TaskList, error)
 	SetTaskDetails(context.Context, *TaskDetailsRequst) (*EmptyReply, error)
 	GetTaskExecutions(context.Context, *TaskIdRequest) (*ExecutionList, error)
 	PublishTask(context.Context, *TaskIdRequest) (*ExecutionList, error)
@@ -4212,7 +4564,7 @@ func (*UnimplementedTaskServer) AddTask(ctx context.Context, req *TaskAddRequest
 func (*UnimplementedTaskServer) DeleteTask(ctx context.Context, req *TaksNameRequest) (*EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTask not implemented")
 }
-func (*UnimplementedTaskServer) GetTasks(ctx context.Context, req *EmptyRequest) (*TaskList, error) {
+func (*UnimplementedTaskServer) GetTasks(ctx context.Context, req *GetTaskRequest) (*TaskList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTasks not implemented")
 }
 func (*UnimplementedTaskServer) SetTaskDetails(ctx context.Context, req *TaskDetailsRequst) (*EmptyReply, error) {
@@ -4266,7 +4618,7 @@ func _Task_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _Task_GetTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(GetTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -4278,7 +4630,7 @@ func _Task_GetTasks_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/task/GetTasks",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TaskServer).GetTasks(ctx, req.(*EmptyRequest))
+		return srv.(TaskServer).GetTasks(ctx, req.(*GetTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

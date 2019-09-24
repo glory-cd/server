@@ -12,6 +12,9 @@ import (
 	"github.com/glory-cd/server/comm"
 	pb "github.com/glory-cd/server/idlentity"
 	"github.com/glory-cd/utils/log"
+	"github.com/tredoe/osutil/user/crypt/sha512_crypt"
+	_ "github.com/tredoe/osutil/user/crypt/sha512_crypt"
+	"math/rand"
 )
 
 func GetMd5String(str string) string {
@@ -20,12 +23,28 @@ func GetMd5String(str string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func GenerateRandSalt(n int) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+func HashOsUser(ospass string) (string, error) {
+	c := sha512_crypt.New()
+	salt := "$6$" + GenerateRandSalt(12) + "$"
+	hash, err := c.Generate([]byte(ospass), []byte(salt))
+	return hash, err
+}
+
 type Service struct{}
 
 func (s *Service) AddService(ctx context.Context, in *pb.ServiceAddRequest) (*pb.ServiceAddReply, error) {
 	// 校验部分参数
 	if in.Name == "" || in.Dir == "" || in.Osuser == "" || in.Agentid == "" || in.Startcmd == "" {
-		return &pb.ServiceAddReply{}, errors.New("参数错误: 不能为空的字段为空")
+		return &pb.ServiceAddReply{}, errors.New("[Service] Parameter error, field that cannot be empty is empty")
 	}
 	serviceObj := comm.Service{Name: in.Name,
 		Dir:          in.Dir,
@@ -38,54 +57,64 @@ func (s *Service) AddService(ctx context.Context, in *pb.ServiceAddRequest) (*pb
 		AgentID:      in.Agentid,
 		GroupID:      int(in.Groupid)}
 	serviceObj.ID = GetMd5String(in.Agentid + in.Dir)
-
-	if err := comm.CreateRecord(&serviceObj); err != nil {
-		log.Slogger.Errorf("[Service] 添加服务[%s]失败: %s", in.Name, err.Error())
+	hashpass, err := HashOsUser(in.Ospass)
+	if err != nil {
 		return &pb.ServiceAddReply{}, err
 	}
 
-	log.Slogger.Infof("[Service] 添加服务[%s]成功", in.Name)
+	serviceObj.OsPass = hashpass
+
+	if err := comm.CreateRecord(&serviceObj); err != nil {
+		log.Slogger.Errorf("[Service] add [%s] failed. %s", in.Name, err.Error())
+		return &pb.ServiceAddReply{}, err
+	}
+
+	log.Slogger.Infof("[Service] add [%s] successful.", in.Name)
 	return &pb.ServiceAddReply{Serviceid: serviceObj.ID}, nil
 }
 
 func (s *Service) DeleteService(ctx context.Context, in *pb.ServiceDeleteRequest) (*pb.EmptyReply, error) {
 	serviceObj := comm.Service{ID: in.Id}
 	if comm.CheckRecordWithStringID(in.Id, &serviceObj) {
-		log.Slogger.Errorf("[Service] 删除服务[%s]失败: 不存在,无法删除", in.Id)
-		return &pb.EmptyReply{}, errors.New("服务不存在，无法删除")
+		log.Slogger.Errorf("[Service] delete [%s] failed. not-exist", in.Id)
+		return &pb.EmptyReply{}, errors.New("service not exist.")
 
 	}
 	err := comm.DeleteRecord(&serviceObj)
 	if err != nil {
-		log.Slogger.Errorf("[Service] 删除服务[%s]失败: %s", serviceObj.Name, err)
+		log.Slogger.Errorf("[Service] delete [%s] failed. %s", serviceObj.Name, err)
 		return &pb.EmptyReply{}, err
 	}
-	log.Slogger.Infof("[Release] 删除服务[%s]成功", serviceObj.Name)
+	log.Slogger.Infof("[Release] delete [%s] successful.", serviceObj.Name)
 	return &pb.EmptyReply{}, nil
 }
 
 func (s *Service) GetServices(ctx context.Context, in *pb.ServiceRequest) (*pb.ServiceList, error) {
 	var services []comm.Service
 	var rservices pb.ServiceList
-	queryCmd := comm.DB
+	queryCmd := comm.DB.Preload("Agent").Preload("Group")
 
 	if in.Serviceids != nil {
-		queryCmd = queryCmd.Where("id in (?)", in.Groupids)
+		queryCmd = queryCmd.Where("id in (?)", in.Serviceids)
 	}
 
-	if in.Groupids != nil {
-		queryCmd = queryCmd.Where("group_id in (?)", in.Groupids)
-	}
-
-	if in.Agentids != nil {
-		queryCmd = queryCmd.Where("agent_id in (?)", in.Agentids)
+	if in.Servicenames != nil {
+		queryCmd = queryCmd.Where("name in (?)", in.Servicenames)
 	}
 
 	if in.Moudlenames != nil {
 		queryCmd = queryCmd.Where("moudle_name in (?)", in.Moudlenames)
 	}
 
-	if err := queryCmd.Preload("Agent").Preload("Group").Find(&services).Error; err != nil {
+	if in.Groupnames != nil {
+		queryCmd = queryCmd.Joins("JOIN cdp_groups ON cdp_groups.id = cdp_services.group_id AND cdp_groups.name in (?)", in.Groupnames)
+	}
+
+	if in.Agentids != nil {
+		queryCmd = queryCmd.Joins("JOIN cdp_agents ON cdp_agents.id = cdp_services.agent_id AND cdp_agents.id in (?)", in.Agentids)
+	}
+
+	if err := queryCmd.Find(&services).Error; err != nil {
 		return &rservices, err
 	}
 
@@ -114,7 +143,7 @@ func (s *Service) ChangeServiceOwn(ctx context.Context, in *pb.ServiceChangeOwnR
 	groupid := in.Groupid
 
 	if comm.DB.First(&service).RecordNotFound() {
-		return &pb.EmptyReply{}, errors.New("服务不存在")
+		return &pb.EmptyReply{}, errors.New("service not-exist.")
 	}
 
 	var err error
@@ -126,7 +155,7 @@ func (s *Service) ChangeServiceOwn(ctx context.Context, in *pb.ServiceChangeOwnR
 	} else if agentid == "" && groupid != 0 {
 		err = updateCMD.Update("group_id", groupid).Error
 	} else {
-		return &pb.EmptyReply{}, errors.New("参数错误")
+		return &pb.EmptyReply{}, errors.New("parameter error")
 	}
 
 	if err != nil {

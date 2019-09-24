@@ -13,7 +13,7 @@ import (
 	"github.com/glory-cd/utils/log"
 )
 
-const rpcPort = ":50051"
+const rpcPort = "localhost:50051"
 
 func InitRpcServer() {
 	lis, err := net.Listen("tcp", rpcPort)

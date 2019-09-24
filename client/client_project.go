@@ -30,50 +30,66 @@ func (c *CDPClient) DeleteProject(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetProjects() (*[]Project, error) {
+func (c *CDPClient) GetProjects(opts ...QueryOption) (ProjectSlice, error) {
+	proQueryOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&proQueryOption)
+	}
 	pc := c.newProjectClient()
 	ctx := context.TODO()
 	var projects []Project
-	prolist, err := pc.GetProjects(ctx, &pb.EmptyRequest{})
+	prolist, err := pc.GetProjects(ctx, &pb.GetProRequest{Ids:proQueryOption.Ids,Names:proQueryOption.Names})
 	if err != nil {
-		return &projects, err
+		return projects, err
 	}
 
-	for _, org := range prolist.Pros {
-		projects = append(projects, Project{ID: org.Id, Name: org.Name, CreatTime: org.Ctime})
+	for _, pro := range prolist.Pros {
+		projects = append(projects, Project{ID: pro.Id, Name: pro.Name, CreatTime: pro.Ctime})
 	}
-	return &projects, nil
+	return projects, nil
 }
 
-/*
-根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
-当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
-example:
-        1. cdpclient.GetOrganizationID()
-        2. cdpclient.GetOrganizationID("org2")
-        3. cdpclient.GetOrganizationID("org3","org2")
-*/
-func (c *CDPClient) GetProjectID(proName ...string) (map[string]int32, error) {
-	proNameId := make(map[string]int32)
-	oc := c.newProjectClient()
+func (c *CDPClient) GetAllProjects() (ProjectSlice, error) {
+	pc := c.newProjectClient()
 	ctx := context.TODO()
-	if len(proName) == 0 {
-		res, err := oc.GetProjects(ctx, &pb.EmptyRequest{})
-		if err != nil {
-			return proNameId, err
-		}
-		for _, r := range res.Pros {
-			proNameId[r.Name] = r.Id
-		}
-
-	} else {
-		for _, ename := range proName {
-			res, err := oc.GetProjectID(ctx, &pb.ProjectNameRequest{Name: ename})
-			if err != nil {
-				return proNameId, err
-			}
-			proNameId[ename] = res.Proid
-		}
+	var projects []Project
+	prolist, err := pc.GetProjects(ctx, &pb.GetProRequest{})
+	if err != nil {
+		return projects, err
 	}
-	return proNameId, nil
+
+	for _, pro := range prolist.Pros {
+		projects = append(projects, Project{ID: pro.Id, Name: pro.Name, CreatTime: pro.Ctime})
+	}
+	return projects, nil
+}
+
+func (c *CDPClient) GetProjectsFromNames(names []string) (ProjectSlice, error) {
+	pc := c.newProjectClient()
+	ctx := context.TODO()
+	var projects []Project
+	prolist, err := pc.GetProjects(ctx, &pb.GetProRequest{Names: names})
+	if err != nil {
+		return projects, err
+	}
+
+	for _, pro := range prolist.Pros {
+		projects = append(projects, Project{ID: pro.Id, Name: pro.Name, CreatTime: pro.Ctime})
+	}
+	return projects, nil
+}
+
+func (c *CDPClient) GetProjectsFromIDs(ids []int32) (ProjectSlice, error) {
+	pc := c.newProjectClient()
+	ctx := context.TODO()
+	var projects []Project
+	prolist, err := pc.GetProjects(ctx, &pb.GetProRequest{Ids: ids})
+	if err != nil {
+		return projects, err
+	}
+
+	for _, pro := range prolist.Pros {
+		projects = append(projects, Project{ID: pro.Id, Name: pro.Name, CreatTime: pro.Ctime})
+	}
+	return projects, nil
 }

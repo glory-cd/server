@@ -8,10 +8,10 @@ import (
 	"encoding/json"
 	"github.com/glory-cd/server/comm"
 	pb "github.com/glory-cd/server/idlentity"
+	"github.com/glory-cd/utils/log"
 	"strings"
 	"sync"
 	"time"
-	"github.com/glory-cd/utils/log"
 )
 
 const (
@@ -27,6 +27,7 @@ type CMD struct {
 	ServiceOp            int      `json:"serviceop"`
 	ServiceName          string   `json:"servicename"`
 	ServiceOsUser        string   `json:"serviceosuser"`
+	ServiceOsPass        string   `json:"serviceospass"`
 	ServiceModuleName    string   `json:"servicemodulename"`
 	ServiceDir           string   `json:"servicedir"`
 	ServiceRemoteCode    string   `json:"serviceremotecode"`
@@ -83,16 +84,16 @@ func getExecutions(task *comm.Task, rrei interface{}) ([]map[string]interface{},
 		var releasecode comm.ReleaseCode
 		comm.DB.Preload("Release").Where("release_id = ?", e.Task.ReleaseID).Where("name = ?", e.Service.ModuleName).Find(&releasecode)
 		tmp := CMD{TaskId: e.TaskID,
-			ExecutionId:        e.ID,
-			ServiceId:          e.ServiceID,
-			ServiceOp:          e.Operation,
-			ServiceName:        e.Service.Name,
-			ServiceOsUser:      e.Service.OsUser,
-			ServiceModuleName:  e.Service.ModuleName,
-			ServiceDir:         e.Service.Dir,
-			ServiceRemoteCode:  releasecode.RelativePath,
-			ServiceCodePattern: strings.Split(e.Service.CodePatterns, ";"),
-			//ServiceCustomPattern: strings.Split(e.CustomUpgradePattern, ";"),
+			ExecutionId:          e.ID,
+			ServiceId:            e.ServiceID,
+			ServiceOp:            e.Operation,
+			ServiceName:          e.Service.Name,
+			ServiceOsUser:        e.Service.OsUser,
+			ServiceOsPass:        e.Service.OsPass,
+			ServiceModuleName:    e.Service.ModuleName,
+			ServiceDir:           e.Service.Dir,
+			ServiceRemoteCode:    releasecode.RelativePath,
+			ServiceCodePattern:   strings.Split(e.Service.CodePatterns, ";"),
 			ServiceCustomPattern: nil,
 			ServicePidfile:       e.Service.Pidfile,
 			ServiceStartCmd:      e.Service.StartCMD,
@@ -125,17 +126,17 @@ func publishExecutionCMD(ecmdList []map[string]interface{}, rre *pb.ExecutionLis
 		}
 		err = comm.PublishCMD(c, string(ebyte))
 		if err != nil {
-			log.Slogger.Errorf("[PublishTask] publish切片失败:[%s]=>[%s]", e, err)
+			log.Slogger.Errorf("[PublishTask] publish task execution failed. [%s]=>[%s]", e, err)
 			prl = append(prl, map[int]error{eid: err})
 			for _, r := range rre.Executions {
 				if int32(eid) == r.Id {
 					r.Rcode = 0
-					r.Rmsg = "publish任务切片失败.Error:" + err.Error()
+					r.Rmsg = "publish task execution failed. " + err.Error()
 					continue
 				}
 			}
 		} else {
-			log.Slogger.Infof("[PublishTask] publish切片成功:[%d]=>[%s]", e.ExecutionId, string(ebyte))
+			log.Slogger.Infof("[PublishTask] publish task execution successful. [%d]=>[%s]", e.ExecutionId, string(ebyte))
 		}
 	}
 	return
@@ -143,7 +144,7 @@ func publishExecutionCMD(ecmdList []map[string]interface{}, rre *pb.ExecutionLis
 
 func collectResult(resultChannel chan string, publishSuccessLen int) []string {
 	//
-	log.Slogger.Infof("[PublishTask] 启动收集任务结果goroutine")
+	log.Slogger.Infof("[PublishTask] start task results collection goroutine....")
 	// 收集任务结果
 	cmdResult := make([]string, publishSuccessLen)
 	wg := sync.WaitGroup{}
@@ -155,7 +156,7 @@ func collectResult(resultChannel chan string, publishSuccessLen int) []string {
 		}(i)
 	}
 	wg.Wait()
-	log.Slogger.Infof("[PublishTask] 结束收集任务结果goroutine")
+	log.Slogger.Infof("[PublishTask] Closing task results collection goroutine")
 	return cmdResult
 }
 

@@ -29,11 +29,17 @@ message OrganizationList {
     repeated OrganizationInfo orgs = 1;
 }
 
+// 获取组织信息请求
+message GetOrgRequest {
+    repeated string Names = 1;
+    repeated int32 ids = 2;
+}
+
+
 service Organization {
     rpc AddOrganization (OrgNameRequest) returns (OrgAddReply) {}
     rpc DeleteOrganization (OrgNameRequest) returns (EmptyReply) {}
-    rpc GetOrganizations (EmptyRequest) returns (OrganizationList) {}
-    rpc GetOrganizationID (OrgNameRequest) returns (OrgAddReply){}
+    rpc GetOrganizations (GetOrgRequest) returns (OrganizationList) {}
 }
 //----------------------------project--------------------------------
 message ProjectNameRequest{
@@ -54,11 +60,17 @@ message ProjectList {
     repeated ProjectInfo pros = 1;
 }
 
+// 获取项目信息请求
+message GetProRequest {
+    repeated string Names = 1;
+    repeated int32 ids = 2;
+}
+
 service Project {
     rpc AddProject (ProjectNameRequest) returns (ProjectAddReply) {}
     rpc DeleteProject (ProjectNameRequest) returns (EmptyReply) {}
-    rpc GetProjects (EmptyRequest) returns (ProjectList) {}
-    rpc GetProjectID(ProjectNameRequest) returns (ProjectAddReply) {}
+    rpc GetProjects (GetProRequest) returns (ProjectList) {}
+//    rpc GetProjectID(ProjectNameRequest) returns (ProjectAddReply) {}
 }
 //---------------------------------env-------------------------------------
 message EnvNameRequest{
@@ -78,11 +90,16 @@ message EnvironmentList {
     repeated EnvironmentInfo envs = 1;
 }
 
+// 获取环境信息请求
+message GetEnvRequest {
+    repeated string Names = 1;
+    repeated int32 ids = 2;
+}
+
 service Environment {
     rpc AddEnvironment (EnvNameRequest) returns (EnvAddReply) {}
     rpc DeleteEnvironment (EnvNameRequest) returns (EmptyReply) {}
-    rpc GetEnvironments (EmptyRequest) returns (EnvironmentList) {}
-    rpc GetEnvironmentID(EnvNameRequest) returns (EnvAddReply) {}
+    rpc GetEnvironments (GetEnvRequest) returns (EnvironmentList) {}
 }
 
 //----------------------------group--------------------------------
@@ -114,11 +131,30 @@ message GroupList {
     repeated GroupInfo groups = 1;
 }
 
+// 获取分组信息请求
+message GetGroupRequest {
+    repeated string Names = 1;
+    repeated int32 Ids = 2;
+    repeated string Orgs = 3;
+    repeated string Envs = 4;
+    repeated string Pros = 5;
+}
+
+// 根据group名称获取agentid请求
+message GetAgentFromGroupRequest{
+    repeated int32 gids = 1;
+}
+// 根据group名称获取agentid响应
+message GroupAgentIds{
+    repeated string agentid = 1;
+}
+
+
 service Group {
     rpc AddGroup (GroupAddRequest) returns (GroupAddReply) {}
     rpc DeleteGroup (GroupNameRequest) returns (EmptyReply) {}
-    rpc GetGroups (EmptyRequest) returns (GroupList) {}
-    rpc GetGroupID (GroupNameRequest) returns (GroupAddReply){}
+    rpc GetGroups (GetGroupRequest) returns (GroupList) {}
+    rpc GetAgentIdFromGroup (GetAgentFromGroupRequest) returns (GroupAgentIds){}
 }
 
 //-----------------------------release--------------------------
@@ -134,13 +170,21 @@ message ReleaseAddReply{
     int32 releaseid = 1;
 }
 
-// 发布代码
+// 发布代码,添加发布时使用
 message ReleaseCode {
     string name = 1;
     string relativepath = 2;
+
 }
 
-// 添加发布
+// 查询发布返回结果使用
+message QueryReleaseCode{
+    ReleaseCode rc = 1;
+    int32 id = 3;    // 查询用
+    int32 releaseid = 4; // 查询用
+}
+
+// 添加发布请求
 message AddReleaseRequest {
     string name = 1; // 发布名称
     string version = 2; // 发布版本
@@ -149,7 +193,15 @@ message AddReleaseRequest {
     repeated ReleaseCode releasecodes = 5; // 发布代码
 }
 
-// 发布列表
+// 获取发布请求
+message GetReleaseRequest {
+    repeated int32 Ids = 1;
+    repeated string Names = 2;
+    repeated string Orgs = 3;
+    repeated string Pros = 4;
+}
+
+// 发布响应
 message ReleaseList {
     message ReleaseInfo {
         int32 id = 1;
@@ -157,25 +209,26 @@ message ReleaseList {
         string version = 3;
         string orgname = 4;
         string proname = 5;
+        repeated QueryReleaseCode rcs = 6;
     }
     repeated ReleaseInfo releases = 1;
 }
 
-// 发布代码列表
+// 查询发布代码请求
+message GetReleaseCodeRequest{
+    repeated int32 releaseids = 1;
+}
+
+// 查询发布代码响应
 message ReleaseCodeList{
-    message ReleaseCodeInfo{
-        int32 id = 1;
-        string name = 2;
-    }
-    repeated ReleaseCodeInfo releasecodes = 1;
+    repeated QueryReleaseCode rcs = 1;
 }
 
 service Release {
     rpc AddRelease (AddReleaseRequest) returns (ReleaseAddReply) {}
     rpc DeleteRelease (ReleaseNameRequest) returns (EmptyReply) {}
-    rpc GetReleases(EmptyRequest) returns(ReleaseList){}
-    rpc GetReleaseID (ReleaseNameRequest) returns (ReleaseAddReply){}
-    rpc GetReleaseCode (ReleaseIdRequest) returns(ReleaseCodeList){}
+    rpc GetReleases(GetReleaseRequest) returns(ReleaseList){}
+    rpc GetReleaseCodes(GetReleaseCodeRequest) returns(ReleaseCodeList){}
 }
 
 //-------------------------------------Agent------------------------
@@ -204,19 +257,14 @@ message AgentAliasRequest{
     string alias = 2;
 }
 
-message AgentGetRequest {
-    enum AgentClassify {
-        none = 0;    //;
-        online = 1;  //上线
-        offline = 2; //下线
-        all = 3;     //所有
-    }
-    AgentClassify ac = 1;
-    int32 groupid = 2; //groupid
+message GetAgentRequest {
+    int32  agentstatus = 1;
+    repeated string id = 2;
+    repeated string name = 3;
 }
 
 service Agent {
-    rpc GetAgents(AgentGetRequest) returns (AgentList){}
+    rpc GetAgents(GetAgentRequest) returns (AgentList){}
     rpc SetAgentAlias (AgentAliasRequest) returns (EmptyReply){}
     rpc OperateAgent (AgentRestartRequest) returns (EmptyReply) {}
 }
@@ -228,7 +276,8 @@ message ServiceAddRequest {
     string dir = 2;
     string moudlename = 3;
     string osuser = 4;
-    string codepattern = 5;
+    string ospass = 5;
+    string codepattern = 6;
     string pidfile = 7;
     string startcmd = 8;
     string stopcmd = 9;
@@ -247,10 +296,11 @@ message ServiceDeleteRequest {
 
 // 查询服务请求
 message ServiceRequest {
-    repeated int32 groupids = 1;
+    repeated string groupnames = 1;
     repeated string agentids = 2;
     repeated string moudlenames = 3;
     repeated string serviceids = 4;
+    repeated string servicenames = 5;
 }
 
 // 查询服务结果响应
@@ -296,19 +346,28 @@ message TaskIdRequest{
     int32 id = 1;
 }
 
-//添加任务
+//添加任务请求
 message TaskAddRequest {
     string name = 1;
     int32 groupid = 2;
     int32 releaseid = 3;
 }
 
+//添加任务响应
 message TaskAddReply{
     int32 taskid = 1;
 }
 
+// 获取任务请求
+message GetTaskRequest{
+    repeated int32 id = 1;
+    repeated string name = 2;
+    repeated string group = 3;
+    repeated string release = 4;
 
+}
 
+// 任务列表
 message TaskList {
     message TaskInfo {
         int32 id = 1;
@@ -358,7 +417,7 @@ message TaskString {
 service task {
     rpc AddTask (TaskAddRequest) returns (TaskAddReply) {}
     rpc DeleteTask (TaksNameRequest) returns (EmptyReply) {}
-    rpc GetTasks (EmptyRequest) returns (TaskList) {}
+    rpc GetTasks (GetTaskRequest) returns (TaskList) {}
     rpc SetTaskDetails (TaskDetailsRequst) returns (EmptyReply) {}
     rpc GetTaskExecutions (TaskIdRequest) returns (ExecutionList) {}
     rpc PublishTask (TaskIdRequest) returns (ExecutionList) {}

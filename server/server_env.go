@@ -17,10 +17,10 @@ type Env struct{}
 func (e *Env) AddEnvironment(ctx context.Context, in *pb.EnvNameRequest) (*pb.EnvAddReply, error) {
 	envObj := comm.Environment{Name: in.Name}
 	if err := comm.CreateRecord(&envObj); err != nil {
-		log.Slogger.Errorf("[Environment] 添加环境失败: %s", err.Error())
+		log.Slogger.Errorf("[Environment] add [%s] failed. %s", in.Name,err.Error())
 		return &pb.EnvAddReply{}, err
 	} else {
-		log.Slogger.Infof("[Environment] 添加环境[%s]成功", envObj.Name)
+		log.Slogger.Infof("[Environment] add [%s] failed.", envObj.Name)
 		return &pb.EnvAddReply{Envid: int32(envObj.ID)}, err
 	}
 }
@@ -28,23 +28,34 @@ func (e *Env) AddEnvironment(ctx context.Context, in *pb.EnvNameRequest) (*pb.En
 func (e *Env) DeleteEnvironment(ctx context.Context, in *pb.EnvNameRequest) (*pb.EmptyReply, error) {
 	envObj := comm.Environment{Name: in.Name}
 	if comm.CheckRecordWithName(in.Name, &envObj) {
-		log.Slogger.Errorf("[Environment] 删除环境[%s]失败: 不存在,无法删除", in.Name)
-		return &pb.EmptyReply{}, errors.New("环境不存在，无法删除")
+		log.Slogger.Errorf("[Environment] delete [%s] failed. not-exist", in.Name)
+		return &pb.EmptyReply{}, errors.New("env not-exist")
 
 	}
 	err := comm.DeleteRecord(&envObj)
 	if err != nil {
-		log.Slogger.Errorf("[Environment] 删除环境[%s]失败: %s", in.Name, err)
+		log.Slogger.Errorf("[Environment] delete [%s] failed. %s", in.Name, err)
 		return &pb.EmptyReply{}, err
 	}
 
-	log.Slogger.Infof("[Environment] 删除环境[%s]成功", in.Name)
+	log.Slogger.Infof("[Environment] delete [%s] successful.", in.Name)
 	return &pb.EmptyReply{}, nil
 }
 
-func (e *Env) GetEnvironments(ctx context.Context, in *pb.EmptyRequest) (*pb.EnvironmentList, error) {
+func (o *Env) GetEnvironments(ctx context.Context, in *pb.GetEnvRequest) (*pb.EnvironmentList, error) {
 	var envs []comm.Environment
-	if err := comm.DB.Find(&envs).Error; err != nil {
+	queryCmd := comm.DB
+
+	if in.Names != nil {
+		queryCmd = queryCmd.Where("name in (?)", in.Names)
+	}
+
+	if in.Ids != nil {
+		queryCmd = queryCmd.Where("id in (?)", in.Ids)
+	}
+
+	if err := queryCmd.Find(&envs).Error; err != nil {
+		log.Slogger.Errorf("[Environment] query error: %v", err)
 		return nil, err
 	}
 
@@ -52,14 +63,5 @@ func (e *Env) GetEnvironments(ctx context.Context, in *pb.EmptyRequest) (*pb.Env
 	for _, env := range envs {
 		renvs.Envs = append(renvs.Envs, &pb.EnvironmentList_EnvironmentInfo{Id: int32(env.ID), Name: env.Name, Ctime: env.CreatedAt.String()})
 	}
-
 	return &renvs, nil
-}
-// 根据环境称获取ID
-func (o *Env) GetEnvironmentID(ctx context.Context, in *pb.EnvNameRequest) (*pb.EnvAddReply, error) {
-	var env comm.Environment
-	if err := comm.DB.Where("name=?", in.Name).Find(&env).Error; err != nil {
-		return nil, err
-	}
-	return &pb.EnvAddReply{Envid: int32(env.ID)}, nil
 }

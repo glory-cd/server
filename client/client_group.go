@@ -10,76 +10,37 @@ import (
 	pb "github.com/glory-cd/server/idlentity"
 )
 
-type groupOption struct {
-	OrgName string
-	ProName string
-	EnvName string
-}
-
-type GroupOption interface {
-	apply(*groupOption)
-}
-
-type funcOptionGroup struct {
-	f func(*groupOption)
-}
-
-func (fdo *funcOptionGroup) apply(do *groupOption) {
-	fdo.f(do)
-}
-
-func newFuncOptionGroup(f func(*groupOption)) *funcOptionGroup {
-	return &funcOptionGroup{f: f}
-}
-
-func WithOrg(name string) GroupOption {
-	return newFuncOptionGroup(func(o *groupOption) { o.OrgName = name })
-}
-
-func WithPro(name string) GroupOption {
-	return newFuncOptionGroup(func(o *groupOption) { o.ProName = name })
-}
-
-func WithEnv(name string) GroupOption {
-	return newFuncOptionGroup(func(o *groupOption) { o.EnvName = name})
-}
-
-//默认参数
-func defaultOptionGroup() groupOption {
-	return groupOption{}
-}
-
 // 添加组织，返回组织ID和错误信息
-func (c *CDPClient) AddGroup(name string, opts ...GroupOption) (int32, error) {
-	groupOption := defaultOptionGroup()
+func (c *CDPClient) AddGroup(name string, opts ...AddOption) (int32, error) {
+	groupOption := defaultAddOption()
 	for _, opt := range opts {
 		opt.apply(&groupOption)
 	}
 	gc := c.newGroupClient()
 	ctx := context.TODO()
 	attr := pb.GroupAddRequest{Name: name}
-	if groupOption.OrgName != ""{
-		gidMap,err := c.GetOrganizationID(groupOption.OrgName)
-		if err != nil{
-			return 0,errors.New("获取组织ID错误: " + err.Error())
+	if groupOption.OrgName != "" {
+		orgs, err := c.GetOrganizationsFromNames([]string{groupOption.OrgName})
+		if err != nil {
+			return 0, errors.New("get Org ID err: " + err.Error())
 		}
-		attr.Orgid = gidMap[groupOption.OrgName]
+		attr.Orgid = orgs.GetID()
 	}
 
-	if groupOption.EnvName != ""{
-		eidMap,err := c.GetEnvironmentID(groupOption.EnvName)
-		if err != nil{
-			return 0,errors.New("获取环境ID错误: " + err.Error())
+	if groupOption.EnvName != "" {
+		envs, err := c.GetEnvironmentsFromNames([]string{groupOption.EnvName})
+		if err != nil {
+			return 0, errors.New("get env ID err: " + err.Error())
 		}
-		attr.Envid = eidMap[groupOption.EnvName]
+		attr.Envid = envs.GetID()
 	}
 
-	if groupOption.ProName != ""{
-		pidMap,err := c.GetProjectID(groupOption.ProName)
-		if err != nil{
-			return 0,errors.New("获取项目ID错误: " + err.Error())
+	if groupOption.ProName != "" {
+		pros, err := c.GetProjectsFromNames([]string{groupOption.ProName})
+		if err != nil {
+			return 0, errors.New("get pro ID err: " + err.Error())
 		}
-		attr.Proid = pidMap[groupOption.ProName]
+		attr.Proid = pros.GetID()
 	}
 
 	res, err := gc.AddGroup(ctx, &attr)
@@ -89,6 +50,7 @@ func (c *CDPClient) AddGroup(name string, opts ...GroupOption) (int32, error) {
 	return res.Groupid, err
 }
 
+// delete group
 func (c *CDPClient) DeleteGroup(name string) error {
 	gc := c.newGroupClient()
 	ctx := context.TODO()
@@ -99,49 +61,38 @@ func (c *CDPClient) DeleteGroup(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetGroups() ([]Group, error) {
+// query group
+func (c *CDPClient) GetGroups(opts ...QueryOption) (GroupSlice, error) {
+	queryGroupOption := defaultQueryOption()
+	for _, opt := range opts {
+		opt.apply(&queryGroupOption)
+	}
+
 	gc := c.newGroupClient()
 	ctx := context.TODO()
-	var groups []Group
-	grouplist, err := gc.GetGroups(ctx, &pb.EmptyRequest{})
+	var groups GroupSlice
+	grouplist, err := gc.GetGroups(ctx, &pb.GetGroupRequest{Ids: queryGroupOption.Ids,
+		Names: queryGroupOption.Names,
+		Orgs:  queryGroupOption.OrgNames,
+		Envs:  queryGroupOption.EnvNames,
+		Pros:  queryGroupOption.ProNames})
 	if err != nil {
 		return groups, err
 	}
-	for _, org := range grouplist.Groups {
-		groups = append(groups, Group{ID: org.Id, Name: org.Name, Organization: org.Orgname, Environment: org.Envname, Project: org.Orgname})
+	for _, gro := range grouplist.Groups {
+		groups = append(groups, Group{ID: gro.Id, Name: gro.Name, Organization: gro.Orgname, Environment: gro.Envname, Project: gro.Proname})
 	}
 	return groups, nil
 }
 
-/*
-根据组织名称获取组织ID，返回组织名称和ID的map.eg:map[cdporg:1 org2:9 org3:10]
-当参数为空时，则获取所有的组织ID,当参数指定时，则获取指定的组织ID。指定参数可以为一个或者多个
-example:
-        1. cdpclient.GetOrganizationID()
-        2. cdpclient.GetOrganizationID("org2")
-        3. cdpclient.GetOrganizationID("org3","org2")
-*/
-func (c *CDPClient) GetGroupID(groupName ...string) (map[string]int32, error) {
-	groupNameId := make(map[string]int32)
-	oc := c.newGroupClient()
+// get agentids from group id slice
+func (c *CDPClient) GetAgentsFromGroup(groupIds []int32) ([]string, error) {
+	gc := c.newGroupClient()
 	ctx := context.TODO()
-	if len(groupName) == 0 {
-		res, err := oc.GetGroups(ctx, &pb.EmptyRequest{})
-		if err != nil {
-			return groupNameId, err
-		}
-		for _, r := range res.Groups {
-			groupNameId[r.Name] = r.Id
-		}
 
-	} else {
-		for _, ename := range groupName {
-			res, err := oc.GetGroupID(ctx, &pb.GroupNameRequest{Name: ename})
-			if err != nil {
-				return groupNameId, err
-			}
-			groupNameId[ename] = res.Groupid
-		}
+	aids, err := gc.GetAgentIdFromGroup(ctx, &pb.GetAgentFromGroupRequest{Gids: groupIds})
+	if err != nil {
+		return nil, err
 	}
-	return groupNameId, nil
+	return aids.Agentid, err
 }
