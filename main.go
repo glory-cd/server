@@ -18,6 +18,7 @@ func main() {
 	comm.ConnEtcd()
 	comm.WatchAgent()
 	comm.WatchService()
+	comm.StartCron()
 	go server.InitRpcServer()
 	select {}
 }

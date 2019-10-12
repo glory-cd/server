@@ -30,8 +30,8 @@ func (c *CDPClient) DeleteOrganization(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetOrganizations(opts ...QueryOption) (OrganizationSlice, error) {
-	orgQueryOption := defaultQueryOption()
+func (c *CDPClient) GetOrganizations(opts ...Option) (OrganizationSlice, error) {
+	orgQueryOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&orgQueryOption)
 	}

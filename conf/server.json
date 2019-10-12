@@ -1,6 +1,6 @@
 {
   "log": {
-    "loglevel": "INFO",
+    "loglevel": "debug",
     "filename": "logs/server.log",
     "maxsize": 128,
     "maxbackups": 30,
@@ -10,7 +10,8 @@
   "mysql": {
     "dsn": "auto:auto@tcp(192.168.1.41:3306)/dev_cdp?charset=utf8&parseTime=true&loc=Local",
     "maxopenconns": 100,
-    "maxidleconns": 10
+    "maxidleconns": 10,
+    "isinit": true
   },
   "etcd": {
     "endpoint": [
@@ -23,5 +24,10 @@
     "maxidele": 3,
     "maxactive": 0,
     "timeout": 300
+  },
+  "rpc": {
+    "hostport": "localhost:50051",
+    "certfile": "cert/server.crt",
+    "keyfile": "cert/server.key"
   }
 }

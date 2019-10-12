@@ -42,7 +42,7 @@ func (g *Group) DeleteGroup(ctx context.Context, in *pb.GroupNameRequest) (*pb.E
 
 func (g *Group) GetGroups(ctx context.Context, in *pb.GetGroupRequest) (*pb.GroupList, error) {
 	var groups []comm.Group
-	var rgrous pb.GroupList
+	var rGrous pb.GroupList
 	queryCmd := comm.DB.Preload("Project").Preload("Environment").Preload("Organization")
 	if in.Ids != nil {
 		queryCmd = queryCmd.Where("id in (?)", in.Ids)
@@ -64,16 +64,15 @@ func (g *Group) GetGroups(ctx context.Context, in *pb.GetGroupRequest) (*pb.Grou
 		queryCmd = queryCmd.Joins("JOIN cdp_organizations on cdp_organizations.id = cdp_groups.organization_id AND cdp_organizations.name in (?) ", in.Orgs)
 	}
 
-	log.Slogger.Debugf("[Group] query cmd is [%s]", queryCmd)
 	err := queryCmd.Find(&groups).Error
 	if err != nil {
 		log.Slogger.Errorf("[Group] query err: %s", err)
-		return &rgrous, err
+		return &rGrous, err
 	}
 	for _, group := range groups {
-		rgrous.Groups = append(rgrous.Groups, &pb.GroupList_GroupInfo{Id: int32(group.ID), Name: group.Name, Orgname: group.Organization.Name, Envname: group.Environment.Name, Proname: group.Project.Name})
+		rGrous.Groups = append(rGrous.Groups, &pb.GroupList_GroupInfo{Id: int32(group.ID), Name: group.Name, Orgname: group.Organization.Name, Envname: group.Environment.Name, Proname: group.Project.Name})
 	}
-	return &rgrous, nil
+	return &rGrous, nil
 }
 
 func (g *Group) GetAgentIdFromGroup(ctx context.Context, in *pb.GetAgentFromGroupRequest) (*pb.GroupAgentIds, error) {

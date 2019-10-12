@@ -11,8 +11,8 @@ import (
 )
 
 // 添加组织，返回组织ID和错误信息
-func (c *CDPClient) AddGroup(name string, opts ...AddOption) (int32, error) {
-	groupOption := defaultAddOption()
+func (c *CDPClient) AddGroup(name string, opts ...Option) (int32, error) {
+	groupOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&groupOption)
 	}
@@ -62,8 +62,8 @@ func (c *CDPClient) DeleteGroup(name string) error {
 }
 
 // query group
-func (c *CDPClient) GetGroups(opts ...QueryOption) (GroupSlice, error) {
-	queryGroupOption := defaultQueryOption()
+func (c *CDPClient) GetGroups(opts ...Option) (GroupSlice, error) {
+	queryGroupOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&queryGroupOption)
 	}

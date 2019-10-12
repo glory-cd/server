@@ -5,11 +5,12 @@
 package comm
 
 import (
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"github.com/glory-cd/utils/cron"
 	"github.com/glory-cd/utils/etcd"
 	"github.com/glory-cd/utils/log"
-	"github.com/glory-cd/utils/myredis"
+	redis "github.com/glory-cd/utils/myredis"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 func InitLog() {
@@ -26,7 +27,7 @@ func ConnDB() {
 	logLevel := Config().Log.LogLevel
 	DB, err = gorm.Open("mysql", config.Dsn)
 	if err != nil {
-		log.Slogger.Errorf("CreateDBPool Error:[%s]", err)
+		log.Slogger.Errorf("[DB] CreateDBPool Error:[%s]", err)
 		return
 	}
 	DB.DB().SetMaxOpenConns(config.MaxOpenConns)
@@ -47,7 +48,11 @@ func ConnDB() {
 		return "cdp_" + defaultTableName
 	}
 	// 初始化表
-	inittable()
+	if config.IsInit {
+		log.Slogger.Info("[DB] init db...")
+		inittable()
+	}
+
 }
 
 var RedisConn redis.RedisConn
@@ -59,7 +64,6 @@ func ConnRedis() {
 }
 
 var EtcdClient *etcd.BaseClient
-
 // 初始化etcd
 func ConnEtcd() {
 	config := Config().Etcd
@@ -67,8 +71,25 @@ func ConnEtcd() {
 	dialtimeout := config.DialTimeout
 	client, err := etcd.NewBaseClient(endpoint, dialtimeout)
 	if err != nil {
-		log.Slogger.Errorf("连接etcd失败. %s", err)
+		log.Slogger.Errorf("[Etcd] Conn etcd failed. %s", err)
 		return
 	}
 	EtcdClient = client
 }
+
+var CronClient cron.CronClient
+// init cron
+func StartCron() {
+	CronClient = cron.NewCronClient()
+	CronClient.StartCron()
+	log.Slogger.Infof("[Cron] Start Cron....")
+
+	cronMap, cronIdMap, err := GetCurrentCronTask()
+	if err != nil {
+		log.Slogger.Errorf("[Corn] Get Cron initvalue failed. %v", err)
+	}
+	AddCronTasks(cronMap, cronIdMap)
+
+}
+
+

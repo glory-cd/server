@@ -30,8 +30,8 @@ func (c *CDPClient) DeleteEnvironment(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetEnvironments(opts ...QueryOption) (EnvironmentSlice, error) {
-	envQueryOption := defaultQueryOption()
+func (c *CDPClient) GetEnvironments(opts ...Option) (EnvironmentSlice, error) {
+	envQueryOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&envQueryOption)
 	}

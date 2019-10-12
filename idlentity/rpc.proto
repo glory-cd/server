@@ -274,7 +274,7 @@ service Agent {
 message ServiceAddRequest {
     string name = 1;
     string dir = 2;
-    string moudlename = 3;
+    string modulename = 3;
     string osuser = 4;
     string ospass = 5;
     string codepattern = 6;
@@ -312,12 +312,14 @@ message ServiceList {
         string moudlename = 4;
         string osuser = 5;
         string codepattern = 6;
-        int32 port = 7;
+        int32  port = 7;
         string pidfile = 8;
         string startcmd = 9;
         string stopcmd = 10;
         string agentname = 12;
         string groupname = 13;
+        string agentid = 14;
+        string hostip = 15;
     }
     repeated ServiceInfo services = 1;
 }
@@ -349,8 +351,6 @@ message TaskIdRequest{
 //添加任务请求
 message TaskAddRequest {
     string name = 1;
-    int32 groupid = 2;
-    int32 releaseid = 3;
 }
 
 //添加任务响应
@@ -362,9 +362,6 @@ message TaskAddReply{
 message GetTaskRequest{
     repeated int32 id = 1;
     repeated string name = 2;
-    repeated string group = 3;
-    repeated string release = 4;
-
 }
 
 // 任务列表
@@ -382,30 +379,31 @@ message TaskList {
     repeated TaskInfo tasks = 1;
 }
 // 具体每个服务的操作，
-// 如果operation是0，则releasecodeid要指定;否则不需要指定
+// 如果operation是1(deploy)，则releasecodeid要指定;否则不需要指定
 message SpecificService {
-    string serviceid = 1;
+    string serviceID = 1;
     int32  operation = 2;
-    int32  releasecodeid = 3;
-    string customupgradepattern = 4;
+    string customUpgradePattern = 3;
 }
 
 message TaskDetailsRequst {
-    int32 taskid = 1;
-    repeated SpecificService sslist = 2;
+    int32 taskID = 1;
+    int32 releaseID = 2;
+    repeated SpecificService sslist = 3;
 }
 
 message ExecutionList {
     message ExecutionInfo {
-        string taskname = 1;
+        string taskName = 1;
         int32  id = 2;
-        string servicename = 3;
+        string serviceName = 3;
         int32 operation = 4;
-        int32 rcode = 5;
-        string rmsg = 6;
-        string customupgradepattern = 7;
+        int32 rCode = 5;
+        string rMsg = 6;
+        string customUpgradePattern = 7;
     }
-    repeated ExecutionInfo executions = 1;
+
+    repeated ExecutionInfo executions = 2;
 }
 
 
@@ -413,6 +411,39 @@ message TaskString {
     string taskstr = 1;
 }
 
+// 设置定时任务请求
+message CronTaskAddRequest {
+    int32 taskId = 1;
+    string timedSpec = 2;
+}
+
+message CronTaskAddReply{
+    int32 CronTaskID = 1;
+}
+
+
+
+message RemoveCronTaskRequest{
+    int32 entryID = 1;
+    int32 taskID  = 2;
+}
+
+// 查询定时任务请求
+message GetCronTaskRequest{
+    repeated int32 entryIDs = 1;
+    repeated string taskNames  = 2;
+}
+
+message CronTaskList {
+    message CronTask {
+        int32 TaskId = 3;
+        string TaskName = 4;
+        int32 EntryId = 2;
+        string TaskExecTIme = 5;
+        string CTime = 6;
+    }
+    repeated CronTask tTasks = 1;
+}
 
 service task {
     rpc AddTask (TaskAddRequest) returns (TaskAddReply) {}
@@ -421,5 +452,9 @@ service task {
     rpc SetTaskDetails (TaskDetailsRequst) returns (EmptyReply) {}
     rpc GetTaskExecutions (TaskIdRequest) returns (ExecutionList) {}
     rpc PublishTask (TaskIdRequest) returns (ExecutionList) {}
+
+    rpc SetTimedTask(CronTaskAddRequest) returns(CronTaskAddReply){}
+    rpc RemoveTimedTask(RemoveCronTaskRequest) returns(EmptyReply){}
+    rpc GetTimedTasks(GetCronTaskRequest) returns(CronTaskList){}
 }
 

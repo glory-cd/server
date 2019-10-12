@@ -5,25 +5,28 @@
 package server
 
 import (
+	"github.com/glory-cd/server/comm"
+	pb "github.com/glory-cd/server/idlentity"
+	"github.com/glory-cd/utils/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"net"
-	pb "github.com/glory-cd/server/idlentity"
-	"github.com/glory-cd/utils/log"
 )
 
 const rpcPort = "localhost:50051"
 
 func InitRpcServer() {
+	config := comm.Config().RPC
+	rpcPort := config.HostPort
 	lis, err := net.Listen("tcp", rpcPort)
 	if err != nil {
-		log.Slogger.Fatalf("[RPC] 监听失败: %v", err)
+		log.Slogger.Fatalf("[RPC] Listen failed. %v", err)
 	}
 
-	log.Slogger.Infof("[RPC] 监听成功: %s", rpcPort)
+	log.Slogger.Infof("[RPC] Listen sucessful. %s", rpcPort)
 
-	creds, err := credentials.NewServerTLSFromFile("cert/server.crt", "cert/server.key")
+	creds, err := credentials.NewServerTLSFromFile(config.CertFile, config.KeyFile)
 	if err != nil {
 		log.Slogger.Fatalf("[RPC] could not load TLS keys: %s", err)
 	}
@@ -42,6 +45,6 @@ func InitRpcServer() {
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
-		log.Slogger.Fatalf("[RPC] 监听连接rpc服务失败: %v", err)
+		log.Slogger.Fatalf("[RPC] register rpc service failed. %v", err)
 	}
 }

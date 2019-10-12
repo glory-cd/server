@@ -30,8 +30,8 @@ func (c *CDPClient) DeleteProject(name string) error {
 	return nil
 }
 
-func (c *CDPClient) GetProjects(opts ...QueryOption) (ProjectSlice, error) {
-	proQueryOption := defaultQueryOption()
+func (c *CDPClient) GetProjects(opts ...Option) (ProjectSlice, error) {
+	proQueryOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&proQueryOption)
 	}

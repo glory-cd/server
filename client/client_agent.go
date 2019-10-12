@@ -10,8 +10,8 @@ import (
 	pb "github.com/glory-cd/server/idlentity"
 )
 
-func (c *CDPClient) GetAgents(opts ...QueryOption) (AgentSlice, error) {
-	agentQueryOption := defaultQueryOption()
+func (c *CDPClient) GetAgents(opts ...Option) (AgentSlice, error) {
+	agentQueryOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&agentQueryOption)
 	}
@@ -26,12 +26,12 @@ func (c *CDPClient) GetAgents(opts ...QueryOption) (AgentSlice, error) {
 		aqs = 2
 	}
 
-	agentlist, err := ac.GetAgents(ctx, &pb.GetAgentRequest{Agentstatus: aqs, Id: agentQueryOption.AgentIDs, Name: agentQueryOption.Names})
+	agentList, err := ac.GetAgents(ctx, &pb.GetAgentRequest{Agentstatus: aqs, Id: agentQueryOption.AgentIDs, Name: agentQueryOption.Names})
 	if err != nil {
 		return agents, err
 	}
 
-	for _, a := range agentlist.Agents {
+	for _, a := range agentList.Agents {
 		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, Ip: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
 	}
 	return agents, nil
@@ -50,43 +50,9 @@ func (c *CDPClient) SetAgentAlias(agentID, agentAlias string) error {
 	return nil
 }
 
-type agentOperateOption struct {
-	AgentIDs []string
-	GroupIDs []int32
-}
-
-type AgentOperateOption interface {
-	apply(*agentOperateOption)
-}
-
-type funcOptionAgentOperate struct {
-	f func(*agentOperateOption)
-}
-
-func (fdo *funcOptionAgentOperate) apply(do *agentOperateOption) {
-	fdo.f(do)
-}
-
-func newFuncOptionAgentOperate(f func(*agentOperateOption)) *funcOptionAgentOperate {
-	return &funcOptionAgentOperate{f: f}
-}
-
-func WithAgentID(ids []string) AgentOperateOption {
-	return newFuncOptionAgentOperate(func(o *agentOperateOption) { o.AgentIDs = ids })
-}
-
-func WithGroupID(ids []int32) AgentOperateOption {
-	return newFuncOptionAgentOperate(func(o *agentOperateOption) { o.GroupIDs = ids })
-}
-
-//默认参数
-func defaultOptionAgentOperate() agentOperateOption {
-	return agentOperateOption{}
-}
-
 // 操作agent
-func (c *CDPClient) OperateAgent(op string, opts ...AgentOperateOption) error {
-	agentOperateOption := defaultOptionAgentOperate()
+func (c *CDPClient) OperateAgent(op string, opts ...Option) error {
+	agentOperateOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&agentOperateOption)
 	}
@@ -95,7 +61,7 @@ func (c *CDPClient) OperateAgent(op string, opts ...AgentOperateOption) error {
 
 	agentIDs, err := c.GetAgentsFromGroup(agentOperateOption.GroupIDs)
 	if err != nil {
-		return errors.New("get agentid failed. " + err.Error())
+		return errors.New("get agent id failed. " + err.Error())
 	}
 
 	agentIDList = append(agentOperateOption.AgentIDs, agentIDs...)

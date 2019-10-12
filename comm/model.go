@@ -88,26 +88,24 @@ type Service struct {
 type Task struct {
 	ID        int       `gorm:"type:int AUTO_INCREMENT;NOT NULL;PRIMARY_KEY"`
 	Name      string    `gorm:"column:name;type:varchar(128);UNIQUE;NOT NULL"`
-	Status    int       `gorm:"column:status;type:int;NOT NULL;DEFAULT:2"` //默认值是2，表示未执行
+	Status    int       `gorm:"column:status;type:int;NOT NULL;DEFAULT:2"` //0: 执行失败; 1:执行成功; 2:未执行(默认值); 3:定时任务; 4:正在执行
 	CreatedAt time.Time `gorm:"column:ctime"`
 	StartTime time.Time `gorm:"column:start_time"`
 	EndTime   time.Time `gorm:"column:end_time"`
-	GroupID   int       `gorm:"column:group_id;type:int;NOT NULL;DEFAULT:1"`
-	ReleaseID int       `gorm:"column:release_id;type:int;DEFAULT:NULL"`
-	Group     Group     `gorm:"FOREIGNKEY:GroupID;ASSOCIATION_FOREIGNKEY:ID"`
-	Release   Release   `gorm:"FOREIGNKEY:ReleaseID;ASSOCIATION_FOREIGNKEY:ID"`
 }
 
 type Execution struct {
-	ID                   int     `gorm:"type:int AUTO_INCREMENT;NOT NULL;PRIMARY_KEY"`
-	Operation            int     `gorm:"column:operation;type:int;NOT NULL"`
-	ResultCode           int     `gorm:"column:result_code;type:int"`
-	ResultMsg            string  `gorm:"column:result_msg;type:varchar(1024)"`
-	CustomUpgradePattern string  `gorm:"column:custom_upgradepattern;type:varchar(1024)"`
-	TaskID               int     `gorm:"column:task_id;type:int;NOT NULL"`
-	ServiceID            string  `gorm:"column:service_id;type:varchar(32);NOT NULL"`
-	Task                 Task    `gorm:"FOREIGNKEY:TaskID;ASSOCIATION_FOREIGNKEY:ID"`
-	Service              Service `gorm:"FOREIGNKEY:ServiceID;ASSOCIATION_FOREIGNKEY:ID"`
+	ID                   int         `gorm:"type:int AUTO_INCREMENT;NOT NULL;PRIMARY_KEY"`
+	Operation            int         `gorm:"column:operation;type:int;NOT NULL"`
+	ResultCode           int         `gorm:"column:result_code;type:int"`
+	ResultMsg            string      `gorm:"column:result_msg;type:varchar(1024)"`
+	TaskID               int         `gorm:"column:task_id;type:int;NOT NULL"`
+	ServiceID            string      `gorm:"column:service_id;type:varchar(32);NOT NULL"`
+	Task                 Task        `gorm:"FOREIGNKEY:TaskID;ASSOCIATION_FOREIGNKEY:ID"`
+	Service              Service     `gorm:"FOREIGNKEY:ServiceID;ASSOCIATION_FOREIGNKEY:ID"`
+	CustomUpgradePattern string      `gorm:"column:custom_upgradepattern;type:varchar(1024)"`
+	ReleaseCodeID        int         `gorm:"column:releasecode_id;type:int;DEFAULT:NULL"`
+	ReleaseCode          ReleaseCode `gorm:"FOREIGNKEY:ReleaseCodeID;ASSOCIATION_FOREIGNKEY:ID"`
 }
 
 type Execution_Detail struct {
@@ -127,5 +125,13 @@ type Agent_Operation struct {
 	AgentID   string    `gorm:"column:agent_id;NOT NULL"`
 	Agent     Agent     `gorm:"FOREIGNKEY:AgentID;ASSOCIATION_FOREIGNKEY:ID"`
 	OpMode    string    `gorm:"column:opmode;type:varchar(20);NOT NULL"`
+	CreatedAt time.Time `gorm:"column:ctime;NOT NULL"`
+}
+
+type Cron_Task struct {
+	TaskID    int       `gorm:"column:task_id;type:int;NOT NULL;PRIMARY_KEY"`
+	EntryID   int       `gorm:"column:entry_id;type:int;NOT NULL"`
+	Task      Task      `gorm:"FOREIGNKEY:TaskID;ASSOCIATION_FOREIGNKEY:ID"`
+	TimeSpec  string    `gorm:"column:time_spec;type:varchar(30);NOT NULL"`
 	CreatedAt time.Time `gorm:"column:ctime;NOT NULL"`
 }

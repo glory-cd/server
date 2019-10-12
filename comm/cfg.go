@@ -25,6 +25,7 @@ type MysqlConfig struct {
 	Dsn          string `json:"dsn"`
 	MaxOpenConns int    `json:"maxopenconns"`
 	MaxIdleConns int    `json:"maxidleconns"`
+	IsInit       bool   `json:"isinit"`
 }
 
 type LogConfig struct {
@@ -36,12 +37,19 @@ type LogConfig struct {
 	Compress   bool   `json:"compress"`   // 是否压缩
 }
 
+type RPCConfig struct {
+	HostPort string `json:"hostport"`
+	CertFile string `json:"certfile"`
+	KeyFile  string `json:"keyfile"`
+}
+
 type GlobalConfig struct {
 	Debug bool         `json:"debug"`
 	Mysql *MysqlConfig `json:"mysql"`
 	Redis *RedisConfig `json:"redis"`
 	Etcd  *EtcdConfig  `json:"etcd"`
 	Log   *LogConfig   `json:"log"`
+	RPC   *RPCConfig   `json:"rpc"`
 }
 
 var (

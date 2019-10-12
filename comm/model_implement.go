@@ -6,9 +6,9 @@ package comm
 
 import (
 	"encoding/json"
+	"github.com/glory-cd/utils/log"
 	"strings"
 	"time"
-	"github.com/glory-cd/utils/log"
 )
 
 //------------------------------------------------------------
@@ -113,16 +113,39 @@ func SyncServiceFromEtcdToDB(agentid, service string) {
 //--------------------------------------------------------------
 //task
 // 设置该任务开始时间
-func (t *Task) SetTaskStartTime() error {
+/*func (t *Task) SetTaskStartTime() error {
 	return DB.Model(&t).UpdateColumn("start_time", time.Now()).Error
+}*/
+
+func (t *Task) SetTaskStartTimeAndRuningStatus() error{
+	return DB.Model(&t).Updates(map[string]interface{}{"status": 4, "start_time": time.Now()}).Error
 }
 
 // 设置该任务结束时间
 func (t *Task) SetTaskEndTime() error {
 	return DB.Model(&t).UpdateColumn("end_time", time.Now()).Error
 }
+// 设置任务状态
+func (t *Task) SetTaskStatus(status int) error {
+	return DB.Model(&t).UpdateColumn("status", status).Error
+}
 
 // 设置该任务状态和结束时间
 func (t *Task) SetTaskEndTimeAndStatus(status int) error {
 	return DB.Model(&t).Updates(map[string]interface{}{"status": status, "end_time": time.Now()}).Error
 }
+
+//------------------------------------------------------------------
+//CronTask
+func (t *Cron_Task) CheckRecord() bool{
+	return DB.Find(&t).RecordNotFound()
+}
+
+func (t *Cron_Task) SetEntryID(newID int) error {
+	return DB.Model(&t).UpdateColumn("entry_id", newID).Error
+}
+
+/*func (t *Cron_Task) SetEffective(e bool) error {
+	return DB.Model(&t).UpdateColumn("effective", e).Error
+}*/
+

@@ -50,8 +50,8 @@ func (c *CDPClient) DeleteRelease(name string) error {
 }
 
 // query release
-func (c *CDPClient) GetReleases(opts ...QueryOption) (ReleaseSlice, error) {
-	queryReleaseOption := defaultQueryOption()
+func (c *CDPClient) GetReleases(opts ...Option) (ReleaseSlice, error) {
+	queryReleaseOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&queryReleaseOption)
 	}

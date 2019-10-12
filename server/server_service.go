@@ -43,13 +43,14 @@ type Service struct{}
 
 func (s *Service) AddService(ctx context.Context, in *pb.ServiceAddRequest) (*pb.ServiceAddReply, error) {
 	// 校验部分参数
-	if in.Name == "" || in.Dir == "" || in.Osuser == "" || in.Agentid == "" || in.Startcmd == "" {
+	if in.Name == "" || in.Dir == "" || in.Osuser == "" || in.Ospass == "" || in.Agentid == "" || in.Startcmd == "" || in.Modulename == "" {
 		return &pb.ServiceAddReply{}, errors.New("[Service] Parameter error, field that cannot be empty is empty")
 	}
+
 	serviceObj := comm.Service{Name: in.Name,
 		Dir:          in.Dir,
 		OsUser:       in.Osuser,
-		ModuleName:   in.Moudlename,
+		ModuleName:   in.Modulename,
 		CodePatterns: in.Codepattern,
 		Pidfile:      in.Pidfile,
 		StartCMD:     in.Startcmd,
@@ -128,8 +129,10 @@ func (s *Service) GetServices(ctx context.Context, in *pb.ServiceRequest) (*pb.S
 			Pidfile:     service.Pidfile,
 			Startcmd:    service.StartCMD,
 			Stopcmd:     service.StopCMD,
+			Agentid:     service.AgentID,
 			Agentname:   service.Agent.Alias,
 			Groupname:   service.Group.Name,
+			Hostip:      service.Agent.HostIp,
 		}
 		rservices.Services = append(rservices.Services, si)
 	}

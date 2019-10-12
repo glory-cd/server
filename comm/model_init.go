@@ -55,26 +55,31 @@ func inittable() {
 	if !checkTableAndCreate(Release{}) {
 		DB.Model(&Release{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
 		DB.Model(&Release{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
+		DB.Model(&Release{}).AddUniqueIndex("relese_u","version","project_id","organization_id")
 	}
 
-	//releasecode
+	//release-code
 	if !checkTableAndCreate(ReleaseCode{}) {
 		DB.Model(&ReleaseCode{}).AddForeignKey("release_id", "cdp_releases(id)", "CASCADE", "CASCADE")
+		DB.Model(&ReleaseCode{}).AddUniqueIndex("releasecode_u","name","release_id")
 	}
 
 	// task
-	if !checkTableAndCreate(Task{}) {
-		DB.Model(&Task{}).AddForeignKey("group_id", "cdp_groups(id)", "CASCADE", "CASCADE")
-		DB.Model(&Task{}).AddForeignKey("release_id", "cdp_releases(id)", "CASCADE", "CASCADE")
-	}
+	checkTableAndCreate(Task{})
 
 	// execution
 	if !checkTableAndCreate(Execution{}) {
 		DB.Model(&Execution{}).AddForeignKey("service_id", "cdp_services(id)", "CASCADE", "CASCADE")
 		DB.Model(&Execution{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
 	}
-
+	// execution_detail
 	if !checkTableAndCreate(Execution_Detail{}) {
 		DB.Model(&Execution_Detail{}).AddForeignKey("execution_id", "cdp_executions(id)", "CASCADE", "CASCADE")
 	}
+
+	// task_timed
+	if !checkTableAndCreate(Cron_Task{}) {
+		DB.Model(&Cron_Task{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
+	}
+
 }

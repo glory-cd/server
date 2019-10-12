@@ -150,6 +150,8 @@ type Service struct {
 	PidFile     string
 	StartCmd    string
 	StopCmd     string
+	HostIp      string
+	AgentID     string
 	AgentName   string
 	GroupName   string
 }
@@ -190,8 +192,6 @@ type Task struct {
 	Status      int32
 	StartTime   string
 	EndTime     string
-	ReleaseName string
-	GroupName   string
 	CreateTime  string
 }
 
@@ -200,6 +200,33 @@ type TaskSlice []Task
 func (ts TaskSlice) GetID() int32 {
 	if len(ts) == 1 {
 		return ts[0].ID
+	} else {
+		return 0
+	}
+}
+//--------------------------------------------------------
+type CronTask struct {
+	EntryID      int32
+	TaskID       int32
+	TaskName     string
+	TaskExecTime string
+	CreateTime   string
+}
+
+type CronTaskSlice []CronTask
+
+func (cts CronTaskSlice) GetID() int32 {
+	if len(cts) == 1 {
+		return cts[0].EntryID
+	} else {
+		return 0
+	}
+}
+
+
+func (cts CronTaskSlice) GetTaskID() int32 {
+	if len(cts) == 1 {
+		return cts[0].TaskID
 	} else {
 		return 0
 	}

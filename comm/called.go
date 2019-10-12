@@ -6,8 +6,8 @@ package comm
 
 import (
 	"fmt"
-	"strings"
 	"github.com/glory-cd/utils/log"
+	"strings"
 )
 
 //db--------------------------------------------------------
@@ -40,6 +40,7 @@ func UpdateRecord(r interface{}) error {
 	return DB.Save(r).Error
 }
 
+
 //etcd----------------------------------------------------------------
 /*watch agent
 1. 从etcd中获取当前存在的agent信息
@@ -48,6 +49,12 @@ func UpdateRecord(r interface{}) error {
      (1) etcd中存在，数据库中存在，但是状态下线，则将数据库中该agent状态更新为上线
      (2) etcd中存在，数据库中不存在，则将该agent信息插入数据库，状态为上线
 	 (3) etcd中不存在，数据库中的状态是上线，则将数据库中中该agent状态更新为下线
+*/
+
+/*
+|----------------|
+| watch Agent  |
+|----------------|
 */
 func WatchAgent() {
 	agentmap, err := EtcdClient.GetAgents(HandleAgentMessage)
@@ -128,7 +135,12 @@ func SeparateAgentVal(val string) (string, string, error) {
 	}
 }
 
-// watch service
+/*
+|----------------|
+| watch service  |
+|----------------|
+*/
+
 func WatchService() {
 	servicemap, err := EtcdClient.GetServices(HandleServiceMessage)
 	if err != nil {
@@ -180,6 +192,42 @@ func serviceOffline(key, val string) {
 
 }
 
+
+/*
+|----------------|
+| watch cron task  |
+|----------------|
+*/
+/*func WatchCron() {
+	cronMap, err := EtcdClient.GetCrons(HandleCronMessage)
+	if err != nil {
+		log.Slogger.Errorf("[WatchCron] Failure to retrieve timed-tasks from etcd. %s", err)
+		return
+	}
+	log.Slogger.Info("[WatchCron] get timed-tasks Success from etcd.")
+	log.Slogger.Debugf("[WatchCron] current timed-tasks: %s", cronMap)
+	// add task to cron
+	AddTaskIdToCron(cronMap)
+}
+
+func HandleCronMessage(messageType,messageKey,messageVal string){
+	switch messageType {
+	case "PUT":
+		log.Slogger.Debugf("[Etcd]: Put %s=>%s", messageKey, messageVal)
+		cronAdd(messageKey, messageVal)
+	case "DELETE":
+		log.Slogger.Debugf("[Etcd]: Del %s=>%s", messageKey, messageVal)
+		cronDel(messageKey, messageVal)
+	}
+}
+
+func cronAdd(key,val string){
+	taskTimeMap := map[string]string{key:val}
+	AddTaskIdToCron(taskTimeMap)
+}
+
+func cronDel(key,val string){}
+*/
 //redis---------------------------------------------------------------
 func PublishCMD(channel string, cmd string) (pr error) {
 	publishResultChan := make(chan error)
@@ -196,4 +244,21 @@ func SubscribeCMDResult(channel string, resultChan chan string) {
 		return
 	}
 	RedisConn.HandleCMDResultMessage(psc, resultChan)
+}
+//cron------------------------------------------------------------------
+func GetCurrentCronTask() (map[int]string, map[int]int,error) {
+	var cronTasks []Cron_Task
+	cronTaskMap := map[int]string{}
+	cronTaskIdMap := map[int]int{}
+	if err := DB.Find(&cronTasks).Error; err != nil {
+		log.Slogger.Errorf("[Cron] Getting all current cron tasks failed. %v", err)
+		return cronTaskMap, cronTaskIdMap,err
+	}
+
+	for _, ct := range cronTasks {
+		cronTaskMap[ct.TaskID] = ct.TimeSpec
+		cronTaskIdMap[ct.TaskID] = ct.EntryID
+	}
+	log.Slogger.Debugf("[Cron] current cron tasks: %v", cronTaskMap)
+	return cronTaskMap, cronTaskIdMap,nil
 }
