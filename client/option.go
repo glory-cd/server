@@ -20,18 +20,22 @@ type StaticServiceDetail struct {
 }
 
 type option struct {
+	//id
 	GroupID       int32
 	ReleaseID     int32
 	AgentID       string
+	//ids
 	Ids           []int32
 	GroupIDs      []int32
 	AgentIDs      []string
 	ServiceIDs    []string
 	CronEntryIDs  []int32
+	//name
 	OrgName       string
 	ProName       string
 	EnvName       string
 	GroupName     string
+	//names
 	Names         []string
 	OrgNames      []string
 	ProNames      []string
@@ -40,6 +44,7 @@ type option struct {
 	TaskNames     []string
 	ReleaseNames  []string
 	ModuleNames   []string
+	//other
 	AgentIsOnLine bool
 	CodePattern   string
 	PidFile       string

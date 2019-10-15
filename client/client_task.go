@@ -103,7 +103,7 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 func (c *CDPClient) DeleteTask(taskName string) error {
 	sc := c.newTaskClient()
 	ctx := context.TODO()
-	_, err := sc.DeleteTask(ctx, &pb.TaksNameRequest{Name: taskName})
+	_, err := sc.DeleteTask(ctx, &pb.TaskNameRequest{Name: taskName})
 	if err != nil {
 		return err
 	}
@@ -124,7 +124,7 @@ func (c *CDPClient) GetTasks(opts ...Option) (TaskSlice, error) {
 		return tasks, err
 	}
 	for _, t := range taskList.Tasks {
-		tasks = append(tasks, Task{ID: t.Id, Name: t.Name, Status: t.Status, StartTime: t.Starttime, EndTime: t.Endtime, CreateTime: t.Ctime})
+		tasks = append(tasks, Task{ID: t.Id, Name: t.Name, Status: TaskStatus[t.Status], StartTime: t.Starttime, EndTime: t.Endtime, CreateTime: t.Ctime})
 	}
 	return tasks, nil
 }
@@ -137,7 +137,7 @@ func (c *CDPClient) ExecuteTask(taskID int32) ([]TaskResult, error) {
 
 	if res != nil {
 		for _, r := range res.Executions {
-			tmp := TaskResult{TaskName: r.TaskName, ExecutionID: int(r.Id), ServiceName: r.ServiceName, Operation: r.Operation, Resultcode: int(r.RCode), Resultmsg: r.RMsg}
+			tmp := TaskResult{TaskName: r.TaskName, ExecutionID: int(r.Id), ServiceName: r.ServiceName, Operation: r.Operation, ResultCode: int(r.RCode), ResultMsg: r.RMsg}
 			tResult = append(tResult, tmp)
 		}
 
@@ -145,6 +145,9 @@ func (c *CDPClient) ExecuteTask(taskID int32) ([]TaskResult, error) {
 	return tResult, err
 }
 
+/*
+	获取任务切片
+*/
 func (c *CDPClient) GetTaskExecutions(taskID int32) (ExecutionSlice, error) {
 	sc := c.newTaskClient()
 	ctx := context.TODO()
@@ -154,10 +157,35 @@ func (c *CDPClient) GetTaskExecutions(taskID int32) (ExecutionSlice, error) {
 	}
 	res := ExecutionSlice{}
 	for _, e := range es.Executions {
-		res = append(res, Execution{TaskName: e.TaskName, ServiceName: e.ServiceName, ID: e.Id, Op: OpMap[OpMode(e.Operation)], ReturnCode: e.RCode, ReturnMsg: e.RMsg})
+		res = append(res, Execution{TaskID: e.TaskID,
+			TaskName:      e.TaskName,
+			ID:            e.Id,
+			Op:            OpMap[OpMode(e.Operation)],
+			ServiceName:   e.ServiceName,
+			ReturnCode:    e.RCode,
+			ReturnMsg:     e.RMsg,
+			CustomPattern: e.CustomUpgradePattern})
 	}
 	return res, nil
 }
+
+/*
+	获取切片步骤
+*/
+func (c *CDPClient) GetTaskExecutionDetails(executionID int32) (ExecutionDetailSlice, error) {
+	sc := c.newTaskClient()
+	ctx := context.TODO()
+	es, err := sc.GetExecutionDetail(ctx, &pb.GetExecutionDetailRequest{ExecutionID: executionID})
+	if err != nil {
+		return nil, err
+	}
+	res := ExecutionDetailSlice{}
+	for _, e := range es.EDetails {
+		res = append(res, ExecutionDetail{StepNum: e.StepNum, StepName: e.StepName, StepMsg: e.StepMsg, StepTime: e.StepTime, StepStatus: e.StepState})
+	}
+	return res, nil
+}
+
 
 /*
 	设置任务为定时任务

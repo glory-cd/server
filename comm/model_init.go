@@ -55,7 +55,7 @@ func inittable() {
 	if !checkTableAndCreate(Release{}) {
 		DB.Model(&Release{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
 		DB.Model(&Release{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
-		DB.Model(&Release{}).AddUniqueIndex("relese_u","version","project_id","organization_id")
+		DB.Model(&Release{}).AddUniqueIndex("release_unique","version","project_id","organization_id")
 	}
 
 	//release-code

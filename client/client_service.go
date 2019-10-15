@@ -6,6 +6,7 @@ package client
 
 import (
 	"context"
+    "errors"
 	pb "github.com/glory-cd/server/idlentity"
 )
 
@@ -15,6 +16,17 @@ func (c *CDPClient) AddService(name, dir, osUser, osPass, startCmd, agentID, mod
 	for _, opt := range opts {
 		opt.apply(&serviceOption)
 	}
+
+	var groupID int32 = 1
+	if serviceOption.GroupName != "" {
+		groups, err := c.GetGroups(WithGroupNames([]string{serviceOption.GroupName}))
+		if err != nil {
+			return "", errors.New("get group ID err: " + err.Error())
+		}
+		groupID = groups.GetID()
+	}
+
+
 	addService := pb.ServiceAddRequest{Name: name,
 		Dir:         dir,
 		Modulename:  moduleName,
@@ -25,7 +37,7 @@ func (c *CDPClient) AddService(name, dir, osUser, osPass, startCmd, agentID, mod
 		Startcmd:    startCmd,
 		Stopcmd:     serviceOption.StopCmd,
 		Agentid:     agentID,
-		Groupid:     int32(serviceOption.GroupID)}
+		Groupid:     groupID}
 
 	sc := c.newServiceClient()
 	ctx := context.TODO()
@@ -68,7 +80,7 @@ func (c *CDPClient) GetServices(opts ...Option) (ServiceSlice, error) {
 	for _, s := range serviceList.Services {
 		tmpService := Service{ID: s.Id,
 			Name:        s.Name,
-			MoudleName:  s.Moudlename,
+			ModuleName:  s.Moudlename,
 			OsUser:      s.Osuser,
 			CodePattern: s.Codepattern,
 			PidFile:     s.Pidfile,

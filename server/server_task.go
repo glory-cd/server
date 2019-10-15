@@ -29,7 +29,7 @@ func (t *Task) AddTask(ctx context.Context, in *pb.TaskAddRequest) (*pb.TaskAddR
 	return &pb.TaskAddReply{Taskid: int32(taskObj.ID)}, nil
 }
 
-func (t *Task) DeleteTask(ctx context.Context, in *pb.TaksNameRequest) (*pb.EmptyReply, error) {
+func (t *Task) DeleteTask(ctx context.Context, in *pb.TaskNameRequest) (*pb.EmptyReply, error) {
 	taskObj := comm.Task{Name: in.Name}
 	if comm.CheckRecordWithName(in.Name, &taskObj) {
 		log.Slogger.Errorf("[Task] delete [%s] failed. not-exist", in.Name)
@@ -146,24 +146,40 @@ func (t *Task) SetTaskDetails(ctx context.Context, in *pb.TaskDetailsRequst) (*p
 
 // 根据task-id获取所有该任务的所有切片
 func (t *Task) GetTaskExecutions(ctx context.Context, in *pb.TaskIdRequest) (*pb.ExecutionList, error) {
-	var relist pb.ExecutionList
-	var elist []comm.Execution
-	if err := comm.DB.Preload("Task").Preload("Service").Where("task_id = ?", in.Id).Find(&elist).Error; err != nil {
-		return &relist, err
+	var rEList pb.ExecutionList
+	var eList []comm.Execution
+	if err := comm.DB.Preload("Task").Preload("Service").Where("task_id = ?", in.Id).Find(&eList).Error; err != nil {
+		return &rEList, err
 	}
-	for _, e := range elist {
+	for _, e := range eList {
 		_tmpE := &pb.ExecutionList_ExecutionInfo{Id: int32(e.ID),
 			Operation:            int32(e.Operation),
 			RCode:                int32(e.ResultCode),
 			RMsg:                 e.ResultMsg,
 			ServiceName:          e.Service.Name,
 			TaskName:             e.Task.Name,
+			TaskID:               int32(e.TaskID),
 			CustomUpgradePattern: e.CustomUpgradePattern}
-		relist.Executions = append(relist.Executions, _tmpE)
+		rEList.Executions = append(rEList.Executions, _tmpE)
 	}
-	return &relist, nil
-
+	return &rEList, nil
 }
+
+// 根据execution-id 获取该切片的步骤详情
+func (t *Task) GetExecutionDetail(ctx context.Context, in *pb.GetExecutionDetailRequest) (*pb.ExecutionDetailsList, error) {
+	var rEDetailList pb.ExecutionDetailsList
+	var eDetails []comm.Execution_Detail
+	if err := comm.DB.Preload("Execution").Where("execution_id = ?", in.ExecutionID).Find(&eDetails).Error; err != nil {
+		return &rEDetailList, err
+	}
+
+	for _, ed := range eDetails {
+		_tmp := &pb.ExecutionDetailsList_ExecutionDetail{StepNum: int32(ed.StepNum), StepName: ed.StepName, StepMsg: ed.StepMsg, StepState: int32(ed.StepState), StepTime: ed.StepTime.String()}
+		rEDetailList.EDetails = append(rEDetailList.EDetails, _tmp)
+	}
+	return &rEDetailList, nil
+}
+
 
 func (t *Task) PublishTask(ctx context.Context, in *pb.TaskIdRequest) (*pb.ExecutionList, error) {
 	log.Slogger.Infof("[PublishTask] exec task[%d]", in.Id)
@@ -189,14 +205,14 @@ func (t *Task) PublishTask(ctx context.Context, in *pb.TaskIdRequest) (*pb.Execu
 	}
 	//订阅任务结果通道
 	resultChannel := make(chan string)
-	subscribChannel := "result." + strconv.Itoa(int(in.Id)) //channel:result.taskId
-	go comm.SubscribeCMDResult(subscribChannel, resultChannel)
+	subscribeChannel := "result." + strconv.Itoa(int(in.Id)) //channel:result.taskId
+	go comm.SubscribeCMDResult(subscribeChannel, resultChannel)
 	//发布任务
-	pubListErrResult := publishExecutionCMD(eObjectList, &el)
+	publishErrResult := publishExecutionCMD(eObjectList, &el)
 	//成功publish的命令个数
-	pubLishSuccessLen := len(eObjectList) - len(pubListErrResult)
+	publishSuccessLen := len(eObjectList) - len(publishErrResult)
 	//收集任务结果
-	cmdResult := collectResult(resultChannel, pubLishSuccessLen)
+	cmdResult := collectResult(resultChannel, publishSuccessLen)
 	//入库
 	err = result2DB(task, cmdResult, &el)
 	// 返回结果

@@ -82,7 +82,7 @@ type ControlAgent struct {
 	检查任务当前状态
     返回结果: 是否可执行;任务状态;错误信息
 */
-func  checkTaskIsExecute(taskid int) (bool, int, error) {
+func checkTaskIsExecute(taskid int) (bool, int, error) {
 	task := comm.Task{}
 	if err := comm.DB.Select("status").Where("id = ?", taskid).Find(&task).Error; err != nil {
 		return false, 0, err
@@ -95,20 +95,21 @@ func  checkTaskIsExecute(taskid int) (bool, int, error) {
 		return true, task.Status, nil
 	}
 }
+
 /*
 	获取需要执行的任务切片.
     1. 任务状态=0(失败)，则选择出失败的切片
     2. 任务状态=2(未执行)，则选择出所有相关切片
     3. 任务状态=3(定时任务)，则选择出所有相关切片
 */
-func getExecutions(task *comm.Task, taskStatus int, rrei interface{}) ([]map[string]interface{}, error) {
+func getExecutions(task *comm.Task, taskStatus int, rRei interface{}) ([]map[string]interface{}, error) {
 	var executionMapList []map[string]interface{}
 	// 获取切片列表
 	queryCmd := comm.DB.Preload("Task").Preload("Service").Where("task_id = ?", task.ID)
 	var eList []comm.Execution
 	// 如果任务状态是执行失败(0),则只选出失败的切片去执行
-	if taskStatus == TaskStatus_Failed{
-		queryCmd = queryCmd.Where("result_code = ?",TaskStatus_Failed)
+	if taskStatus == TaskStatus_Failed {
+		queryCmd = queryCmd.Where("result_code = ?", TaskStatus_Failed)
 	}
 	if err := queryCmd.Find(&eList).Error; err != nil {
 		_ = task.SetTaskEndTime()
@@ -121,12 +122,12 @@ func getExecutions(task *comm.Task, taskStatus int, rrei interface{}) ([]map[str
 		comm.DB.First(&releaseCode, e.ReleaseCodeID)
 		// 获取agent状态
 		var agent comm.Agent
-		if comm.CheckRecordWithStringID(e.Service.AgentID,&agent){
-			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-found",e.ServiceID,e.Service.AgentID)
+		if comm.CheckRecordWithStringID(e.Service.AgentID, &agent) {
+			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-found", e.ServiceID, e.Service.AgentID)
 			return executionMapList, errors.New(errInfo)
 		}
 		if agent.Status == "0" {
-			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-online",e.ServiceID,e.Service.AgentID)
+			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-online", e.ServiceID, e.Service.AgentID)
 			return executionMapList, errors.New(errInfo)
 		}
 
@@ -149,9 +150,9 @@ func getExecutions(task *comm.Task, taskStatus int, rrei interface{}) ([]map[str
 
 		publishChannel := "cmd." + e.Service.AgentID
 		executionMapList = append(executionMapList, map[string]interface{}{"pchannel": publishChannel, "eobject": tmp})
-		rre, ok := rrei.(*pb.ExecutionList)
+		rre, ok := rRei.(*pb.ExecutionList)
 		if ok {
-			rre.Executions = append(rre.Executions, &pb.ExecutionList_ExecutionInfo{Id: int32(e.ID), TaskName: e.Task.Name, ServiceName: e.Service.Name, Operation: int32(e.Operation)})
+			rre.Executions = append(rre.Executions, &pb.ExecutionList_ExecutionInfo{Id: int32(e.ID), TaskID: int32(e.TaskID), TaskName: e.Task.Name, ServiceName: e.Service.Name, Operation: int32(e.Operation)})
 		}
 
 	}
@@ -189,7 +190,6 @@ func publishExecutionCMD(ecmdList []map[string]interface{}, rre *pb.ExecutionLis
 	return
 }
 
-
 func collectResult(resultChannel chan string, publishSuccessLen int) []string {
 	log.Slogger.Infof("[PublishTask] start task results collection goroutine....")
 	//收集任务结果
@@ -219,7 +219,6 @@ func collectResult(resultChannel chan string, publishSuccessLen int) []string {
 	return cmdResult
 }
 
-
 func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 	// 入库
 	var taskstatus = TaskStatus_Successful
@@ -229,7 +228,7 @@ func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 		var executionID int
 		var resultMsg string
 		rs := Result{}
-		if r != ""{
+		if r != "" {
 			err := json.Unmarshal([]byte(r), &rs)
 			if err != nil {
 				return err
@@ -257,7 +256,6 @@ func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 			}
 		}
 
-
 		// 设置切片结果
 		e := comm.Execution{ID: executionID}
 		if err := tx.Model(&e).Updates(map[string]interface{}{"result_code": resultCode, "result_msg": resultMsg}).Error; err != nil {
@@ -276,7 +274,6 @@ func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 		if resultCode == TaskStatus_Failed {
 			taskstatus = TaskStatus_Failed
 		}
-
 
 	}
 	// 设置任务结束时间

@@ -30,9 +30,9 @@ func (c *CDPClient) AddRelease(name string, version string, orgName, projectName
 	if err != nil {
 		return 0, err
 	}
-	projectid := pros.Pros[0].Id
+	projectId := pros.Pros[0].Id
 
-	res, err := rc.AddRelease(ctx, &pb.AddReleaseRequest{Name: name, Version: version, Orgid: orgid, Proid: projectid, Releasecodes: rcs})
+	res, err := rc.AddRelease(ctx, &pb.AddReleaseRequest{Name: name, Version: version, Orgid: orgid, Proid: projectId, Releasecodes: rcs})
 	if err != nil {
 		return 0, err
 	}
@@ -75,6 +75,28 @@ func (c *CDPClient) GetReleases(opts ...Option) (ReleaseSlice, error) {
 	}
 	return releases, nil
 }
+
+/*
+	设置发布代码
+*/
+
+func (c *CDPClient) SetReleaseCode(releaseID int32, codes []ReleaseCode) error {
+	ctx := context.TODO()
+	rc := c.newReleaseClient()
+
+	var rcs []*pb.ReleaseCode
+	for _, c := range codes {
+		_tmp := pb.ReleaseCode{Name: c.CodeName, Relativepath: c.CodePath}
+		rcs = append(rcs, &_tmp)
+	}
+
+	_, err := rc.SetReleaseCode(ctx, &pb.SetReleaseCodeRequest{ReleaseID: releaseID, ReleaseCodes: rcs})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 /*
 	Getting the releasecodes  based on release ID
     para releaseId:
@@ -85,12 +107,12 @@ func (c *CDPClient) GetReleaseCodeMap(releaseId int32) (map[string]int32, error)
 	ctx := context.TODO()
 	rc := c.newReleaseClient()
 
-	releasecodeList, err := rc.GetReleaseCodes(ctx, &pb.GetReleaseCodeRequest{Releaseids: []int32{releaseId}})
+	releaseCodeList, err := rc.GetReleaseCodes(ctx, &pb.GetReleaseCodeRequest{Releaseids: []int32{releaseId}})
 	if err != nil {
 		return mapCodeNameId, err
 	}
 
-	for _, rc := range releasecodeList.Rcs {
+	for _, rc := range releaseCodeList.Rcs {
 		mapCodeNameId[rc.Rc.Name] = rc.Id
 	}
 	return mapCodeNameId, nil

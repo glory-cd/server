@@ -40,6 +40,8 @@ var OpMap = map[OpMode]string{OperateDefault: "",
 	OperateRollBack: "rollback"}
 
 
+var TaskStatus = map[int32]string{0:"失败",1:"成功",2:"未执行",3:"定时任务",4:"正在执行"}
+
 
 //-----------------------------------------------
 type Organization struct {
@@ -144,7 +146,7 @@ type Service struct {
 	ID          string
 	Name        string
 	Dir         string
-	MoudleName  string
+	ModuleName  string
 	OsUser      string
 	CodePattern string
 	PidFile     string
@@ -189,7 +191,7 @@ func (as AgentSlice) GetID() string {
 type Task struct {
 	ID          int32
 	Name        string
-	Status      int32
+	Status      string
 	StartTime   string
 	EndTime     string
 	CreateTime  string
@@ -233,26 +235,36 @@ func (cts CronTaskSlice) GetTaskID() int32 {
 }
 
 //--------------------------------------------------------
-
 type TaskResult struct {
 	TaskName    string
 	ExecutionID int
 	ServiceName string
 	Operation   int32
-	Resultcode  int
-	Resultmsg   string
+	ResultCode  int
+	ResultMsg   string
 }
 
+//-------------------------------------------------
 type Execution struct {
+	TaskID         int32
 	TaskName       string
 	ServiceName    string
 	ID             int32
 	Op             string
 	ReturnCode     int32
 	ReturnMsg      string
-	CustomePattern string
+	CustomPattern string
 }
 
 type ExecutionSlice []Execution
 
-//-------------------------------------------------
+//-------------------------------------------------------
+type ExecutionDetail struct {
+	StepNum    int32
+	StepName   string
+	StepMsg    string
+	StepStatus int32
+	StepTime   string
+}
+
+type ExecutionDetailSlice []ExecutionDetail

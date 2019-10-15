@@ -23,18 +23,20 @@ func (r *Release) AddRelease(ctx context.Context, in *pb.AddReleaseRequest) (*pb
 		return &pb.ReleaseAddReply{}, err
 	}
 	// 则分析代码字符串，初始化release_code
-	for _, ci := range in.Releasecodes {
-		name := ci.Name
-		relativePath := ci.Relativepath
-		releasecodeObj := comm.ReleaseCode{Name: name, RelativePath: relativePath, ReleaseID: releaseObj.ID}
-		if err := tx.Create(&releasecodeObj).Error; err != nil {
-			tx.Rollback()
-			log.Slogger.Errorf("[Release] add [%s] successful,but parse releasecode failed. err: %s", in.Name,err)
-			return &pb.ReleaseAddReply{}, err
+	if len(in.Releasecodes) > 0 {
+		for _, ci := range in.Releasecodes {
+			name := ci.Name
+			relativePath := ci.Relativepath
+			releaseCodeObj := comm.ReleaseCode{Name: name, RelativePath: relativePath, ReleaseID: releaseObj.ID}
+			if err := tx.Create(&releaseCodeObj).Error; err != nil {
+				tx.Rollback()
+				log.Slogger.Errorf("[Release] add [%s] successful,but parse release code failed. err: %s", in.Name, err)
+				return &pb.ReleaseAddReply{}, err
+			}
 		}
 	}
 	tx.Commit()
-	log.Slogger.Infof("[Release] add [%s] successful.",releaseObj.Name)
+	log.Slogger.Infof("[Release] add [%s] successful.", releaseObj.Name)
 	return &pb.ReleaseAddReply{Releaseid: int32(releaseObj.ID)}, nil
 }
 
@@ -79,7 +81,7 @@ func (r *Release) GetReleases(ctx context.Context, in *pb.GetReleaseRequest) (*p
 	}
 	var rrels pb.ReleaseList
 	for _, rel := range rels {
-		// query cdp_releasecodes
+		// query cdp_release_codes
 		var rcs []comm.ReleaseCode
 		err := comm.DB.Where("release_id = ?", rel.ID).Find(&rcs).Error
 		if err != nil {
@@ -93,6 +95,26 @@ func (r *Release) GetReleases(ctx context.Context, in *pb.GetReleaseRequest) (*p
 	}
 	return &rrels, nil
 }
+
+// 设置发布代码
+func (r *Release) SetReleaseCode(ctx context.Context, in *pb.SetReleaseCodeRequest) (*pb.EmptyReply, error) {
+	tx := comm.DB.Begin()
+	for _, ci := range in.ReleaseCodes {
+		name := ci.Name
+		relativePath := ci.Relativepath
+		releaseCodeObj := comm.ReleaseCode{Name: name, RelativePath: relativePath, ReleaseID: int(in.ReleaseID)}
+		if err := tx.Create(&releaseCodeObj).Error; err != nil {
+			tx.Rollback()
+			log.Slogger.Errorf("[SetReleaseCode] set release[%d] code failed. err: %s",in.ReleaseID, err)
+			return &pb.EmptyReply{}, err
+		}
+	}
+
+	tx.Commit()
+	log.Slogger.Infof("[SetReleaseCode] set release[%d] code successful.",in.ReleaseID)
+	return &pb.EmptyReply{}, nil
+}
+
 
 
 // 查询发布代码

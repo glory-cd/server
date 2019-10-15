@@ -224,10 +224,16 @@ message ReleaseCodeList{
     repeated QueryReleaseCode rcs = 1;
 }
 
+message SetReleaseCodeRequest {
+    int32 releaseID = 1;
+    repeated ReleaseCode releaseCodes = 2;
+}
+
 service Release {
     rpc AddRelease (AddReleaseRequest) returns (ReleaseAddReply) {}
     rpc DeleteRelease (ReleaseNameRequest) returns (EmptyReply) {}
     rpc GetReleases(GetReleaseRequest) returns(ReleaseList){}
+    rpc SetReleaseCode(SetReleaseCodeRequest) returns(EmptyReply){}
     rpc GetReleaseCodes(GetReleaseCodeRequest) returns(ReleaseCodeList){}
 }
 
@@ -340,7 +346,7 @@ service Service {
 }
 
 //--------------------------------------task--------------------------------
-message TaksNameRequest{
+message TaskNameRequest{
     string name = 1;
 }
 
@@ -379,7 +385,7 @@ message TaskList {
     repeated TaskInfo tasks = 1;
 }
 // 具体每个服务的操作，
-// 如果operation是1(deploy)，则releasecodeid要指定;否则不需要指定
+// 如果operation是1(deploy)，则release-code-id要指定;否则不需要指定
 message SpecificService {
     string serviceID = 1;
     int32  operation = 2;
@@ -395,12 +401,13 @@ message TaskDetailsRequst {
 message ExecutionList {
     message ExecutionInfo {
         string taskName = 1;
-        int32  id = 2;
+        int32 id = 2;
         string serviceName = 3;
         int32 operation = 4;
         int32 rCode = 5;
         string rMsg = 6;
         string customUpgradePattern = 7;
+        int32 taskID = 8;
     }
 
     repeated ExecutionInfo executions = 2;
@@ -445,14 +452,30 @@ message CronTaskList {
     repeated CronTask tTasks = 1;
 }
 
+//
+message GetExecutionDetailRequest{
+    int32 ExecutionID = 1;
+}
+
+message ExecutionDetailsList {
+    message ExecutionDetail {
+        int32 StepNum = 1;
+        string StepName = 2;
+        string StepMsg = 3;
+        int32 StepState = 4;
+        string StepTime = 5;
+    }
+    repeated ExecutionDetail eDetails = 1;
+}
+
 service task {
     rpc AddTask (TaskAddRequest) returns (TaskAddReply) {}
-    rpc DeleteTask (TaksNameRequest) returns (EmptyReply) {}
+    rpc DeleteTask (TaskNameRequest) returns (EmptyReply) {}
     rpc GetTasks (GetTaskRequest) returns (TaskList) {}
     rpc SetTaskDetails (TaskDetailsRequst) returns (EmptyReply) {}
     rpc GetTaskExecutions (TaskIdRequest) returns (ExecutionList) {}
+    rpc GetExecutionDetail(GetExecutionDetailRequest) returns (ExecutionDetailsList){}
     rpc PublishTask (TaskIdRequest) returns (ExecutionList) {}
-
     rpc SetTimedTask(CronTaskAddRequest) returns(CronTaskAddReply){}
     rpc RemoveTimedTask(RemoveCronTaskRequest) returns(EmptyReply){}
     rpc GetTimedTasks(GetCronTaskRequest) returns(CronTaskList){}

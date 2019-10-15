@@ -20,6 +20,7 @@ func (c *CDPClient) GetAgents(opts ...Option) (AgentSlice, error) {
 	ctx := context.TODO()
 	var agents AgentSlice
 	var aqs int32
+
 	if agentQueryOption.AgentIsOnLine == true {
 		aqs = 1
 	} else {
