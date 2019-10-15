@@ -3,5 +3,5 @@
 logs/*
 bg
 vendor/*
-cert/*
+cert_*/*
 cdpc.go

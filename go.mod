@@ -12,8 +12,3 @@ require (
 	github.com/tredoe/osutil v0.0.0-20161130133508-7d3ee1afa71c
 	google.golang.org/grpc v1.19.0
 )
-
-replace (
-	github.com/glory-cd/server => ./
-	github.com/glory-cd/utils => E:\GoProject\cdp\utils
-)
