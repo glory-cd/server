@@ -6,7 +6,6 @@ package client
 
 import (
 	"context"
-	"errors"
 	pb "github.com/glory-cd/server/idlentity"
 )
 
@@ -33,7 +32,7 @@ func (c *CDPClient) GetAgents(opts ...Option) (AgentSlice, error) {
 	}
 
 	for _, a := range agentList.Agents {
-		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, Ip: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
+		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, IP: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
 	}
 	return agents, nil
 }
@@ -52,24 +51,10 @@ func (c *CDPClient) SetAgentAlias(agentID, agentAlias string) error {
 }
 
 // 操作agent
-func (c *CDPClient) OperateAgent(op string, opts ...Option) error {
-	agentOperateOption := defaultOption()
-	for _, opt := range opts {
-		opt.apply(&agentOperateOption)
-	}
-
-	var agentIDList []string
-
-	agentIDs, err := c.GetAgentsFromGroup(agentOperateOption.GroupIDs)
-	if err != nil {
-		return errors.New("get agent id failed. " + err.Error())
-	}
-
-	agentIDList = append(agentOperateOption.AgentIDs, agentIDs...)
-
+func (c *CDPClient) OperateAgent(op string, agentIds ...string) error {
 	ac := c.newAgentClient()
 	ctx := context.TODO()
-	for _, aid := range agentIDList {
+	for _, aid := range agentIds {
 		_, err := ac.OperateAgent(ctx, &pb.AgentRestartRequest{Id: aid, Op: op})
 		if err != nil {
 			return err

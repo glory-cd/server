@@ -26,8 +26,8 @@
     "timeout": 300
   },
   "rpc": {
-    "hostport": "localhost:50051",
-    "certfile": "cert/server.crt",
-    "keyfile": "cert/server.key"
+    "hostport": ":50051",
+    "certfile": "cert_local/server.crt",
+    "keyfile": "cert_local/server.key"
   }
 }

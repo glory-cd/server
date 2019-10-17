@@ -14,8 +14,6 @@ import (
 	"net"
 )
 
-const rpcPort = "localhost:50051"
-
 func InitRpcServer() {
 	config := comm.Config().RPC
 	rpcPort := config.HostPort

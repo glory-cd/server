@@ -29,9 +29,7 @@ func (a *Agent) GetAgents(ctx context.Context, in *pb.GetAgentRequest) (*pb.Agen
 
 	if in.Agentstatus == 1 {
 		queryCmd = queryCmd.Where("status = ? ", 1)
-	} else if in.Agentstatus == 2 {
-		queryCmd = queryCmd.Where("status = ? ", 0)
-	} else {
+	}  else {
 		queryCmd = queryCmd
 	}
 
@@ -40,7 +38,7 @@ func (a *Agent) GetAgents(ctx context.Context, in *pb.GetAgentRequest) (*pb.Agen
 	}
 
 	for _, agent := range agents {
-		ragents.Agents = append(ragents.Agents, &pb.AgentList_AgentInfo{Id: agent.ID, Alias: agent.Alias, Hostname: agent.HostName, Hostip: agent.HostIp, Status: agent.Status, Ctime: agent.CreatedAt.String(), Utime: agent.UpdatedAt.String()})
+		ragents.Agents = append(ragents.Agents, &pb.AgentList_AgentInfo{Id: agent.ID, Alias: agent.Alias, Hostname: agent.HostName, Hostip: agent.HostIp, Status: agent.Status, Ctime: agent.CreatedAt.String(), Utime: agent.UpdatedAt.Format("2006-01-02 15:04:05")})
 	}
 
 	return &ragents, nil
@@ -63,10 +61,10 @@ func (a *Agent) OperateAgent(ctx context.Context, in *pb.AgentRestartRequest) (*
 	if err != nil {
 		return &pb.EmptyReply{}, err
 	}
-	opagentchannel := "grace." + in.Id
+	opAgentChannel := "grace." + in.Id
 	c := ControlAgent{AgentID: in.Id, OPMode: in.Op}
 	by, err := json.Marshal(&c)
-	err = comm.PublishCMD(opagentchannel, string(by))
+	err = comm.PublishCMD(opAgentChannel, string(by))
 	if err != nil {
 		return &pb.EmptyReply{}, err
 	}

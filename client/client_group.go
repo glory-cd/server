@@ -85,12 +85,12 @@ func (c *CDPClient) GetGroups(opts ...Option) (GroupSlice, error) {
 	return groups, nil
 }
 
-// get agentids from group id slice
-func (c *CDPClient) GetAgentsFromGroup(groupIds []int32) ([]string, error) {
+// get agentIds from group name slice
+func (c *CDPClient) GetAgentIdFromGroup(groupNames []string) ([]string, error) {
 	gc := c.newGroupClient()
 	ctx := context.TODO()
 
-	aids, err := gc.GetAgentIdFromGroup(ctx, &pb.GetAgentFromGroupRequest{Gids: groupIds})
+	aids, err := gc.GetAgentIdFromGroup(ctx, &pb.GetAgentFromGroupRequest{GroupNames: groupNames})
 	if err != nil {
 		return nil, err
 	}

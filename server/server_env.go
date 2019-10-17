@@ -61,7 +61,7 @@ func (o *Env) GetEnvironments(ctx context.Context, in *pb.GetEnvRequest) (*pb.En
 
 	var renvs pb.EnvironmentList
 	for _, env := range envs {
-		renvs.Envs = append(renvs.Envs, &pb.EnvironmentList_EnvironmentInfo{Id: int32(env.ID), Name: env.Name, Ctime: env.CreatedAt.String()})
+		renvs.Envs = append(renvs.Envs, &pb.EnvironmentList_EnvironmentInfo{Id: int32(env.ID), Name: env.Name, Ctime: env.CreatedAt.Format("2006-01-02 15:04:05")})
 	}
 	return &renvs, nil
 }

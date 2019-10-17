@@ -60,7 +60,7 @@ func (p *Pro) GetProjects(ctx context.Context, in *pb.GetProRequest) (*pb.Projec
 
 	var rpros pb.ProjectList
 	for _, pro := range pros {
-		rpros.Pros = append(rpros.Pros, &pb.ProjectList_ProjectInfo{Id: int32(pro.ID), Name: pro.Name, Ctime: pro.CreatedAt.String()})
+		rpros.Pros = append(rpros.Pros, &pb.ProjectList_ProjectInfo{Id: int32(pro.ID), Name: pro.Name, Ctime: pro.CreatedAt.Format("2006-01-02 15:04:05")})
 	}
 	return &rpros, nil
 }

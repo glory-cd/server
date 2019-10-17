@@ -42,6 +42,8 @@ var OpMap = map[OpMode]string{OperateDefault: "",
 
 var TaskStatus = map[int32]string{0:"失败",1:"成功",2:"未执行",3:"定时任务",4:"正在执行"}
 
+var ResultMap = map[int32]string{0:"失败",1:"成功"}
+
 
 //-----------------------------------------------
 type Organization struct {
@@ -119,7 +121,7 @@ type Release struct {
 	Version      string
 	OrgName      string
 	ProName      string
-	ReleaseCodes []int32   // releasecode id slice
+	ReleaseCodes []int32   // release code id slice
 }
 
 type ReleaseSlice []Release
@@ -172,7 +174,7 @@ type Agent struct {
 	ID        string
 	Alias     string
 	Host      string
-	Ip        string
+	IP        string
 	Status    string
 	CreatTime string
 }
@@ -237,23 +239,23 @@ func (cts CronTaskSlice) GetTaskID() int32 {
 //--------------------------------------------------------
 type TaskResult struct {
 	TaskName    string
-	ExecutionID int
+	WorkID      int
 	ServiceName string
-	Operation   int32
-	ResultCode  int
+	Operation   string
+	ResultCode  string
 	ResultMsg   string
 }
 
 //-------------------------------------------------
 type Execution struct {
-	TaskID         int32
-	TaskName       string
-	ServiceName    string
-	ID             int32
-	Op             string
-	ReturnCode     int32
-	ReturnMsg      string
-	CustomPattern string
+	TaskID            int32
+	TaskName          string
+	ServiceName       string
+	WorkID            int32
+	WorkOp            string
+	WorkReturnCode    string
+	WorkReturnMsg     string
+	WorkCustomPattern string
 }
 
 type ExecutionSlice []Execution

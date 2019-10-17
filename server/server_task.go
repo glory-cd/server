@@ -18,7 +18,7 @@ type Task struct{}
 
 func (t *Task) AddTask(ctx context.Context, in *pb.TaskAddRequest) (*pb.TaskAddReply, error) {
 	var taskObj comm.Task
-	taskObj = comm.Task{Name: in.Name}
+	taskObj = comm.Task{Name: in.Name,IsShow:in.IsShow}
 
 	if err := comm.CreateRecord(&taskObj); err != nil {
 		log.Slogger.Errorf("[Task] add [%s] failed. %s", in.Name, err)
@@ -62,12 +62,22 @@ func (t *Task) GetTasks(ctx context.Context, in *pb.GetTaskRequest) (*pb.TaskLis
 		return &rtasks, err
 	}
 	for _, task := range tasks {
+		formatStartTime := task.StartTime.Format("2006-01-02 15:04:05")
+		if formatStartTime == "0001-01-01 00:00:00"{
+			formatStartTime = ""
+		}
+
+		formatEndTime := task.EndTime.Format("2006-01-02 15:04:05")
+		if formatEndTime == "0001-01-01 00:00:00"{
+			formatEndTime = ""
+		}
+
 		ti := &pb.TaskList_TaskInfo{Id: int32(task.ID),
 			Name:      task.Name,
 			Status:    int32(task.Status),
-			Ctime:     task.CreatedAt.String(),
-			Starttime: task.StartTime.String(),
-			Endtime:   task.EndTime.String()}
+			Ctime:     task.CreatedAt.Format("2006-01-02 15:04:05"),
+			Starttime: formatStartTime,
+			Endtime:   formatEndTime}
 		rtasks.Tasks = append(rtasks.Tasks, ti)
 	}
 	return &rtasks, nil
@@ -174,7 +184,7 @@ func (t *Task) GetExecutionDetail(ctx context.Context, in *pb.GetExecutionDetail
 	}
 
 	for _, ed := range eDetails {
-		_tmp := &pb.ExecutionDetailsList_ExecutionDetail{StepNum: int32(ed.StepNum), StepName: ed.StepName, StepMsg: ed.StepMsg, StepState: int32(ed.StepState), StepTime: ed.StepTime.String()}
+		_tmp := &pb.ExecutionDetailsList_ExecutionDetail{StepNum: int32(ed.StepNum), StepName: ed.StepName, StepMsg: ed.StepMsg, StepState: int32(ed.StepState), StepTime: ed.StepTime.Format("2006-01-02 15:04:05")}
 		rEDetailList.EDetails = append(rEDetailList.EDetails, _tmp)
 	}
 	return &rEDetailList, nil
@@ -268,7 +278,7 @@ func (t *Task) RemoveTimedTask(ctx context.Context, in *pb.RemoveCronTaskRequest
 	cronTaskObj := comm.Cron_Task{TaskID: taskID}
 	err := comm.DeleteRecord(&cronTaskObj)
 	if err != nil {
-		return &pb.EmptyReply{}, errors.New("[cron-task] delete task faied. " + err.Error())
+		return &pb.EmptyReply{}, errors.New("[cron-task] delete task failed. " + err.Error())
 	}
 
 	return &pb.EmptyReply{}, nil
@@ -291,7 +301,7 @@ func (t *Task) GetTimedTasks(ctx context.Context, in *pb.GetCronTaskRequest) (*p
 	}
 
 	for _, tt := range timedTasks {
-		timedTaskList.TTasks = append(timedTaskList.TTasks, &pb.CronTaskList_CronTask{EntryId: int32(tt.EntryID), TaskId: int32(tt.TaskID), TaskName: tt.Task.Name, TaskExecTIme: tt.TimeSpec, CTime: tt.CreatedAt.String()})
+		timedTaskList.TTasks = append(timedTaskList.TTasks, &pb.CronTaskList_CronTask{EntryId: int32(tt.EntryID), TaskId: int32(tt.TaskID), TaskName: tt.Task.Name, TaskExecTIme: tt.TimeSpec, CTime: tt.CreatedAt.Format("2006-01-02 15:04:05")})
 	}
 	return &timedTaskList, nil
 }

@@ -58,6 +58,8 @@ github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeME
 github.com/gliderlabs/ssh v0.1.1/go.mod h1:U7qILu1NlMHj9FlMhZLlkCdDnU1DBEAqr0aevW3Awn0=
 github.com/glory-cd/utils v0.0.0-20190918013744-736ed1a53da9 h1:ZaM2nxLddD1kc6B8QAYyc8T/Zxpe8nKANfC97h3X0IU=
 github.com/glory-cd/utils v0.0.0-20190918013744-736ed1a53da9/go.mod h1:XJYdvZvgwfYhmlJ5GpG/3GI9zxVShfYqc1bqRz7ZHx0=
+github.com/glory-cd/utils v0.0.0-20191015083917-2cde6d4df02a h1:pzaCFuQe+5ocgzwLHiFmOTRNU1KcZyTwRKcgY4lUiVM=
+github.com/glory-cd/utils v0.0.0-20191015083917-2cde6d4df02a/go.mod h1:d6mX06OqYYhB4gcrOJLbRW4gs9a9SGm+Hu+M/HqqTY4=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-logfmt/logfmt v0.3.0/go.mod h1:Qt1PoO58o5twSAckw1HlFXLmHsOX5/0LbT9GBnD5lWE=
 github.com/go-sql-driver/mysql v1.4.1 h1:g24URVg0OFbNUTx9qqY1IRZ9D9z3iPyi5zKhQZpNwpA=

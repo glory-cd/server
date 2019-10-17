@@ -53,6 +53,7 @@ type option struct {
 	Deploys       []DeployServiceDetail
 	Upgrades      []UpgradeServiceDetail
 	Statics       []StaticServiceDetail
+	TaskIsShow    bool
 }
 
 type Option interface {
@@ -190,4 +191,8 @@ func WithTaskUpgrade(u []UpgradeServiceDetail) Option {
 
 func WithTaskStatic(s []StaticServiceDetail) Option {
 	return newFuncOptionA(func(o *option) { o.Statics = s })
+}
+
+func WithTaskShow(show bool) Option {
+	return newFuncOptionA(func(o *option) { o.TaskIsShow = show })
 }

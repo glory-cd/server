@@ -92,6 +92,7 @@ type Task struct {
 	CreatedAt time.Time `gorm:"column:ctime"`
 	StartTime time.Time `gorm:"column:start_time"`
 	EndTime   time.Time `gorm:"column:end_time"`
+	IsShow    bool      `gorm:"type:bool;column:is_show;NOT NULL;DEFAULT:false"`
 }
 
 type Execution struct {

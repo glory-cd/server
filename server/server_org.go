@@ -58,7 +58,7 @@ func (o *Org) GetOrganizations(ctx context.Context, in *pb.GetOrgRequest) (*pb.O
 
 	var rorgs pb.OrganizationList
 	for _, org := range orgs {
-		rorgs.Orgs = append(rorgs.Orgs, &pb.OrganizationList_OrganizationInfo{Id: int32(org.ID), Name: org.Name, Ctime: org.CreatedAt.String()})
+		rorgs.Orgs = append(rorgs.Orgs, &pb.OrganizationList_OrganizationInfo{Id: int32(org.ID), Name: org.Name, Ctime: org.CreatedAt.Format("2006-01-02 15:04:05")})
 	}
 	return &rorgs, nil
 }

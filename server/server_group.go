@@ -78,19 +78,14 @@ func (g *Group) GetGroups(ctx context.Context, in *pb.GetGroupRequest) (*pb.Grou
 func (g *Group) GetAgentIdFromGroup(ctx context.Context, in *pb.GetAgentFromGroupRequest) (*pb.GroupAgentIds, error) {
 	var services []comm.Service
 	var rAgentIDs pb.GroupAgentIds
-	queryCmd := comm.DB
 
-	if in.Gids != nil {
-		queryCmd = queryCmd.Where("group_id in (?)", in.Gids)
+	if in.GroupNames != nil {
+		if err := comm.DB.Joins("JOIN cdp_groups on cdp_groups.id = cdp_services.group_id AND cdp_groups.name in (?)",in.GroupNames).Find(&services).Error; err != nil {
+			return &rAgentIDs, err
+		}
+		for _, s := range services {
+			rAgentIDs.Agentid = append(rAgentIDs.Agentid, s.AgentID)
+		}
 	}
-
-	if err := queryCmd.Find(&services).Error; err != nil {
-		return &rAgentIDs, err
-	}
-
-	for _, s := range services {
-		rAgentIDs.Agentid = append(rAgentIDs.Agentid, s.AgentID)
-	}
-
 	return &rAgentIDs, nil
 }

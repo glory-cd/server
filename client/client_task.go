@@ -32,7 +32,8 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 	deploys := taskOption.Deploys
 	upgrades := taskOption.Upgrades
 	statics := taskOption.Statics
-    // 校验
+	taskIsShow := taskOption.TaskIsShow
+	// 校验
 	if op == OperateDeploy {
 		return 0, errors.New("Parameter error: OP is global, for all services in designated group，So it can't be deploy." +
 			"If you want to achieve the deploy task, use the 'WithDeploy' parameter")
@@ -46,14 +47,7 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 		return 0, errors.New("Parameter error: to deploy or upgrade tasks, you must use WithRelease to set the release's name.")
 	}
 
-	ctx := context.TODO()
-	sc := c.newTaskClient()
-	// 添加任务，在任务表中插入一条记录
-	res, err := sc.AddTask(ctx, &pb.TaskAddRequest{Name: taskName})
-	if err != nil {
-		return 0, err
-	}
-	// 设置任务详情
+	// 格式化任务详情
 	var ss []*pb.SpecificService
 	if op == OperateDefault {
 		if statics != nil {
@@ -92,6 +86,14 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 			ss = append(ss, &pb.SpecificService{ServiceID: s.ID, Operation: int32(op)})
 		}
 	}
+	ctx := context.TODO()
+	sc := c.newTaskClient()
+	// 添加任务，在任务表中插入一条记录
+	res, err := sc.AddTask(ctx, &pb.TaskAddRequest{Name: taskName, IsShow: taskIsShow})
+	if err != nil {
+		return 0, err
+	}
+
 	_, err = sc.SetTaskDetails(ctx, &pb.TaskDetailsRequst{TaskID: res.Taskid, ReleaseID: releaseID, Sslist: ss})
 	if err != nil {
 		return res.Taskid, err
@@ -137,7 +139,7 @@ func (c *CDPClient) ExecuteTask(taskID int32) ([]TaskResult, error) {
 
 	if res != nil {
 		for _, r := range res.Executions {
-			tmp := TaskResult{TaskName: r.TaskName, ExecutionID: int(r.Id), ServiceName: r.ServiceName, Operation: r.Operation, ResultCode: int(r.RCode), ResultMsg: r.RMsg}
+			tmp := TaskResult{TaskName: r.TaskName, WorkID: int(r.Id), ServiceName: r.ServiceName, Operation: OpMap[OpMode(r.Operation)], ResultCode: ResultMap[r.RCode], ResultMsg: r.RMsg}
 			tResult = append(tResult, tmp)
 		}
 
@@ -158,13 +160,13 @@ func (c *CDPClient) GetTaskExecutions(taskID int32) (ExecutionSlice, error) {
 	res := ExecutionSlice{}
 	for _, e := range es.Executions {
 		res = append(res, Execution{TaskID: e.TaskID,
-			TaskName:      e.TaskName,
-			ID:            e.Id,
-			Op:            OpMap[OpMode(e.Operation)],
-			ServiceName:   e.ServiceName,
-			ReturnCode:    e.RCode,
-			ReturnMsg:     e.RMsg,
-			CustomPattern: e.CustomUpgradePattern})
+			TaskName:          e.TaskName,
+			ServiceName:       e.ServiceName,
+			WorkID:            e.Id,
+			WorkOp:            OpMap[OpMode(e.Operation)],
+			WorkReturnCode:    ResultMap[e.RCode],
+			WorkReturnMsg:     e.RMsg,
+			WorkCustomPattern: e.CustomUpgradePattern})
 	}
 	return res, nil
 }

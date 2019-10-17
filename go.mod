@@ -3,7 +3,7 @@ module github.com/glory-cd/server
 go 1.12
 
 require (
-	github.com/glory-cd/utils v0.0.0-20190918013744-736ed1a53da9
+	github.com/glory-cd/utils v0.0.0-20191015083917-2cde6d4df02a
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/protobuf v1.3.2
 	github.com/jinzhu/gorm v1.9.10

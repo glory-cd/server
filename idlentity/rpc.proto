@@ -142,7 +142,7 @@ message GetGroupRequest {
 
 // 根据group名称获取agentid请求
 message GetAgentFromGroupRequest{
-    repeated int32 gids = 1;
+    repeated string groupNames = 1;
 }
 // 根据group名称获取agentid响应
 message GroupAgentIds{
@@ -357,6 +357,7 @@ message TaskIdRequest{
 //添加任务请求
 message TaskAddRequest {
     string name = 1;
+    bool isShow = 2;
 }
 
 //添加任务响应
