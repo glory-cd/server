@@ -366,9 +366,10 @@ message TaskAddReply{
 }
 
 // 获取任务请求
-message GetTaskRequest{
+message GetTaskRequest {
     repeated int32 id = 1;
     repeated string name = 2;
+    bool isShow = 3;
 }
 
 // 任务列表

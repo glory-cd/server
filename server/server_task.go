@@ -48,7 +48,7 @@ func (t *Task) DeleteTask(ctx context.Context, in *pb.TaskNameRequest) (*pb.Empt
 
 func (t *Task) GetTasks(ctx context.Context, in *pb.GetTaskRequest) (*pb.TaskList, error) {
 	var tasks []comm.Task
-	var rtasks pb.TaskList
+	var rTasks pb.TaskList
 	queryCmd := comm.DB
 	if in.Id != nil {
 		queryCmd = queryCmd.Where("id in (?)", in.Id)
@@ -59,16 +59,16 @@ func (t *Task) GetTasks(ctx context.Context, in *pb.GetTaskRequest) (*pb.TaskLis
 	}
 
 	if err := queryCmd.Find(&tasks).Error; err != nil {
-		return &rtasks, err
+		return &rTasks, err
 	}
 	for _, task := range tasks {
 		formatStartTime := task.StartTime.Format("2006-01-02 15:04:05")
-		if formatStartTime == "0001-01-01 00:00:00"{
+		if formatStartTime == "0001-01-01 00:00:00" {
 			formatStartTime = ""
 		}
 
 		formatEndTime := task.EndTime.Format("2006-01-02 15:04:05")
-		if formatEndTime == "0001-01-01 00:00:00"{
+		if formatEndTime == "0001-01-01 00:00:00" {
 			formatEndTime = ""
 		}
 
@@ -78,9 +78,9 @@ func (t *Task) GetTasks(ctx context.Context, in *pb.GetTaskRequest) (*pb.TaskLis
 			Ctime:     task.CreatedAt.Format("2006-01-02 15:04:05"),
 			Starttime: formatStartTime,
 			Endtime:   formatEndTime}
-		rtasks.Tasks = append(rtasks.Tasks, ti)
+		rTasks.Tasks = append(rTasks.Tasks, ti)
 	}
-	return &rtasks, nil
+	return &rTasks, nil
 }
 
 func (t *Task) SetTaskDetails(ctx context.Context, in *pb.TaskDetailsRequst) (*pb.EmptyReply, error) {
