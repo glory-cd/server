@@ -3,5 +3,6 @@
 logs/*
 bg
 vendor/*
-cert_*/*
+cert/*
 cdpc.go
+75Config/*
