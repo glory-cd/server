@@ -38,7 +38,7 @@ func (a *Agent) GetAgents(ctx context.Context, in *pb.GetAgentRequest) (*pb.Agen
 	}
 
 	for _, agent := range agents {
-		ragents.Agents = append(ragents.Agents, &pb.AgentList_AgentInfo{Id: agent.ID, Alias: agent.Alias, Hostname: agent.HostName, Hostip: agent.HostIp, Status: agent.Status, Ctime: agent.CreatedAt.String(), Utime: agent.UpdatedAt.Format("2006-01-02 15:04:05")})
+		ragents.Agents = append(ragents.Agents, &pb.AgentList_AgentInfo{Id: agent.ID, Alias: agent.Alias, Hostname: agent.HostName, Hostip: agent.HostIp, Status: agent.Status, Ctime: agent.CreatedAt.Format("2006-01-02 15:04:05"), Utime: agent.UpdatedAt.Format("2006-01-02 15:04:05")})
 	}
 
 	return &ragents, nil
