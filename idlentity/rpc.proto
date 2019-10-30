@@ -283,12 +283,8 @@ message ServiceAddRequest {
     string modulename = 3;
     string osuser = 4;
     string ospass = 5;
-    string codepattern = 6;
-    string pidfile = 7;
-    string startcmd = 8;
-    string stopcmd = 9;
     string agentid = 10;
-    int32 groupid = 11;
+    int32  groupid = 11;
 }
 // 添加服务响应
 message ServiceAddReply {

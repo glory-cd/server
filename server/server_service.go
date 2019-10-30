@@ -43,27 +43,23 @@ type Service struct{}
 
 func (s *Service) AddService(ctx context.Context, in *pb.ServiceAddRequest) (*pb.ServiceAddReply, error) {
 	// 校验部分参数
-	if in.Name == "" || in.Dir == "" || in.Osuser == "" || in.Ospass == "" || in.Agentid == "" || in.Startcmd == "" || in.Modulename == "" {
+	if in.Name == "" || in.Dir == "" || in.Osuser == "" || in.Ospass == "" || in.Agentid == "" || in.Modulename == "" {
 		return &pb.ServiceAddReply{}, errors.New("[Service] Parameter error, field that cannot be empty is empty")
 	}
 
 	serviceObj := comm.Service{Name: in.Name,
-		Dir:          in.Dir,
-		OsUser:       in.Osuser,
-		ModuleName:   in.Modulename,
-		CodePatterns: in.Codepattern,
-		Pidfile:      in.Pidfile,
-		StartCMD:     in.Startcmd,
-		StopCMD:      in.Stopcmd,
-		AgentID:      in.Agentid,
-		GroupID:      int(in.Groupid)}
+		Dir:        in.Dir,
+		OsUser:     in.Osuser,
+		ModuleName: in.Modulename,
+		AgentID:    in.Agentid,
+		GroupID:    int(in.Groupid)}
 	serviceObj.ID = GetMd5String(in.Agentid + in.Dir)
-	hashpass, err := HashOsUser(in.Ospass)
+	hashPass, err := HashOsUser(in.Ospass)
 	if err != nil {
 		return &pb.ServiceAddReply{}, err
 	}
 
-	serviceObj.OsPass = hashpass
+	serviceObj.OsPass = hashPass
 
 	if err := comm.CreateRecord(&serviceObj); err != nil {
 		log.Slogger.Errorf("[Service] add [%s] failed. %s", in.Name, err.Error())
@@ -104,7 +100,7 @@ func (s *Service) GetServices(ctx context.Context, in *pb.ServiceRequest) (*pb.S
 	}
 
 	if in.Moudlenames != nil {
-		queryCmd = queryCmd.Where("moudle_name in (?)", in.Moudlenames)
+		queryCmd = queryCmd.Where("module_name in (?)", in.Moudlenames)
 	}
 
 	if in.Groupnames != nil {

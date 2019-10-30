@@ -6,25 +6,24 @@ package client
 
 import (
 	"context"
-    "errors"
 	pb "github.com/glory-cd/server/idlentity"
 )
 
 // 添加服务，返回组织ID和错误信息
-func (c *CDPClient) AddService(name, dir, osUser, osPass, startCmd, agentID, moduleName string, opts ...Option) (string, error) {
+func (c *CDPClient) AddService(name, dir, osUser, osPass, agentID, moduleName string, opts ...Option) (string, error) {
 	serviceOption := defaultOption()
 	for _, opt := range opts {
 		opt.apply(&serviceOption)
 	}
 
-	var groupID int32 = 1
+	/*var groupID int32 = 1
 	if serviceOption.GroupName != "" {
 		groups, err := c.GetGroups(WithGroupNames([]string{serviceOption.GroupName}))
 		if err != nil {
 			return "", errors.New("get group ID err: " + err.Error())
 		}
 		groupID = groups.GetID()
-	}
+	}*/
 
 
 	addService := pb.ServiceAddRequest{Name: name,
@@ -32,12 +31,11 @@ func (c *CDPClient) AddService(name, dir, osUser, osPass, startCmd, agentID, mod
 		Modulename:  moduleName,
 		Osuser:      osUser,
 		Ospass:      osPass,
-		Codepattern: serviceOption.CodePattern,
-		Pidfile:     serviceOption.PidFile,
-		Startcmd:    startCmd,
-		Stopcmd:     serviceOption.StopCmd,
+		//Codepattern: serviceOption.CodePattern,
+		//Pidfile:     serviceOption.PidFile,
+		//Stopcmd:     serviceOption.StopCmd,
 		Agentid:     agentID,
-		Groupid:     groupID}
+		Groupid:     serviceOption.GroupID}
 
 	sc := c.newServiceClient()
 	ctx := context.TODO()
