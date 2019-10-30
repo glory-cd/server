@@ -75,7 +75,7 @@ type Service struct {
 	OsUser       string   `gorm:"column:os_user;type:varchar(128);NOT NULL" json:"serviceosuser"`
 	OsPass       string   `gorm:"column:os_pass;type:varchar(128);NOT NULL" json:"serviceospass"`
 	CodePattern  []string `gorm:"-" json:"servicecodepattern"`
-	CodePatterns string   `gorm:"column:code_pattern;type:varchar(1000)"`
+	CodePatterns string   `gorm:"column:codes;type:varchar(1000)"`
 	Pidfile      string   `gorm:"column:pid_file" json:"servicepidfile"`
 	StartCMD     string   `gorm:"column:start_cmd;type:varchar(128)" json:"servicestartcmd"`
 	StopCMD      string   `gorm:"column:stop_cmd;type:varchar(128)" json:"servicestopcmd"`
@@ -83,6 +83,7 @@ type Service struct {
 	GroupID      int      `gorm:"column:group_id;type:int;NOT NULL;DEFAULT:1" json:"groupid"`
 	Agent        Agent    `gorm:"FOREIGNKEY:AgentID;ASSOCIATION_FOREIGNKEY:ID"`
 	Group        Group    `gorm:"FOREIGNKEY:GroupID;ASSOCIATION_FOREIGNKEY:ID"`
+
 }
 
 type Task struct {

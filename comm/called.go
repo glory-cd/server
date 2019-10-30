@@ -40,6 +40,13 @@ func UpdateRecord(r interface{}) error {
 	return DB.Save(r).Error
 }
 
+/*func UpdatePartRecord(r interface{}, updateMap map[string]string) error {
+	return  DB.Debug().Model(r).Updates(updateMap).Error
+}*/
+
+func UpdatePartRecord(r interface{}, u interface{}) error {
+	return DB.Model(r).UpdateColumns(u).Error
+}
 
 //etcd----------------------------------------------------------------
 /*watch agent
@@ -57,23 +64,24 @@ func UpdateRecord(r interface{}) error {
 |----------------|
 */
 func WatchAgent() {
-	agentmap, err := EtcdClient.GetAgents(HandleAgentMessage)
+	agentMap, err := EtcdClient.GetAgents(HandleAgentMessage)
 	if err != nil {
-		log.Slogger.Errorf("[WatchAgent] 从etcd中获取Agent失败. %s", err)
+		log.Slogger.Errorf("[WatchAgent] get agents from etcd failed. %s", err)
 		return
 	}
-	log.Slogger.Debugf("[WatchAgent] 从etcd中获取Agent成功.%s", agentmap)
+	log.Slogger.Infof("[WatchAgent] get agents from etcd success.")
+	log.Slogger.Debugf("[WatchAgent] current agents is:  %+v.", agentMap)
 
 	var agentKeys []string
-	for k, v := range agentmap {
-		agentid := SeparateAgentKey(k)
-		hostname, hostip, err := SeparateAgentVal(v)
+	for k, v := range agentMap {
+		agentId := SeparateAgentKey(k)
+		hostname, hostIp, err := SeparateAgentVal(v)
 		if err != nil {
 			log.Slogger.Errorf("[SyncAgent] %s", err)
 			return
 		}
-		SyncAgentFromEtcdToDBOnline(agentid, hostname, hostip)
-		agentKeys = append(agentKeys, agentid)
+		SyncAgentFromEtcdToDBOnline(agentId, hostname, hostIp)
+		agentKeys = append(agentKeys, agentId)
 	}
 	SyncAgentFromEtcdToDBOffline(agentKeys)
 }
@@ -89,32 +97,34 @@ func HandleAgentMessage(messageType, messageKey, messageVal string) {
 }
 
 func agentOnline(key, val string) {
-	agentid := SeparateAgentKey(key)
-	hostname, hostip, err := SeparateAgentVal(val)
+	log.Slogger.Debugf("[AgentOnline] receive agent online message. %s => %+v.", key, val)
+	agentId := SeparateAgentKey(key)
+	hostName, hostIp, err := SeparateAgentVal(val)
 	if err != nil {
-		log.Slogger.Errorf("[AgentOnline] [key:%s]-[val:%s]=>[%s]", key, val, err)
+		log.Slogger.Errorf("[AgentOnline] %s. agent id is [%s], register info is [%s]", err, agentId, val)
 		return
 	}
-	agent := Agent{ID: agentid, HostName: hostname, HostIp: hostip}
+	log.Slogger.Debugf("[AgentOnline] agent id: [%s]", agentId)
+	log.Slogger.Debugf("[AgentOnline] agent hostname: [%s]", hostName)
+	log.Slogger.Debugf("[AgentOnline] agent host ip: [%s]", hostIp)
+
+	agent := Agent{ID: agentId, HostName: hostName, HostIp: hostIp}
 	if err = agent.Online(); err == nil {
-		log.Slogger.Infof("[AgentOnline] Agent上线入库成功：[key:%s]-[val:%s]", key, val)
+		log.Slogger.Infof("[AgentOnline] success. id is [%s]", agentId)
 	} else {
-		log.Slogger.Errorf("[AgentOnline] Agent上线入库失败：[key:%s]-[val:%s]=>[%s]", key, val, err)
+		log.Slogger.Errorf("[AgentOnline] %s. agent id is [%s]", err, agentId)
 	}
 }
 
 func agentOffline(key, val string) {
-	agentid := SeparateAgentKey(key)
-	hostname, hostip, err := SeparateAgentVal(val)
-	if err != nil {
-		log.Slogger.Errorf("[AgentOffline] [key:%s]-[val:%s]=>[%s]", key, val, err)
-		return
-	}
-	agent := Agent{ID: agentid, HostName: hostname, HostIp: hostip}
+	log.Slogger.Debugf("[AgentOffline] receive agent offline message. %s => %+v.", key)
+	agentId := SeparateAgentKey(key)
+
+	agent := Agent{ID: agentId}
 	if err := agent.Offline(); err == nil {
-		log.Slogger.Infof("[AgentOffline] Agent下线入库成功.[key:%s]", key)
+		log.Slogger.Infof("[AgentOffline] success. [%s]", agentId)
 	} else {
-		log.Slogger.Errorf("[AgentOffline] Agent下线入库失败.[key:%s]=>[%s]", key, err)
+		log.Slogger.Errorf("[AgentOffline] %s. agent id is [%s]", err, agentId)
 	}
 }
 
@@ -131,7 +141,7 @@ func SeparateAgentVal(val string) (string, string, error) {
 	} else if val == "" { //删除key时，val是""
 		return "", "", nil
 	} else {
-		return "", "", fmt.Errorf("[SeparateAgentAtt] Agent的注册信息的值格式错误[%s].", val)
+		return "", "", fmt.Errorf("agent register info format error. [%s].", val)
 	}
 }
 
@@ -142,17 +152,17 @@ func SeparateAgentVal(val string) (string, string, error) {
 */
 
 func WatchService() {
-	servicemap, err := EtcdClient.GetServices(HandleServiceMessage)
+	serviceMap, err := EtcdClient.GetServices(HandleServiceMessage)
 	if err != nil {
-		log.Slogger.Errorf("[WatchService] 从etcd中获取service失败. %s", err)
+		log.Slogger.Errorf("[WatchService] get services from etcd failed. %s", err)
 		return
 	}
-	log.Slogger.Info("[WatchService] 从etcd中获取service成功.")
-	log.Slogger.Debugf("[WatchService] etcd中的服务: %s", servicemap)
+	log.Slogger.Info("[WatchService] get services from etcd success. ")
+	log.Slogger.Debugf("[WatchService] current services is: %+v", serviceMap)
 
-	for k, v := range servicemap {
-		agentid := SeparateAgentKey(k)
-		SyncServiceFromEtcdToDB(agentid, v)
+	for k, v := range serviceMap {
+		agentId := SeparateAgentKey(k)
+		SyncServiceFromEtcdToDB(agentId, v)
 	}
 }
 
@@ -166,68 +176,38 @@ func HandleServiceMessage(messageType, messageKey, messageVal string) {
 }
 
 func serviceOnline(key, val string) {
-	agentid := SeparateAgentKey(key)
-	s, err := NewService(val, agentid)
+	log.Slogger.Debugf("[ServiceOnline] receive service online message. %s => %+v.", key, val)
+	agentId := SeparateAgentKey(key)
+	s, err := NewService(val, agentId)
 	if err != nil {
-		log.Slogger.Errorf("[ServiceOnline] %s", err)
+		log.Slogger.Errorf("[ServiceOnline] convert service string to service object failed. %s", err)
 		return
 	}
 
 	if err = s.OnLine(); err != nil {
-		log.Slogger.Errorf("[ServiceOnline] 服务上线入库失败：[key:%s]-[val:%s]=>[%s]", key, val, err)
+		log.Slogger.Errorf("[ServiceOnline] %s. service id is [%s]", err, s.ID)
+	} else {
+		log.Slogger.Infof("[ServiceOnline] success. service id is [%s].", s.ID)
 	}
-	log.Slogger.Infof("[ServiceOnline] 服务上线入库成功：[key:%s]-[val:%s]", key, val)
+
 }
 
 func serviceOffline(key, val string) {
-	agentid := SeparateAgentKey(key)
-	s, err := NewService(val, agentid)
-	if err != nil {
-		log.Slogger.Errorf("[ServiceOffline] %s", err)
-	}
-	if err = s.OffLine(); err != nil {
-		log.Slogger.Errorf("[ServiceOffline] 服务下线入库失败：[key:%s]-[val:%s]=>[%s]", key, val, err)
-	}
-	log.Slogger.Infof("[ServiceOffline] 服务下线入库成功：[key:%s]-[val:%s]=>[%s]", key, val)
-
-}
-
-
-/*
-|----------------|
-| watch cron task  |
-|----------------|
-*/
-/*func WatchCron() {
-	cronMap, err := EtcdClient.GetCrons(HandleCronMessage)
-	if err != nil {
-		log.Slogger.Errorf("[WatchCron] Failure to retrieve timed-tasks from etcd. %s", err)
-		return
-	}
-	log.Slogger.Info("[WatchCron] get timed-tasks Success from etcd.")
-	log.Slogger.Debugf("[WatchCron] current timed-tasks: %s", cronMap)
-	// add task to cron
-	AddTaskIdToCron(cronMap)
-}
-
-func HandleCronMessage(messageType,messageKey,messageVal string){
-	switch messageType {
-	case "PUT":
-		log.Slogger.Debugf("[Etcd]: Put %s=>%s", messageKey, messageVal)
-		cronAdd(messageKey, messageVal)
-	case "DELETE":
-		log.Slogger.Debugf("[Etcd]: Del %s=>%s", messageKey, messageVal)
-		cronDel(messageKey, messageVal)
+	agentId, serviceId := getServiceKeyDetail(key)
+	service := Service{ID: serviceId, AgentID: agentId}
+	if err := service.OffLine(); err != nil {
+		log.Slogger.Errorf("[ServiceOffline] %s. service id is [%s]", err, serviceId)
+	} else {
+		log.Slogger.Infof("[ServiceOffline] success. service id is [%s]", serviceId)
 	}
 }
 
-func cronAdd(key,val string){
-	taskTimeMap := map[string]string{key:val}
-	AddTaskIdToCron(taskTimeMap)
+// 获取etcd中服务的key中的agentID和serviceID
+func getServiceKeyDetail(key string) (string, string) {
+	detail := strings.Split(key, "/")
+	return detail[2], detail[3]
 }
 
-func cronDel(key,val string){}
-*/
 //redis---------------------------------------------------------------
 func PublishCMD(channel string, cmd string) (pr error) {
 	publishResultChan := make(chan error)
@@ -245,20 +225,21 @@ func SubscribeCMDResult(channel string, resultChan chan string) {
 	}
 	RedisConn.HandleCMDResultMessage(psc, resultChan)
 }
+
 //cron------------------------------------------------------------------
-func GetCurrentCronTask() (map[int]string, map[int]int,error) {
+func GetCurrentCronTask() (map[int]string, map[int]int, error) {
 	var cronTasks []Cron_Task
 	cronTaskMap := map[int]string{}
 	cronTaskIdMap := map[int]int{}
 	if err := DB.Find(&cronTasks).Error; err != nil {
-		log.Slogger.Errorf("[Cron] Getting all current cron tasks failed. %v", err)
-		return cronTaskMap, cronTaskIdMap,err
+		log.Slogger.Errorf("[Cron] get current timed tasks failed. %v", err)
+		return cronTaskMap, cronTaskIdMap, err
 	}
 
 	for _, ct := range cronTasks {
 		cronTaskMap[ct.TaskID] = ct.TimeSpec
 		cronTaskIdMap[ct.TaskID] = ct.EntryID
 	}
-	log.Slogger.Debugf("[Cron] current cron tasks: %v", cronTaskMap)
-	return cronTaskMap, cronTaskIdMap,nil
+	log.Slogger.Debugf("[Cron] current timed-task is: %+v", cronTaskMap)
+	return cronTaskMap, cronTaskIdMap, nil
 }

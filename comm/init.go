@@ -49,7 +49,7 @@ func ConnDB() {
 	}
 	// 初始化表
 	if config.IsInit {
-		log.Slogger.Info("[DB] init db...")
+		log.Slogger.Info("[DB] create tables if table is not exist...")
 		inittable()
 	}
 
@@ -82,11 +82,11 @@ var CronClient cron.CronClient
 func StartCron() {
 	CronClient = cron.NewCronClient()
 	CronClient.StartCron()
-	log.Slogger.Infof("[Cron] Start Cron....")
+	log.Slogger.Infof("[Cron] start timed-task server....")
 
 	cronMap, cronIdMap, err := GetCurrentCronTask()
 	if err != nil {
-		log.Slogger.Errorf("[Corn] Get Cron initvalue failed. %v", err)
+		log.Slogger.Errorf("[Corn] Get Cron init value failed. %v", err)
 	}
 	AddCronTasks(cronMap, cronIdMap)
 

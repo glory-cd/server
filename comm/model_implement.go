@@ -39,9 +39,9 @@ func SyncAgentFromEtcdToDBOnline(agentid, hostname, hostip string) {
 	//(2) etcd中存在，数据库中不存在，则将该agent信息插入数据库，状态为上线
 	a := Agent{ID: agentid, HostName: hostname, HostIp: hostip}
 	if err := a.Online(); err != nil {
-		log.Slogger.Errorf("[SyncAgent] 同步agent[%s]失败[%s]。", hostip, err)
+		log.Slogger.Errorf("[SyncAgentToOnline] %s. agent id is [%s]", err, agentid)
 	} else {
-		log.Slogger.Infof("[SyncAgent] 同步agent[%s]成功。", hostip)
+		log.Slogger.Infof("[SyncAgentToOnline] success. agent id is [%s]", hostip)
 	}
 
 }
@@ -50,7 +50,7 @@ func SyncAgentFromEtcdToDBOffline(agentkeys []string) {
 	//(3) etcd中不存在，数据库中存在，但是状态是上线，则将数据库中中该agent状态更新为下线
 	var needOffline []Agent
 	if err := DB.Not(agentkeys).Find(&needOffline).UpdateColumn("status", "0").Error; err != nil {
-		log.Slogger.Errorf("[SyncAgent] 同步下线agent失败[%s]。", err)
+		log.Slogger.Errorf("[SyncAgentToOffline] %s.", err)
 	}
 }
 
@@ -64,7 +64,7 @@ func (s *Service) OnLine() error {
 	if s.CheckRecord() {
 		return CreateRecord(&s)
 	} else {
-		return UpdateRecord(&s)
+		return UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, Pidfile: s.Pidfile})
 	}
 }
 
@@ -80,32 +80,32 @@ func (s *Service) ChangeGroup(newsgroup Group) error {
 	return nil
 }
 
-// josn字符串转换成Service对象
-func NewService(sjson string, agentid string) (s Service, err error) {
-	err = json.Unmarshal([]byte(sjson), &s)
-	s.AgentID = agentid
+// json字符串转换成Service对象
+func NewService(sJson string, agentId string) (s Service, err error) {
+	err = json.Unmarshal([]byte(sJson), &s)
+	s.AgentID = agentId
 	s.CodePatterns = strings.Join(s.CodePattern, ";")
 	return
 }
 
-func SyncServiceFromEtcdToDB(agentid, service string) {
-	s, err := NewService(service, agentid)
+func SyncServiceFromEtcdToDB(agentId, service string) {
+	s, err := NewService(service, agentId)
 	if err != nil {
-		log.Slogger.Errorf("[SyncService] 转换服务json字符串为Service对象出错。%s", err)
+		log.Slogger.Errorf("[SyncService] convert service string to service object failed. %s", err)
 		return
 	}
 
 	if s.CheckRecord() {
 		if err = CreateRecord(&s); err != nil {
-			log.Slogger.Errorf("[SyncService] 同步服务[%s]失败。%s", s.ID, err)
+			log.Slogger.Errorf("[SyncService] %s. service id is %s", err, s.ID)
 		} else {
-			log.Slogger.Infof("[SyncService] 同步服务[%s]成功。", s.Name)
+			log.Slogger.Infof("[SyncService] success. service id is [%s]", s.ID)
 		}
 	} else {
-		if err = UpdateRecord(&s); err != nil {
-			log.Slogger.Errorf("[SyncService] 同步更新服务[%s]失败。%s", s.ID, err)
+		if err = UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, Pidfile: s.Pidfile}); err != nil {
+			log.Slogger.Errorf("[SyncService] %s. service id is %s", err, s.ID)
 		} else {
-			log.Slogger.Infof("[SyncService] 同步更新服务[%s]成功。", s.ID)
+			log.Slogger.Infof("[SyncService] success. service id is [%s]", s.ID)
 		}
 	}
 }
@@ -117,7 +117,7 @@ func SyncServiceFromEtcdToDB(agentid, service string) {
 	return DB.Model(&t).UpdateColumn("start_time", time.Now()).Error
 }*/
 
-func (t *Task) SetTaskStartTimeAndRuningStatus() error{
+func (t *Task) SetTaskStartTimeAndRuningStatus() error {
 	return DB.Model(&t).Updates(map[string]interface{}{"status": 4, "start_time": time.Now()}).Error
 }
 
@@ -125,6 +125,7 @@ func (t *Task) SetTaskStartTimeAndRuningStatus() error{
 func (t *Task) SetTaskEndTime() error {
 	return DB.Model(&t).UpdateColumn("end_time", time.Now()).Error
 }
+
 // 设置任务状态
 func (t *Task) SetTaskStatus(status int) error {
 	return DB.Model(&t).UpdateColumn("status", status).Error
@@ -137,7 +138,7 @@ func (t *Task) SetTaskEndTimeAndStatus(status int) error {
 
 //------------------------------------------------------------------
 //CronTask
-func (t *Cron_Task) CheckRecord() bool{
+func (t *Cron_Task) CheckRecord() bool {
 	return DB.Find(&t).RecordNotFound()
 }
 
@@ -148,4 +149,3 @@ func (t *Cron_Task) SetEntryID(newID int) error {
 /*func (t *Cron_Task) SetEffective(e bool) error {
 	return DB.Model(&t).UpdateColumn("effective", e).Error
 }*/
-
