@@ -15,9 +15,10 @@ type ExecTaskJob struct {
 }
 
 func (ej ExecTaskJob) Run() {
-	config := Config().RPC
-	cdpattr := client.CDPCClientAttr{CertFile: config.CertFile, Address: config.HostPort}
-	conn, err := client.NewClient(cdpattr)
+	rpcPort := MyConfig.RPCHost
+	certFile := MyConfig.RPCCertFile
+	cdpAttr := client.CDPCClientAttr{CertFile: certFile, Address: rpcPort}
+	conn, err := client.NewClient(cdpAttr)
 	if err != nil {
 		log.Slogger.Errorf("[ExecuteCronTask] Conn Server failed. [%v]", err)
 	}
@@ -27,7 +28,6 @@ func (ej ExecTaskJob) Run() {
 		log.Slogger.Errorf("[ExecuteCronTask]: [%v]", err)
 		return
 	}
-
 }
 
 /*

@@ -34,23 +34,23 @@ func (a *Agent) SetAlias(name string) error {
 	return DB.Model(&a).UpdateColumn("alias", name).Error
 }
 
-func SyncAgentFromEtcdToDBOnline(agentid, hostname, hostip string) {
+func SyncAgentFromEtcdToDBOnline(agentId, hostName, hostIp string) {
 	//(1) etcd中存在，数据库中存在，但是状态下线，则将数据库中该agent状态更新为上线
 	//(2) etcd中存在，数据库中不存在，则将该agent信息插入数据库，状态为上线
-	a := Agent{ID: agentid, HostName: hostname, HostIp: hostip}
+	a := Agent{ID: agentId, HostName: hostName, HostIp: hostIp}
 	if err := a.Online(); err != nil {
-		log.Slogger.Errorf("[SyncAgentToOnline] %s. agent id is [%s]", err, agentid)
+		log.Slogger.Errorf("[SyncAgentToDBOnline] %s. agent id is [%s]", err, agentId)
 	} else {
-		log.Slogger.Infof("[SyncAgentToOnline] success. agent id is [%s]", hostip)
+		log.Slogger.Infof("[SyncAgentToDBOnline] success. agent id is [%s]", hostIp)
 	}
 
 }
 
-func SyncAgentFromEtcdToDBOffline(agentkeys []string) {
+func SyncAgentFromEtcdToDBOffline(agentKeys []string) {
 	//(3) etcd中不存在，数据库中存在，但是状态是上线，则将数据库中中该agent状态更新为下线
 	var needOffline []Agent
-	if err := DB.Not(agentkeys).Find(&needOffline).UpdateColumn("status", "0").Error; err != nil {
-		log.Slogger.Errorf("[SyncAgentToOffline] %s.", err)
+	if err := DB.Not(agentKeys).Find(&needOffline).UpdateColumn("status", "0").Error; err != nil {
+		log.Slogger.Errorf("[SyncAgentToDBOffline] %s.", err)
 	}
 }
 
@@ -91,21 +91,21 @@ func NewService(sJson string, agentId string) (s Service, err error) {
 func SyncServiceFromEtcdToDB(agentId, service string) {
 	s, err := NewService(service, agentId)
 	if err != nil {
-		log.Slogger.Errorf("[SyncService] convert service string to service object failed. %s", err)
+		log.Slogger.Errorf("[SyncServiceToDB] convert service string to service object failed. %s", err)
 		return
 	}
 
 	if s.CheckRecord() {
 		if err = CreateRecord(&s); err != nil {
-			log.Slogger.Errorf("[SyncService] %s. service id is %s", err, s.ID)
+			log.Slogger.Errorf("[SyncServiceToDB] %s. service id is %s", err, s.ID)
 		} else {
-			log.Slogger.Infof("[SyncService] success. service id is [%s]", s.ID)
+			log.Slogger.Infof("[SyncServiceToDB] success. service id is [%s]", s.ID)
 		}
 	} else {
 		if err = UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, Pidfile: s.Pidfile}); err != nil {
-			log.Slogger.Errorf("[SyncService] %s. service id is %s", err, s.ID)
+			log.Slogger.Errorf("[SyncServiceToDB] %s. service id is %s", err, s.ID)
 		} else {
-			log.Slogger.Infof("[SyncService] success. service id is [%s]", s.ID)
+			log.Slogger.Infof("[SyncServiceToDB] success. service id is [%s]", s.ID)
 		}
 	}
 }
@@ -117,7 +117,7 @@ func SyncServiceFromEtcdToDB(agentId, service string) {
 	return DB.Model(&t).UpdateColumn("start_time", time.Now()).Error
 }*/
 
-func (t *Task) SetTaskStartTimeAndRuningStatus() error {
+func (t *Task) SetTaskStartTimeAndRunningStatus() error {
 	return DB.Model(&t).Updates(map[string]interface{}{"status": 4, "start_time": time.Now()}).Error
 }
 

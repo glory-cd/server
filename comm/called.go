@@ -40,10 +40,7 @@ func UpdateRecord(r interface{}) error {
 	return DB.Save(r).Error
 }
 
-/*func UpdatePartRecord(r interface{}, updateMap map[string]string) error {
-	return  DB.Debug().Model(r).Updates(updateMap).Error
-}*/
-
+// 更新部分字段
 func UpdatePartRecord(r interface{}, u interface{}) error {
 	return DB.Model(r).UpdateColumns(u).Error
 }

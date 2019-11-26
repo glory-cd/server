@@ -32,54 +32,60 @@ func inittable() {
 		DB.Create(&pro)
 	}
 	checkTableAndCreate(Agent{})
-	if !checkTableAndCreate(Agent_Operation{}) {
-		DB.Model(&Agent_Operation{}).AddForeignKey("agent_id", "cdp_agents(id)", "CASCADE", "CASCADE")
-	}
+	//if !checkTableAndCreate(Agent_Operation{}) {
+	//	DB.Model(&Agent_Operation{}).AddForeignKey("agent_id", "cdp_agents(id)", "CASCADE", "CASCADE")
+	//}
 
 	//group
 	if !checkTableAndCreate(Group{}) {
-		DB.Model(&Group{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
-		DB.Model(&Group{}).AddForeignKey("environment_id", "cdp_environments(id)", "CASCADE", "CASCADE")
-		DB.Model(&Group{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
+		//DB.Model(&Group{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
+		//DB.Model(&Group{}).AddForeignKey("environment_id", "cdp_environments(id)", "CASCADE", "CASCADE")
+		//DB.Model(&Group{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
 		groname := "cdpgro"
 		gro := Group{Name: groname, OrganizationID: 1, EnvironmentID: 1, ProjectID: 1}
 		DB.Create(&gro)
 	}
 	//service
-	if !checkTableAndCreate(Service{}) {
-		DB.Model(&Service{}).AddForeignKey("agent_id", "cdp_agents(id)", "CASCADE", "CASCADE")
-		DB.Model(&Service{}).AddForeignKey("group_id", "cdp_groups(id)", "CASCADE", "CASCADE")
-	}
+	checkTableAndCreate(Service{})
+	//if !checkTableAndCreate(Service{}) {
+	//	DB.Model(&Service{}).AddForeignKey("agent_id", "cdp_agents(id)", "CASCADE", "CASCADE")
+	//	DB.Model(&Service{}).AddForeignKey("group_id", "cdp_groups(id)", "CASCADE", "CASCADE")
+	//}
 
 	//release
+
 	if !checkTableAndCreate(Release{}) {
-		DB.Model(&Release{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
-		DB.Model(&Release{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
+		//DB.Model(&Release{}).AddForeignKey("organization_id", "cdp_organizations(id)", "CASCADE", "CASCADE")
+		//DB.Model(&Release{}).AddForeignKey("project_id", "cdp_projects(id)", "CASCADE", "CASCADE")
 		DB.Model(&Release{}).AddUniqueIndex("release_unique","version","project_id","organization_id")
 	}
 
 	//release-code
-	if !checkTableAndCreate(ReleaseCode{}) {
-		DB.Model(&ReleaseCode{}).AddForeignKey("release_id", "cdp_releases(id)", "CASCADE", "CASCADE")
-		DB.Model(&ReleaseCode{}).AddUniqueIndex("releasecode_u","name","release_id")
-	}
+	checkTableAndCreate(ReleaseCode{})
+	//if !checkTableAndCreate(ReleaseCode{}) {
+	//	DB.Model(&ReleaseCode{}).AddForeignKey("release_id", "cdp_releases(id)", "CASCADE", "CASCADE")
+	//	DB.Model(&ReleaseCode{}).AddUniqueIndex("releasecode_u","name","release_id")
+	//}
 
 	// task
 	checkTableAndCreate(Task{})
 
 	// execution
-	if !checkTableAndCreate(Execution{}) {
-		DB.Model(&Execution{}).AddForeignKey("service_id", "cdp_services(id)", "CASCADE", "CASCADE")
-		DB.Model(&Execution{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
-	}
+	checkTableAndCreate(Execution{})
+	//if !checkTableAndCreate(Execution{}) {
+	//	DB.Model(&Execution{}).AddForeignKey("service_id", "cdp_services(id)", "CASCADE", "CASCADE")
+	//	DB.Model(&Execution{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
+	//}
 	// execution_detail
-	if !checkTableAndCreate(Execution_Detail{}) {
-		DB.Model(&Execution_Detail{}).AddForeignKey("execution_id", "cdp_executions(id)", "CASCADE", "CASCADE")
-	}
+	checkTableAndCreate(Execution_Detail{})
+	//if !checkTableAndCreate(Execution_Detail{}) {
+	//	DB.Model(&Execution_Detail{}).AddForeignKey("execution_id", "cdp_executions(id)", "CASCADE", "CASCADE")
+	//}
 
 	// task_timed
-	if !checkTableAndCreate(Cron_Task{}) {
-		DB.Model(&Cron_Task{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
-	}
+	checkTableAndCreate(Cron_Task{})
+	//if !checkTableAndCreate(Cron_Task{}) {
+	//	DB.Model(&Cron_Task{}).AddForeignKey("task_id", "cdp_tasks(id)", "CASCADE", "CASCADE")
+	//}
 
 }
