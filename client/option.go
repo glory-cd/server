@@ -6,7 +6,6 @@ package client
 
 type DeployServiceDetail struct {
 	ServiceID     string
-	ReleaseCodeID int32
 }
 
 type UpgradeServiceDetail struct {

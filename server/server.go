@@ -15,8 +15,10 @@ import (
 )
 
 func InitRpcServer() {
-	config := comm.Config().RPC
-	rpcPort := config.HostPort
+	rpcPort := comm.MyConfig.RPCHost
+	certFile := comm.MyConfig.RPCCertFile
+	keyFile := comm.MyConfig.RPCKeyFile
+
 	lis, err := net.Listen("tcp", rpcPort)
 	if err != nil {
 		log.Slogger.Fatalf("[RPC] Listen failed. %v", err)
@@ -24,7 +26,7 @@ func InitRpcServer() {
 
 	log.Slogger.Infof("[RPC] Listen sucessful. %s", rpcPort)
 
-	creds, err := credentials.NewServerTLSFromFile(config.CertFile, config.KeyFile)
+	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		log.Slogger.Fatalf("[RPC] could not load TLS keys: %s", err)
 	}

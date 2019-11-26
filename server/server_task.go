@@ -201,7 +201,7 @@ func (t *Task) PublishTask(ctx context.Context, in *pb.TaskIdRequest) (*pb.Execu
 	}
 	//设置任务开始时间和running状态. 设置失败则设置其结束时间和失败状态
 	task := comm.Task{ID: int(in.Id)}
-	if err := task.SetTaskStartTimeAndRuningStatus(); err != nil {
+	if err := task.SetTaskStartTimeAndRunningStatus(); err != nil {
 		errInfo := fmt.Sprintf("[PublishTask] set task[%d] start-time and running-status failed. %v", in.Id, err)
 		log.Slogger.Error(errInfo)
 		_ = task.SetTaskEndTimeAndStatus(TaskStatus_Failed)
@@ -211,6 +211,7 @@ func (t *Task) PublishTask(ctx context.Context, in *pb.TaskIdRequest) (*pb.Execu
 	// 获取任务切片字符串
 	eObjectList, err := getExecutions(&task, taskStatus, &el)
 	if err != nil {
+		_ = task.SetTaskEndTimeAndStatus(TaskStatus_Failed)
 		return &el, err // 此时返回，el为空[]
 	}
 	//订阅任务结果通道

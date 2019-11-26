@@ -34,32 +34,22 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 	statics := taskOption.Statics
 	taskIsShow := taskOption.TaskIsShow
 	// 校验
-	if op == OperateDeploy {
-		return 0, errors.New("Parameter error: OP is global, for all services in designated group，So it can't be deploy." +
-			"If you want to achieve the deploy task, use the 'WithDeploy' parameter")
-	}
+	//if op == OperateDeploy {
+	//	return 0, errors.New("Parameter error: OP is global, for all services in designated group，So it can't be deploy." +
+	//		"If you want to achieve the deploy task, use the 'WithDeploy' parameter")
+	//}
 
 	if op == OperateDefault && len(deploys) == 0 && len(upgrades) == 0 && len(statics) == 0 {
 		return 0, errors.New("Parameter error: neither OP nor detailed parameters are set.")
 	}
 
-	if releaseID == 0 && (len(deploys) > 0 || len(upgrades) > 0 || op == OperateUpgrade) {
+	if releaseID == 0 && (len(deploys) > 0 || len(upgrades) > 0 || op == OperateUpgrade || op == OperateDeploy) {
 		return 0, errors.New("Parameter error: to deploy or upgrade tasks, you must use WithRelease to set the release's name.")
 	}
 
 	// 格式化任务详情
 	var ss []*pb.SpecificService
 	if op == OperateDefault {
-		if statics != nil {
-			//验证OpMode
-			for _, s := range statics {
-				if s.Op == OperateDeploy || s.Op == OperateUpgrade {
-					return 0, errors.New("Parameter error: static-OpMode not be OperateDeploy and OperateUpgrade.")
-				}
-
-			}
-		}
-
 		for _, d := range deploys {
 			ss = append(ss, &pb.SpecificService{ServiceID: d.ServiceID, Operation: int32(OperateDeploy)})
 		}
@@ -69,6 +59,9 @@ func (c *CDPClient) AddTask(taskName string, opts ...Option) (int32, error) {
 		}
 
 		for _, s := range statics {
+			if s.Op == OperateDeploy || s.Op == OperateUpgrade {
+				return 0, errors.New("Parameter error: static-OpMode not be OperateDeploy and OperateUpgrade.")
+			}
 			ss = append(ss, &pb.SpecificService{ServiceID: s.ServiceID, Operation: int32(s.Op)})
 		}
 

@@ -78,6 +78,7 @@ func (c *CDPClient) GetServices(opts ...Option) (ServiceSlice, error) {
 	for _, s := range serviceList.Services {
 		tmpService := Service{ID: s.Id,
 			Name:        s.Name,
+			Dir:		 s.Dir,
 			ModuleName:  s.Moudlename,
 			OsUser:      s.Osuser,
 			CodePattern: s.Codepattern,

@@ -123,11 +123,11 @@ func getExecutions(task *comm.Task, taskStatus int, rRei interface{}) ([]map[str
 		// 获取agent状态
 		var agent comm.Agent
 		if comm.CheckRecordWithStringID(e.Service.AgentID, &agent) {
-			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-found", e.ServiceID, e.Service.AgentID)
+			errInfo := fmt.Sprintf("service[%s] node[%s] not-found", e.ServiceID, e.Service.AgentID)
 			return executionMapList, errors.New(errInfo)
 		}
 		if agent.Status == "0" {
-			errInfo := fmt.Sprintf("service[%s] ownership agent[%s] not-online", e.ServiceID, e.Service.AgentID)
+			errInfo := fmt.Sprintf("service[%s] node[%s] offline", e.ServiceID, e.Service.AgentID)
 			return executionMapList, errors.New(errInfo)
 		}
 
@@ -221,7 +221,7 @@ func collectResult(resultChannel chan string, publishSuccessLen int) []string {
 
 func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 	// 入库
-	var taskstatus = TaskStatus_Successful
+	var taskStatus = TaskStatus_Successful
 
 	tx := comm.DB.Begin()
 	for _, r := range results {
@@ -272,14 +272,15 @@ func result2DB(task comm.Task, results []string, rre *pb.ExecutionList) error {
 		}
 
 		if resultCode == TaskStatus_Failed {
-			taskstatus = TaskStatus_Failed
+			taskStatus = TaskStatus_Failed
 		}
 
 	}
-	// 设置任务结束时间
-	if err := task.SetTaskEndTimeAndStatus(taskstatus); err != nil {
+	//设置任务结束时间
+	if err := tx.Model(&task).Updates(map[string]interface{}{"status": taskStatus, "end_time": time.Now()}).Error; err != nil {
 		tx.Rollback()
 		return err
+
 	}
 	tx.Commit()
 	return nil

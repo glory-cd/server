@@ -111,6 +111,7 @@ func (s *Service) GetServices(ctx context.Context, in *pb.ServiceRequest) (*pb.S
 		queryCmd = queryCmd.Joins("JOIN cdp_agents ON cdp_agents.id = cdp_services.agent_id AND cdp_agents.id in (?)", in.Agentids)
 	}
 
+
 	if err := queryCmd.Find(&services).Error; err != nil {
 		return &rservices, err
 	}
