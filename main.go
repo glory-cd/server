@@ -5,17 +5,25 @@
 package main
 
 import (
+	"flag"
 	"github.com/glory-cd/server/comm"
 	"github.com/glory-cd/server/server"
 )
 
+var etcdEndpoints string
+var version string
+
+func init() {
+	flag.StringVar(&etcdEndpoints, "etcd", "", "etcd endpoints")
+	flag.StringVar(&version, "version", "", "etcd endpoints")
+}
+
 func main() {
-	cfg := "conf/server.json"
-	comm.ParseConfig(cfg)
-	comm.InitLog()
+	flag.Parse()
+	comm.ConnEtcd(etcdEndpoints)
+	comm.InitLogLevel()
 	comm.ConnDB()
 	comm.ConnRedis()
-	comm.ConnEtcd()
 	comm.WatchAgent()
 	comm.WatchService()
 	comm.StartCron()

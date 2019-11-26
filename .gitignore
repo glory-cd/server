@@ -6,3 +6,5 @@ vendor/*
 cert/*
 cdpc.go
 75Config/*
+*.db
+*.sql
