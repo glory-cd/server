@@ -119,7 +119,7 @@ func (c *CDPClient) GetTasks(opts ...Option) (TaskSlice, error) {
 		return tasks, err
 	}
 	for _, t := range taskList.Tasks {
-		tasks = append(tasks, Task{ID: t.Id, Name: t.Name, Status: TaskStatus[t.Status], StartTime: t.Starttime, EndTime: t.Endtime, CreateTime: t.Ctime})
+		tasks = append(tasks, Task{ID: t.Id, Name: t.Name, Status: TaskStatus[t.Status], StartTime: t.Starttime, EndTime: t.Endtime, CreateTime: t.Ctime, IsShow: t.IsShow})
 	}
 	return tasks, nil
 }

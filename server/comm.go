@@ -143,7 +143,7 @@ func getExecutions(task *comm.Task, taskStatus int, rRei interface{}) ([]map[str
 			ServiceRemoteCode:    releaseCode.RelativePath,
 			ServiceCodePattern:   strings.Split(e.Service.CodePatterns, ";"),
 			ServiceCustomPattern: strings.Split(e.CustomUpgradePattern, ";"),
-			ServicePidfile:       e.Service.Pidfile,
+			ServicePidfile:       e.Service.PidFile,
 			ServiceStartCmd:      e.Service.StartCMD,
 			ServiceStopCmd:       e.Service.StopCMD,
 		}

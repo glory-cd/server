@@ -32,7 +32,7 @@ func (c *CDPClient) GetAgents(opts ...Option) (AgentSlice, error) {
 	}
 
 	for _, a := range agentList.Agents {
-		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, IP: a.Hostip, Status: a.Status, CreatTime: a.Ctime})
+		agents = append(agents, Agent{ID: a.Id, Alias: a.Alias, Host: a.Hostname, IP: a.Hostip, Status: a.Status, CreatTime: a.Ctime, LatestTime: a.Utime})
 	}
 	return agents, nil
 }

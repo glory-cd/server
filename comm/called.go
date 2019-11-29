@@ -42,7 +42,7 @@ func UpdateRecord(r interface{}) error {
 
 // 更新部分字段
 func UpdatePartRecord(r interface{}, u interface{}) error {
-	return DB.Model(r).UpdateColumns(u).Error
+	return DB.Model(r).Updates(u).Error
 }
 
 //etcd----------------------------------------------------------------

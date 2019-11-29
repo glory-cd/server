@@ -78,7 +78,7 @@ func (c *CDPClient) GetServices(opts ...Option) (ServiceSlice, error) {
 	for _, s := range serviceList.Services {
 		tmpService := Service{ID: s.Id,
 			Name:        s.Name,
-			Dir:		 s.Dir,
+			Dir:         s.Dir,
 			ModuleName:  s.Moudlename,
 			OsUser:      s.Osuser,
 			CodePattern: s.Codepattern,
@@ -88,7 +88,10 @@ func (c *CDPClient) GetServices(opts ...Option) (ServiceSlice, error) {
 			HostIp:      s.Hostip,
 			AgentName:   s.Agentname,
 			AgentID:     s.Agentid,
-			GroupName:   s.Groupname}
+			GroupName:   s.Groupname,
+			CreatTime:   s.Ctime,
+			LatestTime:  s.Utime,
+		}
 		services = append(services, tmpService)
 	}
 	return services, nil

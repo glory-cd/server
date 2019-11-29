@@ -158,6 +158,8 @@ type Service struct {
 	AgentID     string
 	AgentName   string
 	GroupName   string
+	CreatTime   string
+	LatestTime  string
 }
 
 type ServiceSlice []Service
@@ -171,12 +173,13 @@ func (ss ServiceSlice) GetID() string {
 }
 //-----------------------------------------------------
 type Agent struct {
-	ID        string
-	Alias     string
-	Host      string
-	IP        string
-	Status    string
-	CreatTime string
+	ID         string
+	Alias      string
+	Host       string
+	IP         string
+	Status     string
+	CreatTime  string
+	LatestTime string
 }
 
 type AgentSlice []Agent
@@ -191,12 +194,13 @@ func (as AgentSlice) GetID() string {
 
 //------------------------------------------------------
 type Task struct {
-	ID          int32
-	Name        string
-	Status      string
-	StartTime   string
-	EndTime     string
-	CreateTime  string
+	ID         int32
+	Name       string
+	Status     string
+	StartTime  string
+	EndTime    string
+	CreateTime string
+	IsShow     bool
 }
 
 type TaskSlice []Task

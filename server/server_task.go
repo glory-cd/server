@@ -77,7 +77,9 @@ func (t *Task) GetTasks(ctx context.Context, in *pb.GetTaskRequest) (*pb.TaskLis
 			Status:    int32(task.Status),
 			Ctime:     task.CreatedAt.Format("2006-01-02 15:04:05"),
 			Starttime: formatStartTime,
-			Endtime:   formatEndTime}
+			Endtime:   formatEndTime,
+			IsShow:    task.IsShow,
+		    }
 		rTasks.Tasks = append(rTasks.Tasks, ti)
 	}
 	return &rTasks, nil

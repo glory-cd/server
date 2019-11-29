@@ -49,7 +49,7 @@ func SyncAgentFromEtcdToDBOnline(agentId, hostName, hostIp string) {
 func SyncAgentFromEtcdToDBOffline(agentKeys []string) {
 	//(3) etcd中不存在，数据库中存在，但是状态是上线，则将数据库中中该agent状态更新为下线
 	var needOffline []Agent
-	if err := DB.Not(agentKeys).Find(&needOffline).UpdateColumn("status", "0").Error; err != nil {
+	if err := DB.Not(agentKeys).Find(&needOffline).Update("status", "0").Error; err != nil {
 		log.Slogger.Errorf("[SyncAgentToDBOffline] %s.", err)
 	}
 }
@@ -64,7 +64,7 @@ func (s *Service) OnLine() error {
 	if s.CheckRecord() {
 		return CreateRecord(&s)
 	} else {
-		return UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, Pidfile: s.Pidfile})
+		return UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, PidFile: s.PidFile})
 	}
 }
 
@@ -102,7 +102,7 @@ func SyncServiceFromEtcdToDB(agentId, service string) {
 			log.Slogger.Infof("[SyncServiceToDB] success. service id is [%s]", s.ID)
 		}
 	} else {
-		if err = UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, Pidfile: s.Pidfile}); err != nil {
+		if err = UpdatePartRecord(&s, Service{CodePatterns: s.CodePatterns, StartCMD: s.StartCMD, StopCMD: s.StopCMD, PidFile: s.PidFile}); err != nil {
 			log.Slogger.Errorf("[SyncServiceToDB] %s. service id is %s", err, s.ID)
 		} else {
 			log.Slogger.Infof("[SyncServiceToDB] success. service id is [%s]", s.ID)

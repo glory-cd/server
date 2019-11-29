@@ -63,27 +63,28 @@ type Agent struct {
 	HostName  string    `gorm:"column:hostname;type:varchar(128);NOT NULL"`
 	HostIp    string    `gorm:"column:hostip;type:varchar(128);NOT NULL"`
 	Status    string    `gorm:"column:status;type:char(1);NOT NULL;default:'1'"`
-	CreatedAt time.Time `gorm:"column:rtime;NOT NULL"` //agent第一次注册时间
-	UpdatedAt time.Time `gorm:"column:ctime;NOT NULL"` //agent最近注册时间
+	CreatedAt time.Time `gorm:"column:rtime;NOT NULL"` 								//agent第一次注册时间
+	UpdatedAt time.Time `gorm:"column:ctime;NOT NULL"` 							    //agent最近注册时间
 }
 
 type Service struct {
-	ID           string   `gorm:"column:id;type:varchar(32);NOT NULL;PRIMARY_KEY" json:"serviceid"`
-	Name         string   `gorm:"column:name;type:varchar(128);NOT NULL" json:"servicename"`
-	Dir          string   `gorm:"column:dir;type:varchar(1024);NOT NULL" json:"servicedir"`
-	ModuleName   string   `gorm:"column:module_name;type:varchar(128);NOT NULL" json:"servicemodulename"`
-	OsUser       string   `gorm:"column:os_user;type:varchar(128);NOT NULL" json:"serviceosuser"`
-	OsPass       string   `gorm:"column:os_pass;type:varchar(128);NOT NULL" json:"serviceospass"`
-	CodePattern  []string `gorm:"-" json:"servicecodepattern"`
-	CodePatterns string   `gorm:"column:codes;type:varchar(1000)"`
-	Pidfile      string   `gorm:"column:pid_file" json:"servicepidfile"`
-	StartCMD     string   `gorm:"column:start_cmd;type:varchar(128)" json:"servicestartcmd"`
-	StopCMD      string   `gorm:"column:stop_cmd;type:varchar(128)" json:"servicestopcmd"`
-	AgentID      string   `gorm:"column:agent_id;type:varchar(36) REFERENCES cdp_agents(id) ON DELETE CASCADE ON UPDATE CASCADE;" json:"agentid"`
-	GroupID      int      `gorm:"column:group_id;type:integer REFERENCES cdp_groups(id) ON DELETE CASCADE ON UPDATE CASCADE; DEFAULT:1" json:"groupid"`
-	Agent        Agent    `gorm:"FOREIGNKEY:AgentID;ASSOCIATION_FOREIGNKEY:ID"`
-	Group        Group    `gorm:"FOREIGNKEY:GroupID;ASSOCIATION_FOREIGNKEY:ID"`
-
+	ID           string    `gorm:"column:id;type:varchar(32);NOT NULL;PRIMARY_KEY" json:"serviceid"`
+	Name         string    `gorm:"column:name;type:varchar(128);NOT NULL" json:"servicename"`
+	Dir          string    `gorm:"column:dir;type:varchar(1024);NOT NULL" json:"servicedir"`
+	ModuleName   string    `gorm:"column:module_name;type:varchar(128);NOT NULL" json:"servicemodulename"`
+	OsUser       string    `gorm:"column:os_user;type:varchar(128);NOT NULL" json:"serviceosuser"`
+	OsPass       string    `gorm:"column:os_pass;type:varchar(128);NOT NULL" json:"serviceospass"`
+	CodePattern  []string  `gorm:"-" json:"servicecodepattern"`
+	CodePatterns string    `gorm:"column:codes;type:varchar(1000)"`
+	PidFile      string    `gorm:"column:pid_file" json:"servicepidfile"`
+	StartCMD     string    `gorm:"column:start_cmd;type:varchar(128)" json:"servicestartcmd"`
+	StopCMD      string    `gorm:"column:stop_cmd;type:varchar(128)" json:"servicestopcmd"`
+	AgentID      string    `gorm:"column:agent_id;type:varchar(36) REFERENCES cdp_agents(id) ON DELETE CASCADE ON UPDATE CASCADE;" json:"agentid"`
+	GroupID      int       `gorm:"column:group_id;type:integer REFERENCES cdp_groups(id) ON DELETE CASCADE ON UPDATE CASCADE; DEFAULT:1" json:"groupid"`
+	Agent        Agent     `gorm:"FOREIGNKEY:AgentID;ASSOCIATION_FOREIGNKEY:ID"`
+	Group        Group     `gorm:"FOREIGNKEY:GroupID;ASSOCIATION_FOREIGNKEY:ID"`
+	CreatedAt    time.Time `gorm:"column:rtime;NOT NULL"` 							//service第一次注册时间
+	UpdatedAt    time.Time `gorm:"column:ctime;NOT NULL"` 						    //service最近注册时间
 }
 
 type Task struct {

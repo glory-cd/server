@@ -82,7 +82,7 @@ func (s *Service) DeleteService(ctx context.Context, in *pb.ServiceDeleteRequest
 		log.Slogger.Errorf("[Service] delete [%s] failed. %s", serviceObj.Name, err)
 		return &pb.EmptyReply{}, err
 	}
-	log.Slogger.Infof("[Release] delete [%s] successful.", serviceObj.Name)
+	log.Slogger.Infof("[Service] delete [%s] successful.", serviceObj.Name)
 	return &pb.EmptyReply{}, nil
 }
 
@@ -123,16 +123,19 @@ func (s *Service) GetServices(ctx context.Context, in *pb.ServiceRequest) (*pb.S
 			Moudlename:  service.ModuleName,
 			Osuser:      service.OsUser,
 			Codepattern: service.CodePatterns,
-			Pidfile:     service.Pidfile,
+			Pidfile:     service.PidFile,
 			Startcmd:    service.StartCMD,
 			Stopcmd:     service.StopCMD,
 			Agentid:     service.AgentID,
 			Agentname:   service.Agent.Alias,
 			Groupname:   service.Group.Name,
 			Hostip:      service.Agent.HostIp,
+			Ctime:       service.CreatedAt.Format("2006-01-02 15:04:05"),
+			Utime:       service.UpdatedAt.Format("2006-01-02 15:04:05"),
 		}
 		rservices.Services = append(rservices.Services, si)
 	}
+	log.Slogger.Debug("[GetService] %v",rservices.Services)
 	return &rservices, nil
 }
 

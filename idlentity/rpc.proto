@@ -322,6 +322,8 @@ message ServiceList {
         string groupname = 13;
         string agentid = 14;
         string hostip = 15;
+        string ctime = 16;
+        string utime = 17;
     }
     repeated ServiceInfo services = 1;
 }
@@ -379,6 +381,7 @@ message TaskList {
         string endtime = 6;
         string releasename = 7;
         string groupname = 8;
+        bool isShow = 9;
     }
     repeated TaskInfo tasks = 1;
 }
